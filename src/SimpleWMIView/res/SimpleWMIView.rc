@@ -1,0 +1,709 @@
+﻿#include <windows.h>
+#include <commctrl.h>
+
+110 BITMAP "BITMAP110_1.bmp"
+
+
+
+133 BITMAP "BITMAP133_1.bmp"
+
+
+
+134 BITMAP "BITMAP134_1.bmp"
+
+
+
+102 MENU
+
+{
+
+  POPUP "&File"
+
+  {
+
+    MENUITEM "New SimpleWMIView Instance\tCtrl+N",  40044
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "&Save Selected Items\tCtrl+S",  40001
+
+    MENUITEM "Save All Items\tShift+Ctrl+S",  40057
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "&Properties\tAlt+Enter",  40009
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "E&xit",  40002
+
+  }
+
+  POPUP "&Edit"
+
+  {
+
+    MENUITEM "&Find\tCtrl+F",  40014
+
+    MENUITEM "&Copy Selected Items\tCtrl+C",  40008
+
+    MENUITEM "Copy Sorted Column Data\tCtrl+M",  40041
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "Select &All\tCtrl+A",  40007
+
+    MENUITEM "Deselect All\tCtrl+D",  40015
+
+  }
+
+  POPUP "&View"
+
+  {
+
+    MENUITEM "Use Quick Filter\tCtrl+Q",  40060
+
+    MENUITEM "Show &Grid Lines",  40005
+
+    MENUITEM "Show &Tooltips",  40022
+
+    MENUITEM "Mark &Odd/Even Rows",  40028
+
+    MENUITEM "Black Background",  40071
+
+    MENUITEM "Full Screen\tF11",  40068
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "&HTML Report - All Items",  40006
+
+    MENUITEM "HTML R&eport - Selected Items",  40010
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "Choose Colum&ns",  40011
+
+    MENUITEM "&Auto Size Columns\tCtrl+Plus",  40012
+
+    MENUITEM "Auto Size Columns+Headers\tShift+Plus",  40024
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "&Refresh\tF5",  40004
+
+  }
+
+  POPUP "&Options"
+
+  {
+
+    POPUP "Save File Encoding "
+
+    {
+
+      MENUITEM "&Default",  45700
+
+      MENUITEM "Always &ANSI",  45701
+
+      MENUITEM "Always &Unicode (UTF-16)",  45702
+
+      MENUITEM "Always UTF-&8",  45703
+
+    }
+
+    MENUITEM "Auto Size Columns+Headers On Table Load",  40033
+
+    MENUITEM "Auto Fill Classes Combo-Box",  40037
+
+    MENUITEM "Auto Complete Classes Combo-Box",  40063
+
+    MENUITEM "Auto Update On Class/Query Change",  40043
+
+    MENUITEM "Enumerate Full Namespace Tree (Requires Admin)",  40064
+
+    MENUITEM "Align Numeric Columns To Right",  40052
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "Show Time In &GMT",  40034
+
+    MENUITEM "Show Milliseconds In Time",  40067
+
+    MENUITEM "Put Icon On &Tray",  40038
+
+    MENUITEM "Start As Hidden",  40066
+
+    MENUITEM "Always On Top",  40042
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "Select Another &Font",  40055
+
+    MENUITEM "Use Default Font",  40056
+
+  }
+
+  POPUP "&Help"
+
+  {
+
+    MENUITEM "&Run As Administrator\tCtrl+F11",  40029
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "&About",  40003
+
+  }
+
+}
+
+
+
+104 MENU
+
+{
+
+  POPUP "Popup1"
+
+  {
+
+    MENUITEM "Copy Clicked Cell",  40065
+
+    MENUITEM "&Save Selected Items\tCtrl+S",  40001
+
+    MENUITEM "&Copy Selected Items\tCtrl+C",  40008
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "HTML Report - All Items",  40006
+
+    MENUITEM "HTML Report - Selected Items",  40010
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "Choose Colum&ns",  40011
+
+    MENUITEM "&Auto Size Columns\tCtrl+Plus",  40012
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "&Properties\tAlt+Enter",  40009
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "&Refresh\tF5",  40004
+
+  }
+
+}
+
+
+
+112 MENU
+
+{
+
+  MENUITEM "Stop",  40036
+
+}
+
+
+
+113 MENU
+
+{
+
+  POPUP "TrayMenu"
+
+  {
+
+    MENUITEM "Open SimpleWMIView",  40040
+
+    MENUITEM SEPARATOR
+
+    MENUITEM "E&xit",  40002
+
+  }
+
+}
+
+
+
+105 DIALOGEX 0, 0, 594, 238
+
+STYLE DS_SETFONT | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+
+CAPTION "Properties"
+
+FONT 8, "MS Sans Serif"
+
+{
+
+   CONTROL "OK", 1, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 537, 217, 50, 14 
+
+   CONTROL "", 1001, STATIC, SS_LEFT | WS_CHILD | WS_GROUP, 7, 8, 60, 10 
+
+   CONTROL "", 1000, EDIT, ES_LEFT | ES_AUTOHSCROLL | ES_READONLY | WS_CHILD | WS_BORDER | WS_TABSTOP, 71, 7, 516, 12 
+
+   CONTROL "&Next Page", 1010, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 456, 217, 63, 14 
+
+   CONTROL "&Previous Page", 1011, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 366, 217, 63, 14 
+
+}
+
+
+
+107 DIALOG 0, 0, 270, 125
+
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+CAPTION "Exception !"
+
+FONT 8, "MS Sans Serif"
+
+{
+
+   CONTROL "", 1002, EDIT, ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP, 7, 18, 255, 63 
+
+   CONTROL "Copy Exception", 3, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 7, 104, 80, 14 
+
+   CONTROL "Continue", 1, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 95, 104, 80, 14 
+
+   CONTROL "Terminate Application", 2, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 182, 104, 80, 14 
+
+   CONTROL "The following application error has occurred:", 1003, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 6, 255, 9 
+
+   CONTROL "If this problem persists, copy the above exception information to the clipboard, and send it to the author of this software.", 1004, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 82, 255, 18 
+
+}
+
+
+
+111 DIALOGEX 0, 0, 492, 103
+
+STYLE DS_SHELLFONT | DS_CONTROL | WS_CHILD | WS_SYSMENU
+
+CAPTION ""
+
+FONT 8, "MS Shell Dlg", 400, 0, 1
+
+{
+
+   CONTROL "Computer:", 1015, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 6, 6, 75, 9 
+
+   CONTROL "", 1016, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 86, 4, 155, 93 
+
+   CONTROL "", 1017, EDIT, ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 248, 4, 112, 12 
+
+   CONTROL "User Name:", 1018, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 7, 24, 76, 8 
+
+   CONTROL "", 1020, EDIT, ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 86, 22, 109, 12 
+
+   CONTROL "Password:", 1019, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 200, 24, 44, 8 
+
+   CONTROL "", 1001, EDIT, ES_LEFT | ES_PASSWORD | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 248, 22, 112, 12 
+
+   CONTROL "WMI Namespace:", 1005, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 6, 42, 69, 9 
+
+   CONTROL "", 1006, COMBOBOX, CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 86, 40, 155, 346 
+
+   CONTROL "", 1011, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 247, 40, 113, 61 
+
+   CONTROL "Timeout:", 1012, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 366, 42, 44, 8 
+
+   CONTROL "", 1013, EDIT, ES_LEFT | ES_AUTOHSCROLL | ES_NUMBER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 413, 40, 45, 12 
+
+   CONTROL "ms", 1014, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 464, 42, 18, 9 
+
+   CONTROL "WMI Class/Query:", 1007, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 6, 60, 69, 9 
+
+   CONTROL "", 1008, COMBOBOX, CBS_DROPDOWN | CBS_AUTOHSCROLL | CBS_SORT | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 86, 58, 326, 297 
+
+   CONTROL "Update (F5)", 1009, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 4, 79, 72, 15 
+
+}
+
+
+
+112 DIALOG 0, 0, 195, 78
+
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+CAPTION ""
+
+FONT 8, "MS Sans Serif"
+
+{
+
+   CONTROL "OK", 1, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 145, 57, 43, 14 
+
+   CONTROL 101, -1, STATIC, SS_ICON | WS_CHILD | WS_VISIBLE, 14, 15, 21, 20 
+
+   CONTROL "", 1002, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 41, 15, 130, 16 
+
+   CONTROL "", 1004, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 40, 34, 118, 8 
+
+   CONTROL "Translation:", 1005, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 51, 45, 8 
+
+   CONTROL "", 1006, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 61, 120, 8 
+
+}
+
+
+
+114 DIALOGEX 0, 0, 508, 31
+
+STYLE DS_SHELLFONT | DS_CONTROL | WS_CHILD | WS_SYSMENU
+
+CAPTION ""
+
+FONT 8, "MS Shell Dlg", 400, 0, 1
+
+{
+
+   CONTROL "Quick Filter", 1037, BUTTON, BS_GROUPBOX | WS_CHILD | WS_VISIBLE, 0, 0, 507, 28 
+
+   CONTROL "", 1035, EDIT, ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 5, 10, 107, 13 
+
+   CONTROL "", 1038, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 114, 10, 120, 114 
+
+   CONTROL "", 1036, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 233, 10, 93, 62 
+
+   CONTROL "", 1039, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 326, 10, 97, 104 
+
+   CONTROL "Case Sensitive", 1021, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 424, 12, 81, 8 
+
+}
+
+
+
+1096 DIALOGEX 0, 0, 220, 239
+
+STYLE DS_SHELLFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+CAPTION "Column Settings"
+
+FONT 8, "MS Shell Dlg"
+
+{
+
+   CONTROL "", 1001, "SysListView32", LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOCOLUMNHEADER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 7, 28, 145, 156 
+
+   CONTROL "Move &Up", 1003, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP, 159, 30, 50, 14 
+
+   CONTROL "Move &Down", 1004, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 47, 50, 14 
+
+   CONTROL "&Show", 1006, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 64, 50, 14 
+
+   CONTROL "&Hide", 1007, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 81, 50, 14 
+
+   CONTROL "Default", 1008, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 98, 50, 14 
+
+   CONTROL "", 1005, EDIT, ES_LEFT | ES_AUTOHSCROLL | ES_NUMBER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_GROUP | WS_TABSTOP, 124, 191, 26, 13 
+
+   CONTROL "OK", 1, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP, 102, 218, 50, 14 
+
+   CONTROL "Cancel", 2, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 218, 50, 14 
+
+   CONTROL "Check the columns that you would like to make visible. Use the Move Up and Move Down buttons to reorder the columns", 1000, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 7, 202, 19 
+
+   CONTROL "Width of selected column (in pixels):", 1002, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 193, 114, 8 
+
+   CONTROL "", -1, STATIC, SS_ETCHEDFRAME | WS_CHILD | WS_VISIBLE, 7, 211, 202, 2 
+
+   CONTROL "Select All", 1009, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 115, 50, 14 
+
+   CONTROL "Deselect All", 1010, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 132, 50, 14 
+
+}
+
+
+
+STRINGTABLE
+
+{
+
+  4, 	"%d item(s)"
+
+  5, 	", %d Selected"
+
+  6, 	"Created by using"
+
+  7, 	"Select a filename to save"
+
+  8, 	"WMI Data"
+
+  9, 	"False"
+
+  10, 	"True"
+
+  11, 	"Sort By"
+
+  14, 	"Loading... %d"
+
+}
+
+
+
+STRINGTABLE
+
+{
+
+  501, 	"Text File"
+
+  502, 	"Tab Delimited Text File"
+
+  503, 	"Tabular Text File"
+
+  504, 	"HTML File - Horizontal"
+
+  505, 	"HTML File - Vertical"
+
+  506, 	"XML File"
+
+  507, 	"Comma Delimited Text File"
+
+  508, 	"JSON File"
+
+}
+
+
+
+STRINGTABLE
+
+{
+
+  551, 	"Asynchronous Query"
+
+  552, 	"Synchronous Query"
+
+}
+
+
+
+STRINGTABLE
+
+{
+
+  561, 	"This computer"
+
+  562, 	"Connect another computer"
+
+}
+
+
+
+STRINGTABLE
+
+{
+
+  751, 	"Search all columns"
+
+}
+
+
+
+STRINGTABLE
+
+{
+
+  752, 	"Search only visible columns"
+
+  761, 	"Find one string"
+
+  762, 	"Find multiple words (space-delimited list)"
+
+  763, 	"Find multiple strings (comma-delimited list)"
+
+  764, 	"Find records with all words (space-delimited list)"
+
+  765, 	"Find records with all strings (comma-delimited list)"
+
+  766, 	"Find a string begins with..."
+
+}
+
+
+
+STRINGTABLE
+
+{
+
+  781, 	"Show only items match the filter"
+
+  782, 	"Hide items that match the filter"
+
+}
+
+
+
+STRINGTABLE
+
+{
+
+  2000, 	"Empty"
+
+  2002, 	"16-Bit Signed Integer"
+
+  2003, 	"32-Bit Signed Integer"
+
+  2004, 	"32-Bit Real Number"
+
+  2005, 	"64-Bit Real Number"
+
+  2008, 	"String"
+
+  2011, 	"Boolean"
+
+  2013, 	"Object"
+
+}
+
+
+
+STRINGTABLE
+
+{
+
+  2016, 	"8-Bit Signed Integer"
+
+  2017, 	"8-Bit Unsigned Integer"
+
+  2018, 	"16-Bit Unsigned Integer"
+
+  2019, 	"32-Bit Unsigned Integer"
+
+  2020, 	"64-Bit Signed Integer"
+
+  2021, 	"64-Bit Unsigned Integer"
+
+}
+
+
+
+STRINGTABLE
+
+{
+
+  2101, 	"Date Time"
+
+  2102, 	"Object Reference"
+
+  2103, 	"16-Bit Character"
+
+}
+
+
+
+
+
+103 ACCELERATORS
+
+{
+
+	"C", 40008, NOINVERT, CONTROL, VIRTKEY
+
+	"M", 40041, NOINVERT, CONTROL, VIRTKEY
+
+	"D", 40015, NOINVERT, CONTROL, VIRTKEY
+
+	"F", 40014, NOINVERT, CONTROL, VIRTKEY
+
+	"A", 40007, NOINVERT, CONTROL, VIRTKEY
+
+	"N", 40044, NOINVERT, CONTROL, VIRTKEY
+
+	VK_RETURN, 40009, NOINVERT, ALT, VIRTKEY
+
+	"S", 40057, NOINVERT, CONTROL, SHIFT, VIRTKEY
+
+	"S", 40001, NOINVERT, CONTROL, VIRTKEY
+
+	VK_F11, 40029, NOINVERT, CONTROL, VIRTKEY
+
+	VK_ADD, 40012, NOINVERT, CONTROL, VIRTKEY
+
+	VK_ADD, 40024, NOINVERT, SHIFT, VIRTKEY
+
+	VK_F5, 40004, NOINVERT, VIRTKEY
+
+	"Q", 40060, NOINVERT, CONTROL, VIRTKEY
+
+	VK_F11, 40068, NOINVERT, VIRTKEY
+
+}
+
+
+
+103 CURSOR "CURSOR103_1.cur"
+
+
+
+101 ICON "ICON101_1.ico"
+
+
+
+102 ICON "ICON102_1.ico"
+
+
+
+
+
+1 VERSIONINFO
+
+FILEVERSION 1,5,6,0
+
+PRODUCTVERSION 1,5,6,0
+
+FILEOS 0x40004
+
+FILETYPE 0x1
+
+{
+
+BLOCK "StringFileInfo"
+
+{
+
+	BLOCK "040904b0"
+
+	{
+
+		VALUE "CompanyName", "NirSoft"
+
+		VALUE "FileDescription", "SimpleWMIView"
+
+		VALUE "FileVersion", "1.56"
+
+		VALUE "InternalName", "SimpleWMIView"
+
+		VALUE "LegalCopyright", "Copyright \xA9 2015 - 2025 Nir Sofer"
+
+		VALUE "OriginalFilename", "SimpleWMIView.exe"
+
+		VALUE "ProductName", "SimpleWMIView"
+
+		VALUE "ProductVersion", "1.56"
+
+	}
+
+}
+
+
+
+BLOCK "VarFileInfo"
+
+{
+
+	VALUE "Translation", 0x0409 0x04B0  
+
+}
+
+}
+
+
+
+1 24 "MANIFEST1_1.txt"
+
+
+

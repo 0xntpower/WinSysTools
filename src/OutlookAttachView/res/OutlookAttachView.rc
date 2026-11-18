@@ -1,0 +1,566 @@
+﻿#include <windows.h>
+#include <commctrl.h>
+
+104 BITMAP "BITMAP104_1.bmp"
+
+133 BITMAP "BITMAP133_1.bmp"
+
+134 BITMAP "BITMAP134_1.bmp"
+
+102 MENU
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  POPUP "&File"
+  {
+    MENUITEM "Mailbox Scan Options\tF8",  40038
+    MENUITEM SEPARATOR
+    POPUP "Recent Config Files"
+    {
+      MENUITEM "1",  40079
+    }
+    MENUITEM "Save Configuration",  40072
+    MENUITEM "Load Configuration",  40073
+    MENUITEM SEPARATOR
+    MENUITEM "&Copy Selected Attachments To...\tF4",  40027
+    MENUITEM "&Delete Selected Attachments\tDel",  40030
+    MENUITEM "C&lear Selected Attachments \tCtrl+Del",  40034
+    MENUITEM SEPARATOR
+    MENUITEM "Open Message In Outlook \tF9",  40037
+    MENUITEM "Open Selected &Attachment\tF7",  40043
+    MENUITEM "Open Selected Attachment &With...\tCtrl+F7",  40050
+    POPUP "Hash Selected Files"
+    {
+      MENUITEM "MD5 Hash",  44101
+      MENUITEM "SHA1 Hash",  44102
+      MENUITEM "SHA256 Hash",  44103
+      MENUITEM "SHA512 Hash",  44104
+    }
+    MENUITEM SEPARATOR
+    MENUITEM "&Export Attachments Information\tCtrl+S",  40001
+    MENUITEM "&Properties\tAlt+Enter",  40009
+    MENUITEM SEPARATOR
+    MENUITEM "E&xit",  40002
+  }
+  POPUP "&Edit"
+  {
+    MENUITEM "&Find\tCtrl+F",  40014
+    MENUITEM "&Copy Selected Items\tCtrl+C",  40008
+    MENUITEM "&Preview Copy\tCtrl+M",  40093
+    MENUITEM SEPARATOR
+    MENUITEM "Select &All\tCtrl+A",  40007
+    MENUITEM "Deselect All\tCtrl+D",  40015
+  }
+  POPUP "&View"
+  {
+    MENUITEM "Use Quick Filter\tCtrl+Q",  40087
+    MENUITEM "Show &Grid Lines",  40005
+    MENUITEM "Show &Tooltips",  40022
+    MENUITEM "Mark Odd/Even Rows",  40053
+    MENUITEM "Black Background",  40098
+    MENUITEM "Preview Pane\tCtrl+P",  40092
+    MENUITEM SEPARATOR
+    MENUITEM "&HTML Report - All Items",  40006
+    MENUITEM "HTML R&eport - Selected Items",  40010
+    MENUITEM SEPARATOR
+    MENUITEM "Choose Colum&ns",  40011
+    MENUITEM "&Auto Size Columns\tCtrl+Plus",  40012
+    MENUITEM "Auto Size Columns+Headers\tShift+Plus",  40061
+    MENUITEM SEPARATOR
+    MENUITEM "&Refresh\tF5",  40004
+  }
+  POPUP "&Options"
+  {
+    POPUP "&Double-Click Action"
+    {
+      MENUITEM "None",  42100
+      MENUITEM "Open &Properties Window",  42101
+      MENUITEM "Open Outlook &Message",  42102
+      MENUITEM "Open &Attachment File",  42103
+      MENUITEM "Open Selected Attachment With...",  42104
+      MENUITEM "Copy Selected Attachment To...",  42105
+    }
+    POPUP "File Size Unit"
+    {
+      MENUITEM "Bytes",  42201
+      MENUITEM "KB",  42202
+      MENUITEM "MB",  42203
+      MENUITEM "GB",  42204
+      MENUITEM "Automatic",  42205
+    }
+    POPUP "Save File Encoding"
+    {
+      MENUITEM "Default",  45700
+      MENUITEM "Always &ANSI",  45701
+      MENUITEM "Always Unicode (UTF-16)",  45702
+      MENUITEM "Always UTF-&8",  45703
+    }
+    POPUP "&Enter Key Action"
+    {
+      MENUITEM "None",  43100
+      MENUITEM "Open &Properties Window",  43101
+      MENUITEM "Open Outlook &Message",  43102
+      MENUITEM "Open &Attachment File",  43103
+      MENUITEM "Open Selected Attachment With...",  43104
+      MENUITEM "Copy Selected Attachment To...",  43105
+    }
+    MENUITEM SEPARATOR
+    MENUITEM "&Mark Inline Attachments",  40054
+    MENUITEM "Show &Inline Attachments\tCtrl+I",  40023
+    MENUITEM "Show Time In &GMT\tCtrl+G",  40024
+    MENUITEM "Show Options Window Before Scan",  40039
+    MENUITEM "Add Header Line To CSV/Tab-Delimited File",  40042
+    MENUITEM "Align Numeric Columns To Right",  40097
+    MENUITEM "&Put Icon On Tray",  40057
+    MENUITEM "Always On Top",  40081
+    MENUITEM SEPARATOR
+    MENUITEM "Select Another &Font",  40066
+    MENUITEM "Use Default Font",  40067
+  }
+  POPUP "&Help"
+  {
+    MENUITEM "&About",  40003
+  }
+}
+
+104 MENU
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  POPUP "Popup1"
+  {
+    MENUITEM "&Copy Selected Attachments To...\tF4",  40027
+    MENUITEM "Open Message In Outlook \tF9",  40037
+    MENUITEM "Open Selected &Attachment\tF7",  40043
+    MENUITEM "Open Selected Attachment &With...\tCtrl+F7",  40050
+    MENUITEM SEPARATOR
+    MENUITEM "&Export Attachments Information\tCtrl+S",  40001
+    MENUITEM "&Copy Selected Items\tCtrl+C",  40008
+    MENUITEM "Copy Clicked Cell",  40096
+    MENUITEM SEPARATOR
+    MENUITEM "HTML Report - All Items",  40006
+    MENUITEM "HTML Report - Selected Items",  40010
+    MENUITEM SEPARATOR
+    MENUITEM "Choose Colum&ns",  40011
+    MENUITEM "&Auto Size Columns\tCtrl+Plus",  40012
+    MENUITEM SEPARATOR
+    MENUITEM "&Properties\tAlt+Enter",  40009
+    MENUITEM SEPARATOR
+    MENUITEM "&Refresh\tF5",  40004
+  }
+}
+
+109 MENU
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  MENUITEM "&Stop",  40026
+}
+
+112 MENU
+LANGUAGE LANG_HEBREW, 0x1
+{
+  POPUP "TrayMenu"
+  {
+    MENUITEM "Open OutlookAttachView",  40059
+    MENUITEM SEPARATOR
+    MENUITEM "E&xit",  40002
+  }
+}
+
+105 DIALOGEX 0, 0, 363, 228
+STYLE DS_SETFONT | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Properties"
+LANGUAGE LANG_HEBREW, 0x1
+FONT 8, "MS Sans Serif"
+{
+   CONTROL "OK", 1, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 306, 207, 50, 14 
+   CONTROL "", 1001, STATIC, SS_LEFT | WS_CHILD | WS_GROUP, 7, 8, 60, 10 
+   CONTROL "", 1000, EDIT, ES_LEFT | ES_AUTOHSCROLL | ES_READONLY | WS_CHILD | WS_BORDER | WS_TABSTOP, 70, 7, 286, 12 
+}
+
+107 DIALOG 0, 0, 270, 125
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Exception !"
+LANGUAGE LANG_HEBREW, 0x1
+FONT 8, "MS Sans Serif"
+{
+   CONTROL "", 1002, EDIT, ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_TABSTOP, 7, 18, 255, 63 
+   CONTROL "Copy Exception", 3, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 7, 104, 80, 14 
+   CONTROL "Continue", 1, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 95, 104, 80, 14 
+   CONTROL "Terminate Application", 2, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 182, 104, 80, 14 
+   CONTROL "The following application error has occurred:", 1003, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 6, 255, 9 
+   CONTROL "If this problem persists, copy the above exception information to the clipboard, and send it to the author of this software.", 1004, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 82, 255, 18 
+}
+
+110 DIALOGEX 0, 0, 366, 243
+STYLE DS_SHELLFONT | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Copy Selected Files To..."
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+FONT 8, "MS Shell Dlg", 400, 0, 1
+{
+   CONTROL "", 1005, EDIT, ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 7, 9, 289, 13 
+   CONTROL "Browse...", 1006, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 302, 8, 51, 14 
+   CONTROL "Copy as new name if filename already exists", 1007, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 7, 26, 183, 11 
+   CONTROL "Create subfolders automatically", 1038, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 199, 26, 149, 11 
+   CONTROL "Don't copy if filename already exists", 1008, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 7, 40, 183, 11 
+   CONTROL "", 1026, EDIT, ES_LEFT | ES_MULTILINE | ES_READONLY | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 7, 59, 343, 42 
+   CONTROL "", 1025, EDIT, ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 7, 103, 343, 12 
+   CONTROL "Maximum number of characters in format variables:", 1056, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 9, 122, 190, 9 
+   CONTROL "", 1057, EDIT, ES_LEFT | ES_AUTOHSCROLL | ES_NUMBER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 203, 120, 37, 12 
+   CONTROL "Set the modified time of the file to the time of the message", 1027, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 7, 147, 287, 9 
+   CONTROL "OK", 1, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 244, 222, 50, 14 
+   CONTROL "Cancel", 2, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 309, 222, 50, 14 
+   CONTROL "Generate a log file while extracting attachments:", 1052, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 7, 164, 305, 10 
+   CONTROL "", 1062, EDIT, ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 7, 179, 345, 12 
+   CONTROL "Append to existing log file", 1063, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 7, 195, 218, 13 
+}
+
+111 DIALOGEX 0, 0, 358, 193
+STYLE DS_SHELLFONT | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Select Outlook Folders"
+LANGUAGE LANG_HEBREW, 0x1
+FONT 8, "MS Shell Dlg", 400, 0, 1
+{
+   CONTROL "OK", 1, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 233, 172, 50, 14 
+   CONTROL "Cancel", 2, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 301, 172, 50, 14 
+   CONTROL "", 1043, "SysListView32", LVS_REPORT | LVS_SINGLESEL | LVS_ALIGNLEFT | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 7, 7, 344, 143 
+   CONTROL "Include Subfolders", 1045, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 7, 156, 142, 9 
+}
+
+112 DIALOG 0, 0, 195, 78
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION ""
+LANGUAGE LANG_HEBREW, 0x1
+FONT 8, "MS Sans Serif"
+{
+   CONTROL "OK", 1, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 145, 57, 43, 14 
+   CONTROL 101, -1, STATIC, SS_ICON | WS_CHILD | WS_VISIBLE, 14, 15, 21, 20 
+   CONTROL "", 1002, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 41, 15, 130, 16 
+   CONTROL "", 1004, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 40, 34, 118, 8 
+   CONTROL "Translation:", 1005, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 51, 45, 8 
+   CONTROL "", 1006, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 61, 120, 8 
+}
+
+114 DIALOGEX 0, 0, 508, 31
+STYLE DS_SHELLFONT | DS_CONTROL | WS_CHILD | WS_SYSMENU
+CAPTION ""
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+FONT 8, "MS Shell Dlg", 400, 0, 1
+{
+   CONTROL "Quick Filter", 1037, BUTTON, BS_GROUPBOX | WS_CHILD | WS_VISIBLE, 0, 0, 507, 28 
+   CONTROL "", 1035, EDIT, ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 5, 10, 134, 13 
+   CONTROL "", 1038, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 144, 10, 120, 62 
+   CONTROL "", 1036, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 269, 10, 120, 62 
+   CONTROL "", 1039, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 394, 10, 106, 104 
+}
+
+1096 DIALOG 0, 0, 216, 215
+STYLE DS_SHELLFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Column Settings"
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+FONT 8, "MS Shell Dlg"
+{
+   CONTROL "", 1001, "SysListView32", LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOCOLUMNHEADER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 7, 28, 145, 129 
+   CONTROL "Move &Up", 1003, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP, 159, 30, 50, 14 
+   CONTROL "Move &Down", 1004, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 47, 50, 14 
+   CONTROL "&Show", 1006, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 64, 50, 14 
+   CONTROL "&Hide", 1007, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 81, 50, 14 
+   CONTROL "Default", 1008, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 98, 50, 14 
+   CONTROL "Select &All", 1019, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 115, 50, 14 
+   CONTROL "D&eselect All", 1018, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 132, 50, 14 
+   CONTROL "", 1005, EDIT, ES_LEFT | ES_AUTOHSCROLL | ES_NUMBER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_GROUP | WS_TABSTOP, 124, 166, 26, 13 
+   CONTROL "OK", 1, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP, 102, 193, 50, 14 
+   CONTROL "Cancel", 2, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 159, 193, 50, 14 
+   CONTROL "Check the columns that you would like to make visible. Use the Move Up and Move Down buttons to reorder the columns", 1000, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 7, 202, 19 
+   CONTROL "Width of selected column (in pixels):", 1002, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 168, 114, 8 
+   CONTROL "", -1, STATIC, SS_ETCHEDFRAME | WS_CHILD | WS_VISIBLE, 7, 186, 202, 2 
+}
+
+1100 DIALOGEX 0, 0, 464, 396
+STYLE DS_SHELLFONT | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Mailbox Scan Options"
+LANGUAGE LANG_HEBREW, 0x1
+FONT 8, "MS Shell Dlg", 400, 0, 1
+{
+   CONTROL "Outlook Profile:", 1022, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 5, 67, 9 
+   CONTROL "", 1023, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 77, 3, 137, 82 
+   CONTROL "Profile Name:", 1039, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 222, 4, 68, 11 
+   CONTROL "", 1040, COMBOBOX, CBS_DROPDOWN | CBS_SORT | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 293, 3, 122, 156 
+   CONTROL "Scan only messages created in the following date range:", 1010, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 10, 21, 266, 10 
+   CONTROL "From:", 1011, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 36, 47, 9 
+   CONTROL "", 1012, "SysDateTimePick32", DTS_SHORTDATEFORMAT | DTS_RIGHTALIGN | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 56, 34, 60, 13 
+   CONTROL "", 1037, "SysDateTimePick32", DTS_SHORTDATEFORMAT | DTS_UPDOWN | DTS_TIMEFORMAT | DTS_RIGHTALIGN | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 116, 34, 51, 13 
+   CONTROL "To:", 1013, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 171, 36, 29, 9 
+   CONTROL "", 1014, "SysDateTimePick32", DTS_SHORTDATEFORMAT | DTS_RIGHTALIGN | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 203, 34, 60, 13 
+   CONTROL "", 1038, "SysDateTimePick32", DTS_SHORTDATEFORMAT | DTS_UPDOWN | DTS_TIMEFORMAT | DTS_RIGHTALIGN | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 263, 34, 51, 13 
+   CONTROL "Time Zone:", 1015, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 52, 46, 9 
+   CONTROL "", 1016, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 56, 50, 186, 112 
+   CONTROL "Scan only messages created in the last", 1049, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 10, 70, 161, 9 
+   CONTROL "", 1051, EDIT, ES_LEFT | ES_AUTOHSCROLL | ES_NUMBER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 174, 67, 33, 12 
+   CONTROL "days", 1050, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 213, 69, 41, 10 
+   CONTROL "Show only attachments in the following size range:", 1008, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 10, 85, 255, 8 
+   CONTROL "From:", 1017, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 101, 47, 9 
+   CONTROL "", 1021, EDIT, ES_LEFT | ES_AUTOHSCROLL | ES_NUMBER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 60, 99, 43, 12 
+   CONTROL "", 1018, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 103, 99, 43, 77 
+   CONTROL "To:", 1019, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 149, 101, 30, 9 
+   CONTROL "", 1001, EDIT, ES_LEFT | ES_AUTOHSCROLL | ES_NUMBER | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 181, 99, 43, 12 
+   CONTROL "", 1020, COMBOBOX, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 225, 99, 43, 77 
+   CONTROL "Skip Exchange public folders", 1052, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 10, 118, 161, 8 
+   CONTROL "Scan only unread messages", 1067, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 180, 118, 211, 10 
+   CONTROL "Show only files that match the following extensions/wildcard (comma delimited):", 1009, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 10, 134, 272, 8 
+   CONTROL "", 1028, COMBOBOX, CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 286, 130, 163, 259 
+   CONTROL "Exclude the following file extensions/wildcards (comma delimited list):", 1024, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 10, 150, 271, 8 
+   CONTROL "", 1029, COMBOBOX, CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 286, 146, 163, 246 
+   CONTROL "Scan only emails that their subject contains the following string:", 1025, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 10, 167, 284, 8 
+   CONTROL "", 1030, COMBOBOX, CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 9, 179, 433, 201 
+   CONTROL "Scan only the specified folders (comma-delimited list):", 1031, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 10, 199, 278, 8 
+   CONTROL "You can specify only the folder name, like Inbox or Sent Items, or a full path, like Personal Folders\\Inbox , Personal Folders\\Inbox*  (* = include subfolders)", 1033, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 11, 209, 419, 17 
+   CONTROL "", 1032, COMBOBOX, CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 9, 229, 381, 225 
+   CONTROL "Add", 1044, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 398, 230, 44, 13 
+   CONTROL "Skip the specified folders (comma-delimited list):", 1034, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 10, 248, 278, 8 
+   CONTROL "", 1035, COMBOBOX, CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 9, 259, 381, 225 
+   CONTROL "Add", 1045, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 397, 259, 44, 13 
+   CONTROL "Scan only messages with the following 'From' strings (Name or Email Address): (comma-delimited list): ", 1046, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 10, 281, 428, 9 
+   CONTROL "", 1048, COMBOBOX, CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 9, 294, 433, 246 
+   CONTROL "Scan only messages with the following 'To' strings (Name or Email Address): (comma-delimited list):", 1047, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 10, 314, 428, 9 
+   CONTROL "", 1002, COMBOBOX, CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_VSCROLL | WS_TABSTOP, 9, 327, 433, 246 
+   CONTROL "OK", 1, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 327, 377, 50, 14 
+   CONTROL "Cancel", 2, BUTTON, BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 396, 377, 50, 14 
+   CONTROL "Message Direction", 1054, BUTTON, BS_GROUPBOX | WS_CHILD | WS_VISIBLE, 292, 57, 132, 55 
+   CONTROL "Incoming", 1055, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 304, 72, 96, 9 
+   CONTROL "Outgoing", 1056, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 304, 89, 96, 9 
+   CONTROL "Search attached documents that contain the following text:", 1065, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 11, 346, 209, 8 
+   CONTROL "", 1066, EDIT, ES_LEFT | ES_AUTOHSCROLL | WS_CHILD | WS_VISIBLE | WS_BORDER | WS_TABSTOP, 11, 359, 283, 12 
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  4, 	"%d Attachments"
+  5, 	", %d Selected"
+  6, 	"Created by using"
+  7, 	"Select a filename to save"
+  8, 	"Outlook Attachments"
+  9, 	"Yes"
+  10, 	"No"
+  11, 	"Failed to access the specified folder !"
+  12, 	"Select the folder to copy the attachment files"
+  13, 	"Do you want to delete the selected attachments ?"
+  14, 	"Scanning Outlook..."
+  15, 	"Do you want to clear the content of selected attachments ?"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  16, 	"Filename Format: You can use the following variables - %attach_name%, %attach_id%, %extension%, %subject%, %folder_name%, %from%, %to%, %message_date%, %message_time%,  %message_size%, %folder_path%, %domain%, %msgdate:yyyyMMdd%, %msgtime:HHmmss%, %message_entryid%, %message_direction%, %from_email%, %to_email%"
+  17, 	"Copying...  %s"
+  18, 	"You're currently using the x64 version of OutlookAttachView, while your Outlook is 32-bit. You must use the 32-bit version of OutlookAttachView in order to connect Outlook properly."
+  19, 	"You're currently using the 32-bit version of OutlookAttachView, while your Outlook is 64-bit. You must use the x64 version of OutlookAttachView in order to connect Outlook properly."
+  20, 	"Choose a filename to save the current configuration"
+  21, 	"Choose a configuration filename to load"
+  22, 	"Clear Recent Files List"
+  23, 	"Do you want to clear the recent files list ?"
+  24, 	"Failed to create the log file !"
+  25, 	"Sort By"
+  26, 	"Warning: If you clear the content of attachment, you will not be able to open the attachment from the Outlook Message."
+  27, 	"Warning: If you delete attachment, you will not be able to open the attachment from the Outlook Message."
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  101, 	"By Value"
+  104, 	"By Reference"
+  105, 	"Embedded Item"
+  106, 	"OLE"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  201, 	"According to local computer time zone"
+  202, 	"GMT"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  301, 	"Bytes"
+  302, 	"KB"
+  303, 	"MB"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  401, 	"Use the default Outlook profile"
+  402, 	"Allow me to choose the profile"
+  403, 	"Use the following profile:"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  501, 	"Text File"
+  502, 	"Tab Delimited Text File"
+  503, 	"Tabular Text File"
+  504, 	"HTML File - Horizontal"
+  505, 	"HTML File - Vertical"
+  506, 	"XML File"
+  507, 	"Comma Delimited Text File"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  601, 	"OutlookAttachView Config File"
+  602, 	"All Files"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  702, 	"%s KB"
+  703, 	"%s MB"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  704, 	"%s GB"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  751, 	"Search all columns"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  752, 	"Search only visible columns"
+  761, 	"Find one string"
+  762, 	"Find multiple words (space-delimited list)"
+  763, 	"Find multiple strings (comma-delimited list)"
+  764, 	"Find records with all words (space-delimited list)"
+  765, 	"Find records with all strings (comma-delimited list)"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  781, 	"Show only items match the filter"
+  782, 	"Hide items that match the filter"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  1001, 	"Filename"
+  1002, 	"From"
+  1003, 	"To"
+  1004, 	"Subject"
+  1005, 	"MIME Type"
+  1006, 	"Attachment Type"
+  1007, 	"Created On"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  1008, 	"File Size"
+  1009, 	"Attachment ID"
+  1010, 	"Inline"
+  1011, 	"Folder Name"
+  1012, 	"Folder Path"
+  1013, 	"Computer Address"
+  1014, 	"Email Software"
+  1015, 	"Extension"
+  1016, 	"From Email"
+  1017, 	"To Email"
+  1018, 	"Message Direction"
+  1019, 	"Domain"
+  1020, 	"Message EntryID"
+  1021, 	"Message Delivery Time"
+  1022, 	"Hash"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  1101, 	"Folder Name"
+  1102, 	"Full Path"
+}
+
+STRINGTABLE
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  1201, 	"Incoming"
+  1202, 	"Outgoing"
+}
+
+
+103 ACCELERATORS
+LANGUAGE LANG_HEBREW, 0x1
+{
+	"C", 40008, NOINVERT, CONTROL, VIRTKEY
+	"D", 40015, NOINVERT, CONTROL, VIRTKEY
+	"F", 40014, NOINVERT, CONTROL, VIRTKEY
+	"A", 40007, NOINVERT, CONTROL, VIRTKEY
+	VK_DELETE, 40034, NOINVERT, CONTROL, VIRTKEY
+	VK_F4, 40027, NOINVERT, VIRTKEY
+	VK_DELETE, 40030, NOINVERT, VIRTKEY
+	VK_F8, 40038, NOINVERT, VIRTKEY
+	VK_F9, 40037, NOINVERT, VIRTKEY
+	VK_F7, 40043, NOINVERT, VIRTKEY
+	VK_F7, 40050, NOINVERT, CONTROL, VIRTKEY
+	VK_RETURN, 40009, NOINVERT, ALT, VIRTKEY
+	"S", 40001, NOINVERT, CONTROL, VIRTKEY
+	"I", 40023, NOINVERT, CONTROL, VIRTKEY
+	"G", 40024, NOINVERT, CONTROL, VIRTKEY
+	VK_ADD, 40012, NOINVERT, CONTROL, VIRTKEY
+	VK_ADD, 40061, NOINVERT, SHIFT, VIRTKEY
+	"P", 40092, NOINVERT, CONTROL, VIRTKEY
+	VK_F5, 40004, NOINVERT, VIRTKEY
+	"Q", 40087, NOINVERT, CONTROL, VIRTKEY
+	"M", 40093, NOINVERT, CONTROL, VIRTKEY
+}
+
+103 CURSOR "CURSOR103_1.cur"
+
+113 CURSOR "CURSOR113_1.cur"
+
+101 ICON "ICON101_1.ico"
+
+102 ICON "ICON102_1.ico"
+
+
+1 VERSIONINFO
+FILEVERSION 3,5,5,0
+PRODUCTVERSION 3,5,5,0
+FILEOS 0x40004
+FILETYPE 0x1
+{
+BLOCK "StringFileInfo"
+{
+	BLOCK "040904b0"
+	{
+		VALUE "CompanyName", "NirSoft"
+		VALUE "FileDescription", "OutlookAttachView"
+		VALUE "FileVersion", "3.55"
+		VALUE "InternalName", "OutlookAttachView"
+		VALUE "LegalCopyright", "Copyright \xA9 2009 - 2025 Nir Sofer"
+		VALUE "OriginalFilename", "OutlookAttachView.exe"
+		VALUE "ProductName", "OutlookAttachView"
+		VALUE "ProductVersion", "3.55"
+	}
+}
+
+BLOCK "VarFileInfo"
+{
+	VALUE "Translation", 0x0409 0x04B0  
+}
+}
+
+1 24 "MANIFEST1_1.txt"
+

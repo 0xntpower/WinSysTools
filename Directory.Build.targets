@@ -1,0 +1,56 @@
+<Project>
+  <!--
+    Release builds get the full exploit-mitigation set and the most aggressive
+    optimization settings. This file is imported automatically after every
+    project in the tree, so the settings apply uniformly to all tools and
+    override each project's own Release configuration.
+
+    Mitigations: /GS stack cookies, /sdl, Control Flow Guard (/guard:cf),
+    Spectre (/Qspectre), ASLR (/DYNAMICBASE) with high-entropy VA on x64,
+    DEP (/NXCOMPAT), CET shadow stack (/CETCOMPAT), EH continuation metadata
+    (/guard:ehcont, x64), and System32-only dependent loading
+    (/DEPENDENTLOADFLAG:0x800) against DLL planting.
+
+    Performance: /O2 /Ob3 /Oi /Ot /GF /Gy /Gw, whole-program optimization
+    (/GL) with link-time code generation (/LTCG), /OPT:REF and /OPT:ICF, and
+    the static multithreaded CRT (/MT) so the binaries are standalone and load
+    without the CRT DLLs, matching the originals and cutting launch time.
+  -->
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SDLCheck>true</SDLCheck>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+      <SpectreMitigation>Spectre</SpectreMitigation>
+      <AdditionalOptions>/Ob3 /Gw %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <CETCompat>true</CETCompat>
+      <AdditionalOptions>/DEPENDENTLOADFLAG:0x800 %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <!-- x64 only: high-entropy ASLR and EH continuation metadata. -->
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release' and '$(Platform)'=='x64'">
+    <ClCompile>
+      <AdditionalOptions>/guard:ehcont %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <HighEntropyVA>true</HighEntropyVA>
+      <AdditionalOptions>/guard:ehcont %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>
