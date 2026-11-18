@@ -1,0 +1,230 @@
+// ADExplorer.rc -- resources for the Active Directory Explorer recreation.
+// Menu, toolbar strip, icon and dialog layouts are reused from the original
+// ADExplorer64.exe through Resource Hacker, then fixed for rc.exe. The named
+// dialog templates were renumbered so WTL CDialogImpl can carry them, control
+// ids and positions kept. The About box is enlarged to hold the recreation
+// credit and the manifest is an asInvoker one matching the original.
+#include <windows.h>
+#include <commctrl.h>
+#include "../resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+// Icon and toolbar strip
+/////////////////////////////////////////////////////////////////////////////
+IDI_APPICON ICON    "APPICON.ico"
+IDB_TOOLBAR BITMAP  "BITMAP400_1.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+// Main menu
+/////////////////////////////////////////////////////////////////////////////
+IDR_MAIN_MENU MENU
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  POPUP "&File"
+  {
+    MENUITEM "&Connect...",             40072
+    MENUITEM "Remo&ve",                 1114
+    MENUITEM SEPARATOR
+    MENUITEM "Create &Snapshot...",     40073
+    MENUITEM SEPARATOR
+    MENUITEM "E&xit",                   1071
+  }
+  POPUP "&Edit"
+  {
+    MENUITEM "P&roperties...\tEnter",   40057
+  }
+  POPUP "F&avorites"
+  {
+    MENUITEM "&Add to Favorites...",    40086
+    MENUITEM SEPARATOR
+  }
+  POPUP "&Search"
+  {
+    MENUITEM "&Search Container...\tCtrl+F", 117
+    MENUITEM SEPARATOR
+  }
+  POPUP "&Compare"
+  {
+    MENUITEM "C&ompare Snapshot...",            40058
+    MENUITEM "Compare Snapshot &Security...",   40075
+    MENUITEM SEPARATOR
+  }
+  POPUP "H&istory"
+  {
+    MENUITEM "&Forward",                40076
+    MENUITEM "&Back\tCtrl+H",           40077
+    MENUITEM "&All...",                 40078
+  }
+  POPUP "&Help"
+  {
+    MENUITEM "Active Directory Explorer &Help...\tF1", 40085
+    MENUITEM "&About...",               300
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Context menu (tree and list)
+/////////////////////////////////////////////////////////////////////////////
+IDR_CTX_MENU MENU
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  POPUP "Menu"
+  {
+    MENUITEM "P&roperties...",          40057
+    MENUITEM SEPARATOR
+    MENUITEM "Rena&me",                 40070
+    MENUITEM "&Delete",                 40069
+  }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Accelerators
+/////////////////////////////////////////////////////////////////////////////
+IDR_ACCEL ACCELERATORS
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+{
+  VK_F5,     40083, VIRTKEY, NOINVERT
+  "H",       40077, VIRTKEY, CONTROL, NOINVERT
+  "F",         117, VIRTKEY, CONTROL, NOINVERT
+  VK_F3,       117, VIRTKEY, NOINVERT
+  VK_F2,     40070, VIRTKEY, NOINVERT
+  VK_F1,     40085, VIRTKEY, NOINVERT
+  VK_RETURN, 40057, VIRTKEY, NOINVERT
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// About (enlarged to carry the recreation credit)
+/////////////////////////////////////////////////////////////////////////////
+IDD_ABOUT DIALOGEX 0, 0, 268, 118
+STYLE DS_SHELLFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Active Directory Explorer"
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+FONT 8, "MS Shell Dlg"
+{
+  ICON            IDI_APPICON, -1, 12, 9, 20, 20
+  LTEXT           "Active Directory Explorer", IDC_ABOUT_NAME, 41, 9, 120, 8
+  LTEXT           "v1.52", IDC_ABOUT_VERSION, 164, 9, 60, 8
+  LTEXT           "", IDC_ABOUT_DESC, 12, 33, 244, 44
+  CONTROL         "www.sysinternals.com", IDC_ABOUT_LINK, "SysLink", WS_TABSTOP, 12, 82, 150, 10
+  DEFPUSHBUTTON   "OK", IDOK, 211, 98, 47, 14
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Connect to Active Directory
+/////////////////////////////////////////////////////////////////////////////
+IDD_CONNECT DIALOGEX 50, 50, 225, 216
+STYLE DS_SHELLFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Connect to Active Directory"
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+FONT 8, "MS Shell Dlg"
+{
+  CONTROL         "Enter the name of an Active Directory server or domain to which you want to connect. Leave blank to use the local domain controller.", IDC_CONN_RADIO_AD, "BUTTON", BS_AUTORADIOBUTTON | BS_TOP | BS_MULTILINE | WS_GROUP, 7, 7, 211, 29
+  LTEXT           "&Connect to:", -1, 23, 43, 38, 8
+  EDITTEXT        IDC_CONN_SERVER, 67, 40, 151, 12, ES_AUTOHSCROLL
+  LTEXT           "&User:", -1, 23, 59, 18, 8
+  EDITTEXT        IDC_CONN_USER, 67, 58, 151, 12, ES_AUTOHSCROLL
+  LTEXT           "&Password:", -1, 23, 77, 34, 8
+  EDITTEXT        IDC_CONN_PASSWORD, 67, 75, 151, 12, ES_PASSWORD | ES_AUTOHSCROLL
+  CONTROL         "Enter the path of a previous snapshot to load.", IDC_CONN_RADIO_SNAP, "BUTTON", BS_AUTORADIOBUTTON, 7, 94, 165, 10
+  LTEXT           "Path:", -1, 23, 112, 18, 8
+  EDITTEXT        IDC_CONN_SNAPPATH, 67, 110, 137, 12, ES_AUTOHSCROLL
+  PUSHBUTTON      "...", IDC_CONN_BROWSE, 205, 109, 14, 14
+  CONTROL         "", -1, "STATIC", SS_ETCHEDHORZ, 8, 136, 210, 1
+  LTEXT           "If you want to save this connection for future use, select Save this connection, and then enter a name for the saved connection.", -1, 7, 143, 211, 20
+  CONTROL         "&Save this connection", IDC_CONN_SAVE, "BUTTON", BS_AUTOCHECKBOX | WS_TABSTOP, 7, 163, 82, 10
+  LTEXT           "&Name:", -1, 23, 177, 22, 8
+  EDITTEXT        IDC_CONN_NAME, 67, 176, 151, 12, ES_AUTOHSCROLL | WS_DISABLED
+  DEFPUSHBUTTON   "OK", IDOK, 110, 195, 50, 14
+  PUSHBUTTON      "Cancel", IDCANCEL, 168, 195, 50, 14
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Credentials
+/////////////////////////////////////////////////////////////////////////////
+IDD_CREDENTIALS DIALOGEX 50, 50, 225, 115
+STYLE DS_SHELLFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Credentials"
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+FONT 8, "MS Shell Dlg"
+{
+  LTEXT           "Specify credentials to use when making the connection:", -1, 7, 7, 181, 8
+  LTEXT           "Connect to:", -1, 23, 28, 38, 8
+  EDITTEXT        IDC_CRED_SERVER, 67, 26, 151, 12, ES_AUTOHSCROLL
+  LTEXT           "User:", -1, 23, 46, 18, 8
+  EDITTEXT        IDC_CRED_USER, 67, 44, 151, 12, ES_AUTOHSCROLL
+  LTEXT           "Password:", -1, 23, 66, 34, 8
+  EDITTEXT        IDC_CRED_PASSWORD, 67, 64, 151, 12, ES_PASSWORD | ES_AUTOHSCROLL
+  DEFPUSHBUTTON   "OK", IDOK, 110, 94, 50, 14
+  PUSHBUTTON      "Cancel", IDCANCEL, 168, 94, 50, 14
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Attribute Properties (read-only view of one attribute)
+/////////////////////////////////////////////////////////////////////////////
+IDD_ATTR_PROPS DIALOGEX 0, 0, 304, 206
+STYLE DS_SHELLFONT | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Attribute Properties"
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+FONT 8, "MS Shell Dlg"
+{
+  LTEXT           "Attribute:", -1, 6, 8, 29, 8
+  EDITTEXT        IDC_AP_ATTR, 61, 6, 236, 12, ES_AUTOHSCROLL | ES_READONLY
+  LTEXT           "Object:", -1, 6, 25, 24, 8
+  EDITTEXT        IDC_AP_OBJECT, 61, 23, 236, 12, ES_AUTOHSCROLL | ES_READONLY
+  LTEXT           "Syntax:", -1, 6, 42, 24, 8
+  EDITTEXT        IDC_AP_SYNTAX, 61, 40, 236, 12, ES_AUTOHSCROLL | ES_READONLY
+  LTEXT           "Count:", -1, 6, 59, 29, 8
+  EDITTEXT        IDC_AP_SCHEMA, 61, 57, 236, 12, ES_AUTOHSCROLL | ES_READONLY
+  LTEXT           "Values:", -1, 6, 82, 28, 8
+  EDITTEXT        IDC_AP_VALUES, 6, 93, 291, 84, ES_MULTILINE | ES_READONLY | WS_VSCROLL | WS_HSCROLL
+  DEFPUSHBUTTON   "OK", IDOK, 247, 186, 50, 14
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Search Container (compact raw LDAP filter form)
+/////////////////////////////////////////////////////////////////////////////
+IDD_SEARCH DIALOGEX 0, 0, 304, 220
+STYLE DS_SHELLFONT | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Search Container"
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+FONT 8, "MS Shell Dlg"
+{
+  LTEXT           "Search &root (distinguished name):", -1, 6, 8, 160, 8
+  EDITTEXT        IDC_SEARCH_BASE, 6, 19, 291, 12, ES_AUTOHSCROLL
+  LTEXT           "LDAP &filter:", -1, 6, 38, 160, 8
+  EDITTEXT        IDC_SEARCH_FILTER, 6, 49, 291, 12, ES_AUTOHSCROLL
+  LTEXT           "&Scope:", -1, 6, 68, 24, 8
+  COMBOBOX        IDC_SEARCH_SCOPE, 40, 66, 90, 60, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+  CONTROL         "List1", IDC_SEARCH_LIST, "SysListView32", LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP, 6, 84, 291, 112
+  LTEXT           "", IDC_SEARCH_COUNT, 6, 200, 160, 8
+  DEFPUSHBUTTON   "Searc&h", IDOK, 190, 200, 50, 14
+  PUSHBUTTON      "Close", IDCANCEL, 247, 200, 50, 14
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// Version
+/////////////////////////////////////////////////////////////////////////////
+1 VERSIONINFO
+FILEVERSION 1,52,0,0
+PRODUCTVERSION 1,52,0,0
+FILEOS 0x4L
+FILETYPE 0x1L
+{
+  BLOCK "StringFileInfo"
+  {
+    BLOCK "040904b0"
+    {
+      VALUE "CompanyName",      "Independent recreation"
+      VALUE "FileDescription",  "Active Directory Explorer (source-accurate recreation)"
+      VALUE "FileVersion",      "1.52"
+      VALUE "InternalName",     "ADExplorer"
+      VALUE "OriginalFilename", "ADExplorer64.exe"
+      VALUE "ProductName",      "Active Directory Explorer recreation"
+      VALUE "ProductVersion",   "1.52"
+    }
+  }
+  BLOCK "VarFileInfo"
+  {
+    VALUE "Translation", 0x409, 1200
+  }
+}
