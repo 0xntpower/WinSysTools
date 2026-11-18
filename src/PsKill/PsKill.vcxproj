@@ -64,6 +64,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\PsTools.h" />
+    <ClInclude Include="PsKillCommon.h" />
+    <ClInclude Include="ProcessSnapshot.h" />
+    <ClInclude Include="KillProcess.h" />
+    <ClInclude Include="CommandLine.h" />
+    <ClInclude Include="Usage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

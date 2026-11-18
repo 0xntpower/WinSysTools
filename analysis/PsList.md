@@ -7,7 +7,10 @@ process tree (`-t`), and a task-manager refresh mode (`-s`). Reuses the shared
 PsTools front end for the banner and the EULA gate.
 
 - Original: `targets/sysinternals/pslist64.exe` (x64, MSVC, static CRT, console)
-- Rebuild: `src/PsList/PsList.cpp` plus `src/common/PsTools.h`, project
+- Rebuild: `src/PsList/PsList.cpp` (banner and entry flow) plus the headers
+  `ProcessEnum.h` (NtQuerySystemInformation layout and snapshot collection),
+  `CommandLine.h` (switch parse and filter), and `ProcessPrint.h` (column layouts,
+  tree, and task-manager loop), with `src/common/PsTools.h`, project
   `src/PsList/PsList.vcxproj` (console, v143, stdcpp20, Unicode, static CRT)
 - Engine: IDA idalib MCP primary. The program logic is one large `main`
   (`sub_140004410`, about 11 KB), so the format strings, counter names, the
@@ -189,9 +192,26 @@ MSBuild src\PsList\PsList.vcxproj /p:Configuration=Release /p:Platform=x64
 
 PsList uses the PsTools banner and EULA gate from `src/common/PsTools.h` unchanged
 (read-only, as required). Its command line differs from the SID and service tools,
-so the switch parsing, the process and thread collection, the column rendering,
-the tree builder, and the task-manager loop are all local to `PsList.cpp`. No
-addition to `PsTools.h` was needed.
+so the switch parsing lives in `CommandLine.h`, the process and thread collection in
+`ProcessEnum.h`, and the column rendering, tree builder, and task-manager loop in
+`ProcessPrint.h`, each in `namespace pslist`. `PsList.cpp` keeps only the banner and
+the entry flow. No addition to `PsTools.h` was needed.
+
+## Re-validation after the file split (2026-11-18)
+
+`PsList.cpp` was split into `ProcessEnum.h`, `CommandLine.h`, and `ProcessPrint.h`
+(behaviour-preserving code motion plus the HRC clang-format pass), and both x64
+configs rebuilt clean. Two checks confirmed the behaviour held.
+
+- `-?` usage. The banner apart, the rebuilt `Usage:` block through the abbreviation
+  key is byte-identical to `targets/sysinternals/pslist64.exe`, the invoked exe path
+  aside. All 32 usage lines matched.
+- Stable `lsass` (`-nobanner lsass`). The title, the header row, and the column
+  layout matched the original. The stable identity columns came out identical (Name
+  `lsass`, Pid `1552`, Pri `9`, Thd `13`, Priv `17428` KB). Only the naturally
+  volatile fields moved between the two snapshots, the handle count by one (2320
+  against 2319) and the elapsed time by the few seconds between the two runs. CPU
+  Time matched to the millisecond, the service being idle across both.
 
 ## Note on scope
 

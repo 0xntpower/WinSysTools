@@ -158,6 +158,30 @@ only build warning is the benign `D9025: overriding '/Ob2' with '/Ob3'` that eve
 tool in the repo emits from that shared targets file. The project is not added to
 `sysinternals.sln`, per the task.
 
+## Refactor into units (HRC v1.1 style pass)
+
+`LiveKd.cpp` was split from one large translation unit into a thin entry point plus
+focused headers, each in `namespace livekd` with free functions and globals marked
+`inline`. Behavior-preserving code motion only, mirroring the PsService and PsPing
+refactors. Classes and struct layouts (including `SysDbgLiveDumpControl`) moved
+verbatim, so the `static_assert` offset guards still hold.
+
+| File | Holds |
+|---|---|
+| `LiveKd.cpp` | file header, banner constants, `PrintBanner`, and the `wmain` flow |
+| `LiveKdCommon.h` | base includes, `kExitError`, `ScopedHandle`, `Config`, `ArgEquals`, `Narrow` |
+| `Startup.h` | EULA gate, elevation check, `EnablePrivilege`, native-live-dump probe |
+| `Usage.h` | `PrintUsage` (the 39-line usage block) |
+| `LiveDump.h` | dump constants, `SysDbgLiveDumpControl` and its guards, `BuildDumpSecurity`, `WriteLiveKernelDump` |
+| `Debugger.h` | debugger discovery, symbol-path setup, launch and re-run loop |
+| `CommandLine.h` | `-mp` target-process resolution and `ParseArgs` |
+
+Formatted with the repo `.clang-format` (the HRC Allman config). Comments follow HRC
+section 12.7: the decorative `// ---` dividers were dropped and the `sub_`
+provenance references kept concise. The six headers were added to the project
+`ClInclude` list. Both configurations build clean, with only the repo-wide benign
+`D9025: overriding '/Ob2' with '/Ob3'` warning in Release.
+
 ## Validation
 
 - **Banner.** Non-elevated `livekd64.exe -accepteula` and the rebuild print the same
@@ -178,6 +202,15 @@ tool in the repo emits from that shared targets file. The project is not added t
   only, confirming the protected security descriptor. A non-elevated session was
   denied read and delete on the file, which is the DACL working as intended. The
   scratch dump was deleted immediately after the header and DACL were confirmed.
+- **Usage re-check after the refactor (read-only).** The printed usage block
+  reconstructed from the pre-refactor `LiveKd.cpp` and from the post-refactor
+  `Usage.h` hash to the same SHA256
+  (`7939866DEFB66A8F574B612F7355CC7FD07517582568FEE1CC6E95F17AE7A7B3`, 2557 bytes),
+  so the code motion left the `-?` output unchanged. Every one of the 39 usage lines
+  was also confirmed byte-exact in both `targets/sysinternals/livekd64.exe` and the
+  rebuilt `src/LiveKd/x64/Release/LiveKd.exe`. LiveKd has no `-nobanner` switch and
+  prints usage only after the elevation gate, so this static string comparison is the
+  read-only equivalent of a `-?` capture. The live-dump path was not run.
 
 ## What needed the Debugging Tools for Windows
 

@@ -3,8 +3,26 @@
 Console recreation of the Sysinternals **ProcDump** utility, version 11.0. This is
 a command-line tool, not a WTL GUI, and it is not a PsTool, so the NirSoft toolbar
 and window conventions and the shared `PsTools.h` front end do not apply. Source
-lives at `src/ProcDump/` (`ProcDump.cpp` plus `ProcDump.vcxproj`), built as an x64
-console Application with the static CRT.
+lives at `src/ProcDump/`, built as an x64 console Application with the static CRT.
+
+## Source layout
+
+The implementation is split into a thin entry point plus a header per concern, all
+under a `procdump` namespace with inline free functions and classes, mirroring the
+PsService unit split:
+
+- `ProcDump.cpp` - banner, app constants and `wmain` (the top-level flow)
+- `ProcDumpCommon.h` - shared primitives: the RAII `ScopedHandle`, the `Config` and
+  `Target` records, the `DumpType` enum, and the narrow, switch and timestamp helpers
+- `CommandLine.h` - the EULA gate and the switch and argument parse
+- `DumpWriter.h` - the dump-type flag words, the filename scheme, and the
+  MiniDumpWriteDump call with its status lines
+- `Monitor.h` - process selection, the monitoring header, the samplers, and the
+  trigger loops (immediate, timed, CPU, commit, hung, exception)
+- `Usage.h` - the usage help block
+
+The code was moved verbatim and run through the repo `.clang-format` (HRC v1.1
+Allman config). Behaviour is unchanged.
 
 Original binary: `targets/sysinternals/procdump64.exe`
 (MD5 `68a1f7c796de1d0df6b2d78e182df3a0`, SHA-256
@@ -206,4 +224,16 @@ configurations build clean (one benign `D9025 /Ob2 overridden by /Ob3` notice fr
 the shared targets). x64 only, per the task. Not added to any solution, per
 instruction.
 
-Status: done and validated.
+## Re-validation after the unit split
+
+The behaviour-preserving split was re-checked read-only. Both x64 configurations
+(Debug and Release) rebuild clean. The `-?` usage help, run with `-nobanner`, is
+byte-identical between the original `procdump64.exe` and the Release rebuild (7806
+bytes, `fc /b` reports no differences). A functional smoke test dumped a throwaway
+`ping.exe` the session spawned with both binaries and then deleted the dumps and
+killed the process: both wrote a structurally valid minidump with the same header
+(signature `MDMP`, version `0xA793`), the recreation one stream and about 500 bytes
+smaller, which is the documented dump-comment-stream deviation and not a change from
+the refactor. No system or third-party process was dumped.
+
+Status: done and validated, refactored into units.

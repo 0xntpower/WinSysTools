@@ -177,6 +177,28 @@ MSBuild src\PsExec\PsExec.vcxproj /p:Configuration=Debug   /p:Platform=x64
 MSBuild src\PsExec\PsExec.vcxproj /p:Configuration=Release /p:Platform=x64
 ```
 
+## Unit layout
+
+The reconstruction was split from one `PsExec.cpp` into a thin entry file plus
+focused headers, one per concern, under `namespace psexec` with free functions and
+globals marked `inline`. The HRC v1.1 style pass (`.clang-format`, Allman braces,
+120 columns) ran afterward.
+
+| File | Holds |
+|------|-------|
+| `PsExec.cpp` | banner and app constants, `main`, the top-level local-against-service flow |
+| `PsExecCommon.h` | includes, recovered constants, the priority table, the `Options` record, the RAII `ScopedHandle`, and the `Widen` / `IsAllDigits` / `SplitUser` / `ParseAffinity` helpers |
+| `Usage.h` | `PrintUsage`, the byte-identical help block (sub_140017C20) |
+| `CommandLine.h` | `ParseCommandLine` (sub_140014030) |
+| `LocalExec.h` | `CreateLimitedUserToken`, `ApplyAndResume`, `RunLocal` (sub_140012860) |
+| `ServiceExec.h` | `RunViaService`, the PSEXESVC client stub (sub_1400159A0) |
+
+The split is behavior-preserving code motion. Both x64 configs rebuild clean
+afterward (the only diagnostic is the expected `/Ob3` override), and the
+`-nobanner -?` help output stays byte-identical between the original and the Release
+rebuild (md5 082ca07c, stderr empty on both, exit -1 on both), confirming the move
+changed no behavior.
+
 ## Shared framework reuse
 
 PsExec reuses `src/common/PsTools.h` (read-only) for `PrintBanner`, `StripFlag`,

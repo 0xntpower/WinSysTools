@@ -135,6 +135,29 @@ which is correct.
   `-nobanner` the banner never prints, and the hardcoded content matches the
   original's banner otherwise.
 
+## Refactor into units (HRC v1.1)
+
+`Strings.cpp` was split into a thin entry point plus four single-concern headers,
+mirroring the `PsService` layout:
+
+- `StringsUtil.h` -- scan constants, the `Config` state, the RAII `ScopedHandle`,
+  the stdout-pipe probe, and the printable classifiers.
+- `Scan.h` -- the per-file byte walker (`ScanFile`) and the directory/wildcard
+  walker (`Walk`).
+- `Usage.h` -- the message-stream selector and the usage printer.
+- `CommandLine.h` -- the switch matcher, the argv strip, and the EULA gate.
+- `Strings.cpp` -- the banner constants, `PrintBanner`, and `main`.
+
+Every moved free function and global is `inline` inside `namespace strings`, and
+classes are unchanged. The motion is behaviour-preserving, and the five files were
+run through the HRC `.clang-format` Allman config. Both x64 configurations rebuild
+clean (the one benign `/Ob3` notice from the shared targets).
+
+Re-validated after the split against the original with matching arguments:
+`notepad.exe`, `version.dll` (default and `-u -o -n 6`), and `-?`. Every scan case
+produced byte-identical stdout (SHA-256 equal). The `-?` output matches on all
+lines but the first, which echoes the tool's own executable path, as it should.
+
 ## Build
 
 VS 2022 Community MSBuild, PlatformToolset v143, `LanguageStandard stdcpp20`,

@@ -1,0 +1,22 @@
+# HRC v1.1 clang-format -- the mechanical half of the code style (standard section 15.3).
+# Allman braces, braces on every body, no collapsed one-liners, 120-column soft limit.
+Language: Cpp
+BasedOnStyle: Microsoft
+Standard: c++20
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 120
+NamespaceIndentation: All
+PointerAlignment: Left
+SortIncludes: false
+BreakBeforeBraces: Allman
+InsertBraces: true
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortLambdasOnASingleLine: None
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+BreakConstructorInitializers: BeforeComma

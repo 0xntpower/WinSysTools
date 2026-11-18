@@ -6,7 +6,9 @@ the summary statistics, and the latency histogram. Uses the shared PsTools front
 end for the banner and the EULA gate.
 
 - Original: `targets/sysinternals/psping64.exe` (x64, MSVC, static CRT, console)
-- Rebuild: `src/PsPing/PsPing.cpp` plus `src/common/PsTools.h`, project
+- Rebuild: `src/PsPing/PsPing.cpp` (banner and entry) plus the unit headers
+  `PingCommon.h`, `Usage.h`, `Statistics.h`, `CommandLine.h`, `IcmpPing.h`, and
+  `TcpPing.h`, all under a `psping` namespace, with `src/common/PsTools.h`, project
   `src/PsPing/PsPing.vcxproj` (console, v143, stdcpp20, Unicode, static CRT)
 - Engine: rea (Ghidra backend) drove the decompilation this session because all
   four idalib workers stayed busy with other tools for the whole run. The decompiles
@@ -211,3 +213,13 @@ The round-trip times and the ephemeral local port are the only differences on th
 ping paths, and both are inherently per-run. No external host was contacted, the TCP
 listener was a short-lived loopback listener opened for the test, and every process
 and listener launched for validation was stopped afterward.
+
+### Refactor re-validation (unit split)
+
+The single `PsPing.cpp` was split into the `psping`-namespace unit headers above
+with behaviour unchanged, free functions and globals made `inline`, the two
+engine classes kept, and the result run through the repo `.clang-format`. After
+the split both x64 configurations build clean, the `-?`, `-? i`, `-? t`, `-? l`,
+and `-? b` help pages stay byte-identical to the original under `-nobanner`, and a
+loopback `-n 2 127.0.0.1` run matches the original line for line apart from the
+per-run round-trip values.

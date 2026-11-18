@@ -19,6 +19,7 @@ PsShutdown really shuts the machine down. During the first attempt to recreate i
 - Per-target worker `sub_140004A90`: a local target with no countdown and no abort runs the immediate action directly through `sub_140004840` (`ExitWindowsEx`, Powrprof `SetSuspendState`) or `sub_140004820` (monitor off). Anything else goes through the service client.
 - Service client `sub_140004D20` exchanges a 0x220-byte request over `\pipe\psshutdownsvc`. The 544-byte packet layout (flags, allow-abort, message, countdown, requesting user, reason, notify seconds, status) is recovered and reproduced.
 - The service deploy and teardown (`sub_140003920` / `sub_140003F70`) and the bundled PSSDNSVC.EXE helper that runs the countdown, the notification dialog, and `InitiateSystemShutdownEx` are out of scope, the same way PsSuspend leaves PSSPNDSVC. The recreation reproduces the faithful client half and every message and error path.
+- Shared helpers factored alongside: target iteration `sub_140003260` (single, comma list, @file, * domain), enable a privilege `sub_140003180` (OpenProcessToken, AdjustTokenPrivileges), clear console line `sub_140003100` (padding written to stderr), print a system error `sub_1400037F0` (FormatMessage, netmsg.dll for net codes).
 
 ## Build
 
@@ -31,6 +32,24 @@ The action and service paths are validated by code inspection against the decomp
 - The original's strings were extracted statically with our own Strings recreation run against `psshutdown64.exe` (Strings reads the file and does not execute it).
 - The rebuild's `/?` output (the only psshutdown invocation run, Parse returns false before `Worker`) matches the original's usage description lines byte-for-byte (every checked line present in the original's strings).
 - Machine uptime was unchanged across the whole validation, confirming no shutdown happened.
+
+## Refactor into units plus HRC style pass (2026-11-18)
+
+`PsShutdown.cpp` was split from one large file into a thin entry file plus five headers, each under `namespace psshutdown` with free functions and globals `inline` and classes kept:
+
+- `ShutdownCommon.h` the action and modifier bit constants, the reason masks, `ClearLine`, `EnablePrivilege`, `Upper`.
+- `CommandLine.h` the `Options` struct and the switch grammar (`ParseReason`, `ParseClockCountdown`, `Parse`).
+- `Usage.h` the usage block and the live reason table (`PrintUsage`).
+- `ServiceClient.h` the `ShutdownPacket`, the verb helpers, `FillRequestingUser`, and `ServiceClient`.
+- `ShutdownActions.h` the immediate local actions (`ImmediateShutdown`, `MonitorOff`, `LocalLock`) and the per-target `Worker`.
+
+The banner constants and `main` stay in `PsShutdown.cpp`. The move was byte-for-byte with no logic change. An order-independent comparison of the pre-refactor file against the combined new sources matched all 475 statement units, the only difference being a clang-format split of one banner string literal into two adjacent literals that the compiler rejoins. The immediate-shutdown guard is unchanged. Headers were wired into the project's ClInclude and `clang-format` was run over the whole tool.
+
+Revalidated compile-only plus `/?` (zero shutdown risk, same discipline as the original validation):
+
+- Debug and Release x64 both build clean (only the shared `/Ob2` to `/Ob3` note from `Directory.Build.targets`).
+- A single `/?` run of the rebuilt Release binary was the only invocation executed. It printed the banner, the full usage block, and the live reason table, matching the documented usage above, and returned -1 (exit 255) before reaching `Worker`. No shutdown happened.
+- The original `psshutdown64.exe` was not executed at any point, with any argument.
 
 ## Deviations
 

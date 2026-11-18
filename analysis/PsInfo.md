@@ -8,7 +8,10 @@ optional installed hotfixes (`-h`), installed software (`-s`), and disk volume
 information (`-d`). Reuses the shared PsTools command-line front end.
 
 - Original: `targets/sysinternals/PsInfo64.exe` (x64, MSVC, static CRT, console, Unicode)
-- Rebuild: `src/PsInfo/PsInfo.cpp` plus `src/common/PsTools.h` (read-only), project
+- Rebuild: `src/PsInfo/PsInfo.cpp` (banner and entry point) with the per-concern
+  headers `PsInfoUtil.h` (base), `CommandLine.h` (tool-flag parse), `SubReports.h`
+  (hotfix, software, disk), `SystemInfo.h` (gathering), and `InfoPrint.h` (output),
+  all in a `psinfo` namespace, plus `src/common/PsTools.h` (read-only). Project
   `src/PsInfo/PsInfo.vcxproj` (console, v143, stdcpp20, Unicode, static CRT)
 - Engine: IDA idalib MCP primary. The logic decompiled cleanly, no rea cross-check needed.
 
@@ -155,6 +158,21 @@ and `    C: Fixed      NTFS                            1675.82 GB` with only the
 free columns varying. The single hotfix entry
 `n/a           Internet Explorer - 0` comes from the Internet Settings
 MinorVersion source and matched exactly.
+
+### Re-validation after the unit refactor
+
+The single `PsInfo.cpp` was split into the `PsInfoUtil.h`, `CommandLine.h`,
+`SubReports.h`, `SystemInfo.h`, and `InfoPrint.h` units, behaviour unchanged, then
+rebuilt x64 Debug and Release clean. Original and rebuild were rerun with
+`-nobanner -accepteula` and stdout compared again:
+
+- default, `-h`, `-s`: identical once the uptime line is normalized (`-s` still 363
+  applications, same order and format).
+- `-d`: identical once the uptime line and the volatile free columns are normalized,
+  with the totals, type, format, and label all matching.
+- `-?`: the usage body from the `returns information` line through the `-nobanner`
+  line is byte-for-byte identical. Only the banner block differs, which is deviation
+  4 (the rebuild carries its own banner rather than the original copyright line).
 
 ## Build
 

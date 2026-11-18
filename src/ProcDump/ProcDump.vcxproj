@@ -61,5 +61,12 @@
   <ItemGroup>
     <ClCompile Include="ProcDump.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ProcDumpCommon.h" />
+    <ClInclude Include="DumpWriter.h" />
+    <ClInclude Include="Monitor.h" />
+    <ClInclude Include="Usage.h" />
+    <ClInclude Include="CommandLine.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

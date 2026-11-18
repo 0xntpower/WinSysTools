@@ -1,0 +1,251 @@
+// ProcessExplorer.rc -- menu, accelerators, icon and dialogs for the
+// Process Explorer recreation. The menu and accelerator command IDs match the
+// original procexp64.exe resource 101. Out-of-scope menu items are kept for
+// fidelity and their handlers are stubbed or greyed in code.
+#include <windows.h>
+#include <commctrl.h>
+#include "../resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+// Icon
+IDI_APPICON             ICON                    "APPICON.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+// Main menu (resource 101)
+IDR_MAINFRAME MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Run...\tCtrl+R",                 ID_FILE_RUN
+        MENUITEM SEPARATOR
+        MENUITEM "&Save\tCtrl+S",                   ID_FILE_SAVE
+        MENUITEM "Save &As...\tCtrl+A",             ID_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        POPUP "S&hutdown"
+        BEGIN
+            MENUITEM "&Logoff",                     ID_FILE_LOGOFF
+            MENUITEM "&Shutdown",                   ID_FILE_SHUTDOWN
+            MENUITEM "&Restart",                    ID_FILE_RESTARTPC
+        END
+        MENUITEM "E&xit",                           ID_APP_EXIT
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "Run At &Logon",                   ID_OPT_RUNATLOGON
+        MENUITEM SEPARATOR
+        MENUITEM "&Verify Image Signatures",        ID_OPT_VERIFYSIGS
+        POPUP "Virus&Total.com"
+        BEGIN
+            MENUITEM "&Check VirusTotal.com",       ID_OPT_VT_CHECK
+            MENUITEM "&Submit Unknown Executables", ID_OPT_VT_SUBMIT
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Always On Top",                  ID_OPT_ALWAYSONTOP
+        MENUITEM "&Hide When Minimized",            ID_OPT_HIDEMIN
+        MENUITEM "Allow &Only One Instance",        ID_OPT_ONEINSTANCE
+        MENUITEM "&Confirm Kill",                   ID_OPT_CONFIRMKILL
+        MENUITEM "Highlight &Relocated DLLs",       ID_OPT_HILITERELOC
+        MENUITEM SEPARATOR
+        POPUP "Tray &Icons"
+        BEGIN
+            MENUITEM "&CPU History",                ID_OPT_TRAY_CPU
+            MENUITEM "&I/O History",                ID_OPT_TRAY_IO
+            MENUITEM "Commit &History",             ID_OPT_TRAY_COMMIT
+            MENUITEM "&Physical Memory History",    ID_OPT_TRAY_PHYS
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Difference Highlight Duration...", ID_OPT_DIFFDURATION
+        MENUITEM "&Font...",                        ID_OPT_FONT
+        MENUITEM SEPARATOR
+        POPUP "&Theme"
+        BEGIN
+            MENUITEM "&Light",                      ID_OPT_THEME_LIGHT
+            MENUITEM "&Dark",                       ID_OPT_THEME_DARK
+            MENUITEM "Use &System Setting",         ID_OPT_THEME_SYSTEM
+        END
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Show Process Tree\tCtrl+T",      ID_VIEW_PROCTREE
+        MENUITEM "Show Column &Heatmaps",           ID_VIEW_HEATMAPS
+        MENUITEM "Scroll to N&ew Processes",        ID_VIEW_SCROLLNEW
+        MENUITEM "Show U&nnamed Handles and Mappings", ID_VIEW_UNNAMED
+        MENUITEM "Sho&w Processes From All Users",  ID_VIEW_ALLUSERS
+        MENUITEM SEPARATOR
+        MENUITEM "Show Lower &Pane\tCtrl+L",        ID_VIEW_LOWERPANE
+        POPUP "&Lower Pane View"
+        BEGIN
+            MENUITEM "&DLLs\tCtrl+D",               ID_VIEW_DLLS
+            MENUITEM "&Handles\tCtrl+H",            ID_VIEW_HANDLES
+            MENUITEM "&Threads\tCtrl+Y",            ID_VIEW_THREADS
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Refresh Now\tF5",                ID_VIEW_REFRESH
+        POPUP "&Update Speed"
+        BEGIN
+            MENUITEM ".5 &seconds",                 ID_SPEED_HALF
+            MENUITEM "&1 second",                   ID_SPEED_1
+            MENUITEM "&2 seconds",                  ID_SPEED_2
+            MENUITEM "&5 seconds",                  ID_SPEED_5
+            MENUITEM "1&0 seconds",                 ID_SPEED_10
+            MENUITEM SEPARATOR
+            MENUITEM "&Paused\tSpace",              ID_SPEED_PAUSED
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Or&ganize Column Sets...",        ID_VIEW_ORGCOLSETS
+        MENUITEM "Sa&ve Column Set...",             ID_VIEW_SAVECOLSET
+        MENUITEM SEPARATOR
+        MENUITEM "Select &Columns...",              ID_VIEW_SELECTCOLS
+    END
+    POPUP "&Process"
+    BEGIN
+        POPUP "&Window"
+        BEGIN
+            MENUITEM "&Bring to Front",             ID_PROC_BRINGFRONT
+            MENUITEM "&Restore",                    ID_PROC_WIN_RESTORE
+            MENUITEM "&Minimize",                   ID_PROC_WIN_MIN
+            MENUITEM "Ma&ximize",                   ID_PROC_WIN_MAX
+            MENUITEM SEPARATOR
+            MENUITEM "&Close",                      ID_PROC_WIN_CLOSE
+        END
+        MENUITEM SEPARATOR
+        POPUP "&Set Priority"
+        BEGIN
+            MENUITEM "&Realtime: 24",               ID_PRI_REALTIME
+            MENUITEM "&High: 13",                   ID_PRI_HIGH
+            MENUITEM "&Normal: 8",                  ID_PRI_NORMAL
+            MENUITEM "&Idle: 4",                    ID_PRI_IDLE
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Kill Process\tDel",              ID_PROC_KILL
+        MENUITEM "Kill Process &Tree\tShift+Del",   ID_PROC_KILLTREE
+        MENUITEM "&Restart",                        ID_PROC_RESTART
+        MENUITEM "&Suspend",                        ID_PROC_SUSPEND
+        MENUITEM SEPARATOR
+        POPUP "&Create Dump"
+        BEGIN
+            MENUITEM "&Create Minidump...",         ID_PROC_MINIDUMP
+            MENUITEM "Create &Full Dump...",        ID_PROC_FULLDUMP
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Check VirusTotal.com",           ID_PROC_VT_CHECK
+        MENUITEM SEPARATOR
+        MENUITEM "&Properties...",                  ID_PROC_PROPERTIES
+        MENUITEM "Search &Online...\tCtrl+M",       ID_PROC_SEARCHONLINE
+    END
+    POPUP "F&ind"
+    BEGIN
+        MENUITEM "&Filter Processes...\tCtrl+F",    ID_FIND_FILTER
+        MENUITEM "Find H&andle or DLL...\tCtrl+Shift+F", ID_FIND_HANDLEDLL
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Help...\tF1",                    ID_HELP
+        MENUITEM "&About Process Explorer...",      ID_APP_ABOUT
+    END
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// Accelerators (resource 101, in-scope subset)
+IDR_MAINFRAME ACCELERATORS
+BEGIN
+    "R",        ID_FILE_RUN,            VIRTKEY, CONTROL
+    "S",        ID_FILE_SAVE,          VIRTKEY, CONTROL
+    "A",        ID_FILE_SAVE_AS,       VIRTKEY, CONTROL
+    "Q",        ID_APP_EXIT,           VIRTKEY, CONTROL
+    "T",        ID_VIEW_PROCTREE,      VIRTKEY, CONTROL
+    "L",        ID_VIEW_LOWERPANE,     VIRTKEY, CONTROL
+    "D",        ID_VIEW_DLLS,          VIRTKEY, CONTROL
+    "H",        ID_VIEW_HANDLES,       VIRTKEY, CONTROL
+    "Y",        ID_VIEW_THREADS,       VIRTKEY, CONTROL
+    "U",        ID_VIEW_UNNAMED,       VIRTKEY, CONTROL
+    "M",        ID_PROC_SEARCHONLINE,  VIRTKEY, CONTROL
+    "F",        ID_FIND_FILTER,        VIRTKEY, CONTROL
+    "F",        ID_FIND_HANDLEDLL,     VIRTKEY, CONTROL, SHIFT
+    VK_F5,      ID_VIEW_REFRESH,       VIRTKEY
+    VK_F1,      ID_HELP,               VIRTKEY
+    VK_DELETE,  ID_PROC_KILL,          VIRTKEY
+    VK_DELETE,  ID_PROC_KILLTREE,      VIRTKEY, SHIFT
+    VK_SPACE,   ID_SPEED_PAUSED,       VIRTKEY
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// About box (enlarged to carry the recreation credit)
+IDD_ABOUT DIALOGEX 0, 0, 280, 96
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Process Explorer"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDI_APPICON,IDC_ABOUT_ICON,11,11,21,20
+    LTEXT           "Process Explorer",IDC_ABOUT_NAME,41,11,160,8
+    LTEXT           "",IDC_ABOUT_DESC,41,26,228,40
+    CONTROL         "Sysinternals - www.sysinternals.com",IDC_ABOUT_LINK,
+                    "SysLink",WS_TABSTOP,41,72,160,10
+    DEFPUSHBUTTON   "OK",IDOK,223,75,50,14
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// Image property page
+IDD_PROP_IMAGE DIALOGEX 0, 0, 270, 196
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Image"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "Image File",-1,7,4,256,70
+    ICON            "",IDC_IMG_ICON,14,15,21,20
+    LTEXT           "",IDC_IMG_DESC,44,15,210,9
+    LTEXT           "",IDC_IMG_COMPANY,44,27,210,9
+    LTEXT           "",IDC_IMG_VERSION,44,39,210,9
+    LTEXT           "Path:",-1,14,55,25,8
+    EDITTEXT        IDC_IMG_PATH,40,53,215,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Command line:",-1,7,80,60,8
+    EDITTEXT        IDC_IMG_CMDLINE,7,90,256,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Current directory:",-1,7,108,66,8
+    EDITTEXT        IDC_IMG_CURDIR,7,118,256,12,ES_AUTOHSCROLL | ES_READONLY
+    LTEXT           "Parent:",-1,7,138,30,8
+    LTEXT           "",IDC_IMG_PARENT,48,138,215,8
+    LTEXT           "User:",-1,7,152,30,8
+    LTEXT           "",IDC_IMG_USER,48,152,215,8
+    LTEXT           "Started:",-1,7,166,30,8
+    LTEXT           "",IDC_IMG_STARTED,48,166,160,8
+    LTEXT           "PID:",-1,7,180,30,8
+    LTEXT           "",IDC_IMG_PID,48,180,160,8
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// Threads property page
+IDD_PROP_THREADS DIALOGEX 0, 0, 270, 196
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Threads"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_THR_LIST,"SysListView32",LVS_REPORT |
+                    LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,7,7,256,182
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// TCP/IP property page
+IDD_PROP_TCPIP DIALOGEX 0, 0, 270, 196
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "TCP/IP"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_TCP_LIST,"SysListView32",LVS_REPORT |
+                    LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,7,7,256,182
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// Find Handle or DLL
+IDD_FINDHANDLE DIALOGEX 0, 0, 328, 180
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Process Explorer Search"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "Handle or DLL substring:",-1,7,9,90,8
+    EDITTEXT        IDC_FIND_EDIT,100,7,160,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Search",IDC_FIND_SEARCH,266,7,50,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,266,25,50,14
+    CONTROL         "",IDC_FIND_LIST,"SysListView32",LVS_REPORT |
+                    LVS_SINGLESEL | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP,
+                    7,45,314,128
+END

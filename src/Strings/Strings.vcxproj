@@ -63,5 +63,11 @@
   <ItemGroup>
     <ClCompile Include="Strings.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="StringsUtil.h" />
+    <ClInclude Include="Scan.h" />
+    <ClInclude Include="Usage.h" />
+    <ClInclude Include="CommandLine.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

@@ -1,0 +1,53 @@
+# HRC v1.1 -- the mechanical half of the standard (section 15.2.1).
+
+Checks: >
+  -*,
+
+  clang-analyzer-*,
+  bugprone-use-after-move,
+  bugprone-dangling-handle,
+  bugprone-unchecked-optional-access,
+  bugprone-sizeof-expression,
+  bugprone-integer-division,
+  bugprone-not-null-terminated-result,
+  bugprone-suspicious-string-compare,
+  bugprone-infinite-loop,
+
+  cppcoreguidelines-pro-type-cstyle-cast,
+  cppcoreguidelines-owning-memory,
+  cppcoreguidelines-init-variables,
+  cppcoreguidelines-special-member-functions,
+  cppcoreguidelines-virtual-class-destructor,
+  cppcoreguidelines-pro-type-union-access,
+  modernize-use-override,
+  modernize-use-nullptr,
+  modernize-make-unique,
+  modernize-make-shared,
+
+  performance-unnecessary-copy-initialization,
+  performance-for-range-copy,
+  performance-unnecessary-value-param,
+  performance-noexcept-move-constructor,
+
+WarningsAsErrors: >
+  clang-analyzer-*,
+  bugprone-use-after-move,
+  bugprone-dangling-handle,
+  bugprone-unchecked-optional-access,
+  bugprone-sizeof-expression,
+  bugprone-integer-division,
+  bugprone-not-null-terminated-result,
+  bugprone-suspicious-string-compare,
+  bugprone-infinite-loop,
+  cppcoreguidelines-pro-type-cstyle-cast,
+  cppcoreguidelines-owning-memory,
+  cppcoreguidelines-init-variables,
+  cppcoreguidelines-special-member-functions,
+  cppcoreguidelines-virtual-class-destructor,
+  cppcoreguidelines-pro-type-union-access,
+  modernize-use-override,
+  modernize-use-nullptr,
+  modernize-make-unique,
+  modernize-make-shared
+
+HeaderFilterRegex: '.*'

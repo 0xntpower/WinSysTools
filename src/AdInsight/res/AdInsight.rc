@@ -1,0 +1,100 @@
+// AdInsight.rc -- icon, menu, accelerators, dialogs and the embedded hook DLL
+// for the AdInsight recreation. The hook DLL is carried as a BINRES resource
+// with id 1170, matching the original ADInsight64.exe, which the GUI extracts
+// and injects.
+#include <windows.h>
+#include <commctrl.h>
+#include "../resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+// Icon (loaded by name "APPICON", as the original does)
+APPICON                 ICON                    "APPICON.ico"
+IDI_APPICON             ICON                    "APPICON.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+// Embedded hook DLL, matching the original's BINRES resource id 1170.
+IDR_HOOKDLL             BINRES                  "AdInsightDll.dll"
+
+/////////////////////////////////////////////////////////////////////////////
+// Main menu
+IDR_MAINFRAME MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open...\tCtrl+O",                ID_FILE_OPEN
+        MENUITEM "&Save...\tCtrl+S",                ID_FILE_SAVE
+        MENUITEM "Save &As...",                     ID_FILE_SAVE_AS
+        MENUITEM "&Export...",                      ID_FILE_EXPORT
+        MENUITEM SEPARATOR
+        MENUITEM "&Inject into Process...",         ID_INJECT_PID
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                           ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Copy\tCtrl+C",                   ID_EDIT_COPY
+        MENUITEM "&Find...\tCtrl+F",                ID_EDIT_FIND
+        MENUITEM SEPARATOR
+        MENUITEM "C&lear Display\tCtrl+X",          ID_EDIT_CLEAR
+    END
+    POPUP "&Capture"
+    BEGIN
+        MENUITEM "&Capture Events\tCtrl+E",         ID_CAPTURE_EVENTS
+        MENUITEM "&Autoscroll\tCtrl+A",             ID_CAPTURE_AUTOSCROLL
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "&Filter...",                      ID_OPT_FILTER
+        MENUITEM "Select &Columns...",              ID_OPT_SELECTCOLS
+        MENUITEM "Fo&nt...",                        ID_OPT_FONT
+        MENUITEM SEPARATOR
+        MENUITEM "Always On &Top",                  ID_OPT_ALWAYSONTOP
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Help\tF1",                       ID_HELP
+        MENUITEM "&About AdInsight...",             ID_APP_ABOUT
+    END
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// Accelerators
+IDR_MAINFRAME ACCELERATORS
+BEGIN
+    "O",        ID_FILE_OPEN,          VIRTKEY, CONTROL
+    "S",        ID_FILE_SAVE,          VIRTKEY, CONTROL
+    "C",        ID_EDIT_COPY,          VIRTKEY, CONTROL
+    "F",        ID_EDIT_FIND,          VIRTKEY, CONTROL
+    "X",        ID_EDIT_CLEAR,         VIRTKEY, CONTROL
+    "E",        ID_CAPTURE_EVENTS,     VIRTKEY, CONTROL
+    "A",        ID_CAPTURE_AUTOSCROLL, VIRTKEY, CONTROL
+    VK_F1,      ID_HELP,               VIRTKEY
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// About box
+IDD_ABOUT DIALOGEX 0, 0, 290, 96
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About AdInsight"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDI_APPICON,IDC_ABOUT_ICON,11,11,21,20
+    LTEXT           "AdInsight",IDC_ABOUT_NAME,41,11,200,8
+    LTEXT           "",IDC_ABOUT_DESC,41,26,238,40
+    CONTROL         "Sysinternals - www.sysinternals.com",IDC_ABOUT_LINK,
+                    "SysLink",WS_TABSTOP,41,72,170,10
+    DEFPUSHBUTTON   "OK",IDOK,233,75,50,14
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// Single-line text prompt (Find and Inject)
+IDD_FIND DIALOGEX 0, 0, 240, 70
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "AdInsight"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    LTEXT           "",IDC_FIND_PROMPT,7,9,226,9
+    EDITTEXT        IDC_FIND_EDIT,7,22,226,13,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,122,48,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,183,48,50,14
+END

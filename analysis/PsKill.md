@@ -131,6 +131,22 @@ The tree case killed the same count as the original (the `cmd` root, its
 `conhost`, and the child `ping`), which confirms the creation-time-guarded walk
 matches. The remote path is reproduced but validated locally only.
 
+### Refactor re-validation (unit split)
+
+The single `PsKill.cpp` was split into `pskill`-namespace unit headers with
+behaviour unchanged: `PsKillCommon.h` (the RAII `ProcessHandle`, `ClearLine`,
+`EnablePrivilege`), `ProcessSnapshot.h` (the `NtQuerySystemInformation` record
+layout, the snapshot, the name match, and the ancestry walk), `KillProcess.h`
+(`KillProcessById`, `KillLocal`, `KillRemote`, and the remote packet),
+`CommandLine.h` (`Options` and the parse), and `Usage.h`. `PsKill.cpp` keeps the
+banner constants and `main`. Free functions and globals were made `inline`, the
+`ProcessHandle` class was kept, the sub_ map stayed in the function table above
+rather than in the source banner, and every file was run through the repo
+`.clang-format`. After the split both x64 configurations build clean, and the
+`-?` help page stays byte-identical to the original under `-nobanner` (422 bytes,
+`cmp` clean). This was a code-motion plus formatting pass with no logic change, so
+no live kill was re-exercised.
+
 ## Build
 
 VS 2022 Community MSBuild, v143, x64 Debug and Release, both clean. The repo

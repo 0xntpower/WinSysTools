@@ -5,8 +5,10 @@ PID or name, on the local machine or a remote one, with the shared PsTools
 command-line front end. Reuses `src/common/PsTools.h` read only.
 
 - Original: `targets/sysinternals/pssuspend64.exe` (x64, MSVC, static CRT, console)
-- Rebuild: `src/PsSuspend/PsSuspend.cpp` plus `src/common/PsTools.h`, project
-  `src/PsSuspend/PsSuspend.vcxproj` (console, v143, stdcpp20, Unicode, static CRT)
+- Rebuild: `src/PsSuspend/PsSuspend.cpp` (banner and `main`) with the units
+  `CommandLine.h`, `SuspendEngine.h`, and `Report.h` beside it, plus
+  `src/common/PsTools.h`, project `src/PsSuspend/PsSuspend.vcxproj` (console, v143,
+  stdcpp20, Unicode, static CRT)
 - Engine: IDA idalib MCP primary. The logic decompiled cleanly, so rea was not
   needed.
 
@@ -162,10 +164,34 @@ MSBuild src\PsSuspend\PsSuspend.vcxproj /p:Configuration=Release /p:Platform=x64
 
 ## Local additions
 
-`src/common/PsTools.h` is read only and does not carry these, so they live in
-`PsSuspend.cpp`: the PsSuspend argument parser, `EnablePrivilege` for
-`SeDebugPrivilege` (mirrors `sub_140003180`), `ResolveNtProc` for the ntdll
-lookups, `ClearLine` (mirrors `sub_140003100`), and the `SuspendPacket` layout.
+`src/common/PsTools.h` is read only and does not carry these, so they live in the
+units beside `PsSuspend.cpp`: the argument parser and `Options` in `CommandLine.h`,
+then `EnablePrivilege` for `SeDebugPrivilege` (mirrors `sub_140003180`),
+`ResolveNtProc` for the ntdll lookups, `ClearLine` (mirrors `sub_140003100`), and
+the `SuspendPacket` layout in `SuspendEngine.h`. The summary lines are in
+`Report.h`.
+
+## Unit layout
+
+`PsSuspend.cpp` was split into units with the HRC style pass, matching the
+`PsService` and `PsPing` refactors. Behaviour is unchanged, the move was code
+motion with formatting only.
+
+- `PsSuspend.cpp` -- banner and app constants, `main`, the local-or-remote flow
+- `CommandLine.h` -- `Options`, `AllDigits`, `Parse`, `PrintUsage` (`sub_140004FD0`)
+- `SuspendEngine.h` -- `EnablePrivilege`, `ResolveNtProc`, `ActOnPid`,
+  `NameMatches`, `LocalAct`, `SuspendPacket`, `PrintRemoteError`, `RemoteAct`, and
+  `ClearLine` (`sub_1400045F0`, `sub_1400048D0`, `sub_140003180`, `sub_1400052B0`)
+- `Report.h` -- `ReportLocalSuccess`, `ReportLocalFailure`, `ReportRemoteSuccess`
+
+Moved code lives in `namespace pssuspend` with free functions `inline`. Formatted
+with the repo `.clang-format` (HRC Allman, 120 columns). Both x64 configs rebuilt
+clean, the Release `D9025 /Ob2 with /Ob3` note aside.
+
+Re-validated read only: `pssuspend64.exe -nobanner -?` and the rebuilt
+`PsSuspend.exe -nobanner -?` print byte-identical help (477 bytes, matching
+SHA-256), on stdout and stderr, with the same exit. No process was suspended or
+resumed.
 
 ## Deviations
 

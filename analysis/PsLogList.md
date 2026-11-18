@@ -8,8 +8,10 @@ credentials, the error printer, the local computer name, the hidden password
 prompt, and the target iteration.
 
 - Original: `targets/sysinternals/psloglist64.exe` (x64, MSVC, static CRT, console)
-- Rebuild: `src/PsLogList/PsLogList.cpp` plus `src/common/PsTools.h`, project
-  `src/PsLogList/PsLogList.vcxproj` (console, v143, stdcpp20, Unicode, static CRT)
+- Rebuild: `src/PsLogList/` (thin `PsLogList.cpp` plus the `LogListUtil.h`,
+  `CommandLine.h`, `Usage.h`, `EventMessage.h`, and `EventLog.h` units) over
+  `src/common/PsTools.h`, project `src/PsLogList/PsLogList.vcxproj` (console, v143,
+  stdcpp20, Unicode, static CRT)
 - Engines: IDA idalib MCP primary. The whole tool decompiled cleanly, so the rea
   cross-check was not needed.
 
@@ -183,6 +185,49 @@ MSBuild src\PsLogList\PsLogList.vcxproj /p:Configuration=Debug   /p:Platform=x64
 MSBuild src\PsLogList\PsLogList.vcxproj /p:Configuration=Release /p:Platform=x64
 ```
 
+## Refactor into units
+
+The single `PsLogList.cpp` was split into a thin entry point plus five headers,
+each a `#pragma once` unit under `namespace psloglist` with the free functions and
+the module cache made `inline`, the RAII guards kept as classes, and every body
+moved unchanged:
+
+- `LogListUtil.h` the Win32 and CRT includes, the tool constants, the `EventLogGuard`
+  and `RegKeyGuard` guards, the `Options` struct, and the `Widen` and `ContainsNoCase`
+  helpers
+- `CommandLine.h` the digit and id-list predicates, the log-name canonicalizer, the
+  `-d`/`-h`/`-m` cutoff and `-a`/`-b` date parsing, and `ParseCommandLine`
+- `Usage.h` the full original switch list
+- `EventMessage.h` the record decode helpers, the message-DLL resolution, the SID
+  lookup, and `PrintRecord`
+- `EventLog.h` the source and record-selection filters, the log clear, and the
+  per-computer read loop
+
+`PsLogList.cpp` keeps the banner and app constants and `main`, and the five headers
+are listed in the project's `ClInclude` group. The repo `.clang-format` (Allman, 120
+column) was run over the result, the decorative section dividers are gone, and the
+sub_ map stays in this file rather than the source banner. Behaviour is unchanged.
+
+x64 Debug and Release both build clean, with only the documented `D9025` `/Ob3`
+override. Re-validation ran the original `psloglist64.exe` and the rebuilt Release
+exe with the same arguments and compared the bytes:
+
+| Case | Result |
+|------|--------|
+| `-nobanner -r -n 5 System` oldest five | identical, 31 lines |
+| `-nobanner -r -n 5 Application` oldest five | identical, 36 lines |
+| `-nobanner -n 5 System` newest five | identical, 35 lines |
+| `-nobanner -n 5 Application` newest five | identical, 31 lines |
+| `-nobanner -x -r -n 8 System` extended data | identical, 153 lines |
+| `-nobanner -s -r -n 10 System` one line | identical, 10 lines |
+| `-nobanner -?` usage body | identical, 41 lines |
+| `-nobanner -y` bad argument | identical, 41 lines |
+| `-nobanner NoSuchLogXYZ` missing log | identical, 3 lines |
+
+The banner first line (`PsLoglist v2.82 ...`) matches. The copyright and author lines
+differ by design, as the recreation does not carry the Sysinternals copyright, which
+is the pre-existing banner deviation noted below.
+
 ## Shared framework reuse
 
 PsLogList reuses `src/common/PsTools.h` (read-only) for `PrintBanner`, `StripFlag`,
@@ -190,7 +235,7 @@ PsLogList reuses `src/common/PsTools.h` (read-only) for `PrintBanner`, `StripFla
 `RemoteConnect`, `RemoteDisconnect`, and `ForEachComputer`. Nothing was added to
 the shared header. The parser, the record read and format, the message resolution,
 the SID resolution, the record selection filters, and the clear path are all local
-to `PsLogList.cpp`, because the tool's grammar is far richer than the shared
+to the PsLogList units, because the tool's grammar is far richer than the shared
 account-list parser.
 
 ## Deviations

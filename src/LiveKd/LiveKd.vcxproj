@@ -61,5 +61,13 @@
   <ItemGroup>
     <ClCompile Include="LiveKd.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LiveKdCommon.h" />
+    <ClInclude Include="Startup.h" />
+    <ClInclude Include="Usage.h" />
+    <ClInclude Include="LiveDump.h" />
+    <ClInclude Include="Debugger.h" />
+    <ClInclude Include="CommandLine.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
