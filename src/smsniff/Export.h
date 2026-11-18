@@ -12,23 +12,23 @@
 
 enum class ExportFormat
 {
-    Text,            // /stext      filter 1
-    Tab,             // /stab       filter 2
-    Tabular,         // /stabular   filter 3
-    HtmlHorizontal,  // /shtml      filter 4
-    HtmlVertical,    // /sverhtml   filter 5
-    Xml,             // /sxml       filter 6
-    Comma,           //             filter 7 (Save dialog only)
+    Text,           // /stext      filter 1
+    Tab,            // /stab       filter 2
+    Tabular,        // /stabular   filter 3
+    HtmlHorizontal, // /shtml      filter 4
+    HtmlVertical,   // /sverhtml   filter 5
+    Xml,            // /sxml       filter 6
+    Comma,          //             filter 7 (Save dialog only)
 };
 
 struct ExportRequest
 {
     int rowCount = 0;
     const ColumnDef* colDefs = nullptr;
-    std::vector<int> columns;                            // visible column indices, in order
+    std::vector<int> columns; // visible column indices, in order
     std::function<std::wstring(int row, int col)> cell;
-    const wchar_t* reportTitle = L"Packets Summary";     // STRINGTABLE 8
-    bool addHeaderLine = false;                          // AddExportHeaderLine, tab and comma
+    const wchar_t* reportTitle = L"Packets Summary"; // STRINGTABLE 8
+    bool addHeaderLine = false;                      // AddExportHeaderLine, tab and comma
 };
 
 // Build the report as single-byte (ANSI) bytes, matching the original's encoding.

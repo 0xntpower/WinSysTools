@@ -8,9 +8,11 @@ std::vector<ProcessInfo> EnumerateProcesses()
 
     HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     if (snap == INVALID_HANDLE_VALUE)
+    {
         return list;
+    }
 
-    PROCESSENTRY32W pe{ sizeof(pe) };
+    PROCESSENTRY32W pe{sizeof(pe)};
     if (Process32FirstW(snap, &pe))
     {
         do
@@ -25,7 +27,9 @@ std::vector<ProcessInfo> EnumerateProcesses()
                 wchar_t path[MAX_PATH];
                 DWORD cch = MAX_PATH;
                 if (QueryFullProcessImageNameW(proc, 0, path, &cch))
+                {
                     pi.path.assign(path, cch);
+                }
                 CloseHandle(proc);
             }
             list.push_back(std::move(pi));

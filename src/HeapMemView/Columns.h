@@ -11,18 +11,18 @@
 struct ColumnDef
 {
     const wchar_t* title;
-    int            width;    // default pixel width
-    int            format;   // LVCFMT_*
+    int width;  // default pixel width
+    int format; // LVCFMT_*
 };
 
 inline constexpr ColumnDef kColumns[] = {
-    { L"Data Address",   120, LVCFMT_LEFT },  // 0  header + 16
-    { L"Header Address", 120, LVCFMT_LEFT },  // 1  header
-    { L"Block Size",      80, LVCFMT_RIGHT }, // 2  rawSize - 16
-    { L"Heap Handle",    120, LVCFMT_LEFT },  // 3  heap
-    { L"Segment Index",   90, LVCFMT_RIGHT }, // 4  segIndex
-    { L"New",             40, LVCFMT_CENTER },// 5  isNew -> "*"
-    { L"Data Preview",   220, LVCFMT_LEFT },  // 6  data bytes preview
+    {L"Data Address", 120, LVCFMT_LEFT},   // 0  header + 16
+    {L"Header Address", 120, LVCFMT_LEFT}, // 1  header
+    {L"Block Size", 80, LVCFMT_RIGHT},     // 2  rawSize - 16
+    {L"Heap Handle", 120, LVCFMT_LEFT},    // 3  heap
+    {L"Segment Index", 90, LVCFMT_RIGHT},  // 4  segIndex
+    {L"New", 40, LVCFMT_CENTER},           // 5  isNew -> "*"
+    {L"Data Preview", 220, LVCFMT_LEFT},   // 6  data bytes preview
 };
 
 inline constexpr int kColumnCount = static_cast<int>(std::size(kColumns));

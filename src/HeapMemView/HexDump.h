@@ -6,7 +6,12 @@
 #include <vector>
 #include <cstdio>
 
-enum class PreviewMode { None = 0, Ascii = 1, Hex = 2 };
+enum class PreviewMode
+{
+    None = 0,
+    Ascii = 1,
+    Hex = 2
+};
 
 // One-line Data Preview. ASCII mode renders each byte as its character, control
 // bytes and (unless above127 is set) high bytes as '.'. Hex mode renders "%2.2X ".
@@ -16,14 +21,21 @@ inline std::wstring BuildPreview(const std::vector<BYTE>& data, PreviewMode mode
     if (mode == PreviewMode::Hex)
     {
         wchar_t b[8];
-        for (BYTE c : data) { swprintf(b, 8, L"%02X ", c); out += b; }
+        for (BYTE c : data)
+        {
+            swprintf(b, 8, L"%02X ", c);
+            out += b;
+        }
     }
     else if (mode == PreviewMode::Ascii)
     {
         for (BYTE c : data)
         {
             wchar_t ch = L'.';
-            if (c >= 0x20 && (c < 0x80 || above127)) ch = static_cast<wchar_t>(c);
+            if (c >= 0x20 && (c < 0x80 || above127))
+            {
+                ch = static_cast<wchar_t>(c);
+            }
             out += ch;
         }
     }
@@ -32,10 +44,13 @@ inline std::wstring BuildPreview(const std::vector<BYTE>& data, PreviewMode mode
 
 // Multi-line hex view for the lower pane. Each line is an optional address, the hex
 // bytes, then the ASCII gutter, bytesPerLine bytes per line.
-inline std::wstring BuildHexDump(const std::vector<BYTE>& data, uint64_t baseAddress,
-                                 int bytesPerLine, bool showAddress, bool above127)
+inline std::wstring BuildHexDump(const std::vector<BYTE>& data, uint64_t baseAddress, int bytesPerLine,
+                                 bool showAddress, bool above127)
 {
-    if (bytesPerLine < 1) bytesPerLine = 16;
+    if (bytesPerLine < 1)
+    {
+        bytesPerLine = 16;
+    }
     std::wstring out;
     wchar_t tmp[32];
 
@@ -57,7 +72,10 @@ inline std::wstring BuildHexDump(const std::vector<BYTE>& data, uint64_t baseAdd
                 swprintf(tmp, 32, L"%02X ", c);
                 out += tmp;
                 wchar_t ch = L'.';
-                if (c >= 0x20 && (c < 0x80 || above127)) ch = static_cast<wchar_t>(c);
+                if (c >= 0x20 && (c < 0x80 || above127))
+                {
+                    ch = static_cast<wchar_t>(c);
+                }
                 ascii += ch;
             }
             else

@@ -62,6 +62,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ShadowCopyView.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="VssEnumerator.cpp" />
     <ClCompile Include="Export.cpp" />
   </ItemGroup>

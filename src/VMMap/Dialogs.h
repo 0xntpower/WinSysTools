@@ -19,15 +19,18 @@
 // ---- About ---------------------------------------------------------------
 class CAboutDlg : public CDialogImpl<CAboutDlg>
 {
-public:
-    enum { IDD = IDD_ABOUT };
+  public:
+    enum
+    {
+        IDD = IDD_ABOUT
+    };
 
     BEGIN_MSG_MAP(CAboutDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnClose)
-        COMMAND_ID_HANDLER(IDCANCEL, OnClose)
-        NOTIFY_CODE_HANDLER(NM_CLICK, OnLink)
-        NOTIFY_CODE_HANDLER(NM_RETURN, OnLink)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnClose)
+    COMMAND_ID_HANDLER(IDCANCEL, OnClose)
+    NOTIFY_CODE_HANDLER(NM_CLICK, OnLink)
+    NOTIFY_CODE_HANDLER(NM_RETURN, OnLink)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -36,10 +39,9 @@ public:
         SetDlgItemTextW(IDC_ABOUT_NAME, L"VMMap v3.33");
         // A lone & is an accelerator prefix in a static control, so the
         // ampersand is doubled and renders as a single &.
-        SetDlgItemTextW(IDC_ABOUT_DESC,
-            L"Independent source-accurate recreation of VMMap by Sysinternals, "
-            L"through reverse engineering and rewritten in modern C++20 && WTL 10.\r\n"
-            L"Author: 0xntpower");
+        SetDlgItemTextW(IDC_ABOUT_DESC, L"Independent source-accurate recreation of VMMap by Sysinternals, "
+                                        L"through reverse engineering and rewritten in modern C++20 && WTL 10.\r\n"
+                                        L"Author: 0xntpower");
         return TRUE;
     }
 
@@ -51,14 +53,21 @@ public:
         }
         return 0;
     }
-    LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }
+    LRESULT OnClose(WORD, WORD id, HWND, BOOL&)
+    {
+        EndDialog(id);
+        return 0;
+    }
 };
 
 // ---- Select Process picker ----------------------------------------------
 class CSelectProcessDlg : public CDialogImpl<CSelectProcessDlg>
 {
-public:
-    enum { IDD = IDD_SELECT_PROCESS };
+  public:
+    enum
+    {
+        IDD = IDD_SELECT_PROCESS
+    };
 
     DWORD m_pid = 0;
     std::wstring m_name;
@@ -66,12 +75,12 @@ public:
     CListViewCtrl m_list;
 
     BEGIN_MSG_MAP(CSelectProcessDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnOK)
-        COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
-        COMMAND_ID_HANDLER(IDC_PROC_REFRESH, OnRefresh)
-        NOTIFY_HANDLER(IDC_PROC_LIST, LVN_ITEMCHANGED, OnItemChanged)
-        NOTIFY_HANDLER(IDC_PROC_LIST, NM_DBLCLK, OnDblClk)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnOK)
+    COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
+    COMMAND_ID_HANDLER(IDC_PROC_REFRESH, OnRefresh)
+    NOTIFY_HANDLER(IDC_PROC_LIST, LVN_ITEMCHANGED, OnItemChanged)
+    NOTIFY_HANDLER(IDC_PROC_LIST, NM_DBLCLK, OnDblClk)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -142,10 +151,26 @@ public:
         return 0;
     }
 
-    LRESULT OnDblClk(int, LPNMHDR, BOOL&) { Accept(); return 0; }
-    LRESULT OnOK(WORD, WORD, HWND, BOOL&) { Accept(); return 0; }
-    LRESULT OnCancel(WORD, WORD, HWND, BOOL&) { EndDialog(IDCANCEL); return 0; }
-    LRESULT OnRefresh(WORD, WORD, HWND, BOOL&) { Populate(); return 0; }
+    LRESULT OnDblClk(int, LPNMHDR, BOOL&)
+    {
+        Accept();
+        return 0;
+    }
+    LRESULT OnOK(WORD, WORD, HWND, BOOL&)
+    {
+        Accept();
+        return 0;
+    }
+    LRESULT OnCancel(WORD, WORD, HWND, BOOL&)
+    {
+        EndDialog(IDCANCEL);
+        return 0;
+    }
+    LRESULT OnRefresh(WORD, WORD, HWND, BOOL&)
+    {
+        Populate();
+        return 0;
+    }
 
     void Accept()
     {

@@ -29,17 +29,17 @@ namespace
     {
         USHORT Length;
         USHORT MaximumLength;
-        PWSTR  Buffer;
+        PWSTR Buffer;
     };
 
     struct OBJECT_ATTRIBUTES
     {
-        ULONG           Length;
-        HANDLE          RootDirectory;
+        ULONG Length;
+        HANDLE RootDirectory;
         UNICODE_STRING* ObjectName;
-        ULONG           Attributes;
-        PVOID           SecurityDescriptor;
-        PVOID           SecurityQualityOfService;
+        ULONG Attributes;
+        PVOID SecurityDescriptor;
+        PVOID SecurityQualityOfService;
     };
 
     struct OBJECT_DIRECTORY_INFORMATION
@@ -50,16 +50,16 @@ namespace
 
     struct OBJECT_BASIC_INFORMATION
     {
-        ULONG       Attributes;
+        ULONG Attributes;
         ACCESS_MASK GrantedAccess;
-        ULONG       HandleCount;
-        ULONG       PointerCount;
-        ULONG       PagedPoolCharge;
-        ULONG       NonPagedPoolCharge;
-        ULONG       Reserved[3];
-        ULONG       NameInfoSize;
-        ULONG       TypeInfoSize;
-        ULONG       SecurityDescriptorSize;
+        ULONG HandleCount;
+        ULONG PointerCount;
+        ULONG PagedPoolCharge;
+        ULONG NonPagedPoolCharge;
+        ULONG Reserved[3];
+        ULONG NameInfoSize;
+        ULONG TypeInfoSize;
+        ULONG SecurityDescriptorSize;
         LARGE_INTEGER CreationTime;
     };
 
@@ -75,13 +75,13 @@ namespace
 
     struct Ntdll
     {
-        FnOpenByName     OpenDirectory = nullptr;
+        FnOpenByName OpenDirectory = nullptr;
         FnQueryDirectory QueryDirectory = nullptr;
-        FnOpenByName     OpenSymlink = nullptr;
-        FnQuerySymlink   QuerySymlink = nullptr;
-        FnQueryObject    QueryObject = nullptr;
-        FnQuerySecurity  QuerySecurity = nullptr;
-        FnSetSecurity    SetSecurity = nullptr;
+        FnOpenByName OpenSymlink = nullptr;
+        FnQuerySymlink QuerySymlink = nullptr;
+        FnQueryObject QueryObject = nullptr;
+        FnQuerySecurity QuerySecurity = nullptr;
+        FnSetSecurity SetSecurity = nullptr;
 
         // Per-type open routines. Every one of these shares the by-name open
         // signature (handle, access, attributes).
@@ -97,10 +97,17 @@ namespace
         {
             HMODULE h = ::GetModuleHandleW(L"ntdll.dll");
             if (!h)
+            {
                 h = ::LoadLibraryW(L"ntdll.dll");
+            }
             if (!h)
+            {
                 return;
-            auto get = [&](const char* n) { return ::GetProcAddress(h, n); };
+            }
+            auto get = [&](const char* n)
+            {
+                return ::GetProcAddress(h, n);
+            };
             OpenDirectory = reinterpret_cast<FnOpenByName>(get("NtOpenDirectoryObject"));
             QueryDirectory = reinterpret_cast<FnQueryDirectory>(get("NtQueryDirectoryObject"));
             OpenSymlink = reinterpret_cast<FnOpenByName>(get("NtOpenSymbolicLinkObject"));
@@ -143,12 +150,17 @@ namespace
     std::wstring fromCounted(const UNICODE_STRING& us)
     {
         if (!us.Buffer || us.Length == 0)
+        {
             return std::wstring();
+        }
         return std::wstring(us.Buffer, us.Length / sizeof(wchar_t));
     }
 
-    bool success(NTSTATUS s) { return s >= 0; }
-}
+    bool success(NTSTATUS s)
+    {
+        return s >= 0;
+    }
+} // namespace
 
 namespace nt
 {
@@ -157,7 +169,9 @@ namespace nt
         std::vector<ObjEntry> out;
         const Ntdll& nt = api();
         if (!nt.OpenDirectory || !nt.QueryDirectory)
+        {
             return out;
+        }
 
         UNICODE_STRING us{};
         OBJECT_ATTRIBUTES oa{};
@@ -165,7 +179,9 @@ namespace nt
 
         HANDLE dir = nullptr;
         if (!success(nt.OpenDirectory(&dir, kDirectoryQuery, &oa)) || !dir)
+        {
             return out;
+        }
 
         std::vector<BYTE> buffer(64 * 1024);
         ULONG context = 0;
@@ -174,12 +190,14 @@ namespace nt
         for (;;)
         {
             ULONG retLen = 0;
-            NTSTATUS st = nt.QueryDirectory(dir, buffer.data(), static_cast<ULONG>(buffer.size()),
-                                            FALSE, restart, &context, &retLen);
+            NTSTATUS st = nt.QueryDirectory(dir, buffer.data(), static_cast<ULONG>(buffer.size()), FALSE, restart,
+                                            &context, &retLen);
             restart = FALSE;
 
             if (st == kStatusNoMoreEntries)
+            {
                 break;
+            }
             if (st == kStatusBufferTooSmall || retLen > buffer.size())
             {
                 buffer.resize(retLen ? retLen + 4096 : buffer.size() * 2);
@@ -187,7 +205,9 @@ namespace nt
                 continue;
             }
             if (!success(st) && st != kStatusMoreEntries)
+            {
                 break;
+            }
 
             auto* info = reinterpret_cast<OBJECT_DIRECTORY_INFORMATION*>(buffer.data());
             size_t added = 0;
@@ -202,9 +222,13 @@ namespace nt
             }
 
             if (st != kStatusMoreEntries)
+            {
                 break;
+            }
             if (added == 0)
-                break;  // guard against a non-advancing call
+            {
+                break; // guard against a non-advancing call
+            }
         }
 
         ::CloseHandle(dir);
@@ -218,7 +242,9 @@ namespace nt
                 {
                     std::wstring target;
                     if (ResolveSymlink(base + L"\\" + e.name, target))
+                    {
                         e.symlink = target;
+                    }
                 }
             }
         }
@@ -230,7 +256,9 @@ namespace nt
     {
         const Ntdll& nt = api();
         if (!nt.OpenSymlink || !nt.QuerySymlink)
+        {
             return false;
+        }
 
         UNICODE_STRING us{};
         OBJECT_ATTRIBUTES oa{};
@@ -238,7 +266,9 @@ namespace nt
 
         HANDLE link = nullptr;
         if (!success(nt.OpenSymlink(&link, kSymlinkQuery, &oa)) || !link)
+        {
             return false;
+        }
 
         std::vector<wchar_t> buf(2048);
         UNICODE_STRING result{};
@@ -250,7 +280,9 @@ namespace nt
         NTSTATUS st = nt.QuerySymlink(link, &result, &retLen);
         ::CloseHandle(link);
         if (!success(st))
+        {
             return false;
+        }
 
         target.assign(result.Buffer, result.Length / sizeof(wchar_t));
         return true;
@@ -261,18 +293,47 @@ namespace nt
         const Ntdll& nt = api();
 
         FnOpenByName open = nullptr;
-        if (_wcsicmp(type.c_str(), L"Directory") == 0)       open = nt.OpenDirectory;
-        else if (_wcsicmp(type.c_str(), L"SymbolicLink") == 0) open = nt.OpenSymlink;
-        else if (_wcsicmp(type.c_str(), L"Mutant") == 0)     open = nt.OpenMutant;
-        else if (_wcsicmp(type.c_str(), L"Event") == 0)      open = nt.OpenEvent;
-        else if (_wcsicmp(type.c_str(), L"Semaphore") == 0)  open = nt.OpenSemaphore;
-        else if (_wcsicmp(type.c_str(), L"Timer") == 0)      open = nt.OpenTimer;
-        else if (_wcsicmp(type.c_str(), L"Section") == 0)    open = nt.OpenSection;
-        else if (_wcsicmp(type.c_str(), L"Job") == 0)        open = nt.OpenJob;
-        else if (_wcsicmp(type.c_str(), L"KeyedEvent") == 0) open = nt.OpenKeyedEvent;
+        if (_wcsicmp(type.c_str(), L"Directory") == 0)
+        {
+            open = nt.OpenDirectory;
+        }
+        else if (_wcsicmp(type.c_str(), L"SymbolicLink") == 0)
+        {
+            open = nt.OpenSymlink;
+        }
+        else if (_wcsicmp(type.c_str(), L"Mutant") == 0)
+        {
+            open = nt.OpenMutant;
+        }
+        else if (_wcsicmp(type.c_str(), L"Event") == 0)
+        {
+            open = nt.OpenEvent;
+        }
+        else if (_wcsicmp(type.c_str(), L"Semaphore") == 0)
+        {
+            open = nt.OpenSemaphore;
+        }
+        else if (_wcsicmp(type.c_str(), L"Timer") == 0)
+        {
+            open = nt.OpenTimer;
+        }
+        else if (_wcsicmp(type.c_str(), L"Section") == 0)
+        {
+            open = nt.OpenSection;
+        }
+        else if (_wcsicmp(type.c_str(), L"Job") == 0)
+        {
+            open = nt.OpenJob;
+        }
+        else if (_wcsicmp(type.c_str(), L"KeyedEvent") == 0)
+        {
+            open = nt.OpenKeyedEvent;
+        }
 
         if (!open)
+        {
             return nullptr;
+        }
 
         UNICODE_STRING us{};
         OBJECT_ATTRIBUTES oa{};
@@ -280,7 +341,9 @@ namespace nt
 
         HANDLE h = nullptr;
         if (!success(open(&h, access, &oa)))
+        {
             return nullptr;
+        }
         return h;
     }
 
@@ -301,9 +364,13 @@ namespace nt
         ACCESS_MASK access = READ_CONTROL | 0x0001;
         HANDLE h = OpenForQuery(path, type, access);
         if (!h)
+        {
             h = OpenForQuery(path, type, READ_CONTROL);
+        }
         if (!h || !nt.QueryObject)
+        {
             return d;
+        }
 
         OBJECT_BASIC_INFORMATION obi{};
         ULONG retLen = 0;
@@ -327,16 +394,22 @@ namespace nt
     {
         const Ntdll& nt = api();
         if (!object || !nt.QuerySecurity)
+        {
             return nullptr;
+        }
 
         ULONG len = 0;
         NTSTATUS st = nt.QuerySecurity(object, si, nullptr, 0, &len);
         if (len == 0)
+        {
             return nullptr;
+        }
 
         auto* sd = static_cast<PSECURITY_DESCRIPTOR>(::LocalAlloc(LPTR, len));
         if (!sd)
+        {
             return nullptr;
+        }
         st = nt.QuerySecurity(object, si, sd, len, &len);
         if (!success(st))
         {
@@ -350,7 +423,9 @@ namespace nt
     {
         const Ntdll& nt = api();
         if (!object || !nt.SetSecurity)
+        {
             return false;
+        }
         return success(nt.SetSecurity(object, si, sd));
     }
 
@@ -358,13 +433,17 @@ namespace nt
     {
         HANDLE token = nullptr;
         if (!::OpenProcessToken(::GetCurrentProcess(), TOKEN_QUERY, &token))
+        {
             return false;
+        }
         TOKEN_ELEVATION elev{};
         DWORD cb = 0;
         bool result = false;
         if (::GetTokenInformation(token, TokenElevation, &elev, sizeof(elev), &cb))
+        {
             result = elev.TokenIsElevated != 0;
+        }
         ::CloseHandle(token);
         return result;
     }
-}
+} // namespace nt

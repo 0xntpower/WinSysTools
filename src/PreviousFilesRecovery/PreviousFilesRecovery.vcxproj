@@ -62,6 +62,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="PreviousFilesRecovery.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="ShadowCopy.cpp" />
     <ClCompile Include="Scanner.cpp" />
     <ClCompile Include="Export.cpp" />

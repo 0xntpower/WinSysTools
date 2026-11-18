@@ -17,15 +17,24 @@ namespace
 
     std::vector<int> effectiveColumns(const WmiResult& res, const ExportOptions& opt)
     {
-        if (!opt.columns.empty()) return opt.columns;
+        if (!opt.columns.empty())
+        {
+            return opt.columns;
+        }
         std::vector<int> all;
-        for (int i = 0; i < (int)res.columns.size(); ++i) all.push_back(i);
+        for (int i = 0; i < (int)res.columns.size(); ++i)
+        {
+            all.push_back(i);
+        }
         return all;
     }
 
     std::wstring cellText(const WmiResult& res, const WmiRow& r, int col, const DisplayOptions& d)
     {
-        if (col < 0 || col >= (int)r.cells.size()) return {};
+        if (col < 0 || col >= (int)r.cells.size())
+        {
+            return {};
+        }
         return r.cells[col].text(d);
     }
 
@@ -34,21 +43,41 @@ namespace
         std::wstring out;
         out.reserve(s.size());
         for (wchar_t c : s)
+        {
             switch (c)
             {
-            case L'&': out += L"&amp;"; break;
-            case L'<': out += L"&lt;"; break;
-            case L'>': out += L"&gt;"; break;
-            default:   out += c; break;
+            case L'&':
+                out += L"&amp;";
+                break;
+            case L'<':
+                out += L"&lt;";
+                break;
+            case L'>':
+                out += L"&gt;";
+                break;
+            default:
+                out += c;
+                break;
             }
+        }
         return out;
     }
 
     std::wstring csvField(const std::wstring& s)
     {
-        if (s.find_first_of(L",\"\r\n") == std::wstring::npos) return s;
+        if (s.find_first_of(L",\"\r\n") == std::wstring::npos)
+        {
+            return s;
+        }
         std::wstring out = L"\"";
-        for (wchar_t c : s) { if (c == L'"') out += L'"'; out += c; }
+        for (wchar_t c : s)
+        {
+            if (c == L'"')
+            {
+                out += L'"';
+            }
+            out += c;
+        }
         out += L'"';
         return out;
     }
@@ -59,9 +88,18 @@ namespace
         std::wstring out;
         for (wchar_t c : name)
         {
-            if (c == L' ') out += L'_';
-            else if (c >= L'A' && c <= L'Z') out += (wchar_t)(c - L'A' + L'a');
-            else out += c;
+            if (c == L' ')
+            {
+                out += L'_';
+            }
+            else if (c >= L'A' && c <= L'Z')
+            {
+                out += (wchar_t)(c - L'A' + L'a');
+            }
+            else
+            {
+                out += c;
+            }
         }
         return out.empty() ? L"field" : out;
     }
@@ -69,8 +107,14 @@ namespace
     std::string toUtf8(const std::wstring& w, bool bom)
     {
         std::string out;
-        if (bom) out.append("\xEF\xBB\xBF");
-        if (w.empty()) return out;
+        if (bom)
+        {
+            out.append("\xEF\xBB\xBF");
+        }
+        if (w.empty())
+        {
+            return out;
+        }
         int n = ::WideCharToMultiByte(CP_UTF8, 0, w.data(), (int)w.size(), nullptr, 0, nullptr, nullptr);
         std::string body(n, '\0');
         ::WideCharToMultiByte(CP_UTF8, 0, w.data(), (int)w.size(), body.data(), n, nullptr, nullptr);
@@ -80,13 +124,16 @@ namespace
 
     std::string toAnsi(const std::wstring& w)
     {
-        if (w.empty()) return {};
+        if (w.empty())
+        {
+            return {};
+        }
         int n = ::WideCharToMultiByte(CP_ACP, 0, w.data(), (int)w.size(), nullptr, 0, nullptr, nullptr);
         std::string out(n, '\0');
         ::WideCharToMultiByte(CP_ACP, 0, w.data(), (int)w.size(), out.data(), n, nullptr, nullptr);
         return out;
     }
-}
+} // namespace
 
 std::wstring BuildReport(const WmiResult& res, ExportFormat format, const ExportOptions& opt)
 {
@@ -121,7 +168,10 @@ std::wstring BuildReport(const WmiResult& res, ExportFormat format, const Export
         // (no trailing tab, matching v1.55 and later).
         for (size_t i = 0; i < cols.size(); ++i)
         {
-            if (i) out += L'\t';
+            if (i)
+            {
+                out += L'\t';
+            }
             out += res.columns[cols[i]].name;
         }
         out += L"\r\n";
@@ -129,7 +179,10 @@ std::wstring BuildReport(const WmiResult& res, ExportFormat format, const Export
         {
             for (size_t i = 0; i < cols.size(); ++i)
             {
-                if (i) out += L'\t';
+                if (i)
+                {
+                    out += L'\t';
+                }
                 out += cellText(res, r, cols[i], d);
             }
             out += L"\r\n";
@@ -140,22 +193,33 @@ std::wstring BuildReport(const WmiResult& res, ExportFormat format, const Export
     {
         // Fixed-width columns, each padded to its widest value (or header).
         std::vector<size_t> w(cols.size());
-        for (size_t i = 0; i < cols.size(); ++i) w[i] = res.columns[cols[i]].name.size();
-        for (const auto& r : res.rows)
-            for (size_t i = 0; i < cols.size(); ++i)
-                w[i] = std::max(w[i], cellText(res, r, cols[i], d).size());
         for (size_t i = 0; i < cols.size(); ++i)
         {
-            std::wstring h = res.columns[cols[i]].name; h.resize(w[i], L' ');
-            out += h; out += (i + 1 < cols.size()) ? L" " : L"";
+            w[i] = res.columns[cols[i]].name.size();
+        }
+        for (const auto& r : res.rows)
+        {
+            for (size_t i = 0; i < cols.size(); ++i)
+            {
+                w[i] = std::max(w[i], cellText(res, r, cols[i], d).size());
+            }
+        }
+        for (size_t i = 0; i < cols.size(); ++i)
+        {
+            std::wstring h = res.columns[cols[i]].name;
+            h.resize(w[i], L' ');
+            out += h;
+            out += (i + 1 < cols.size()) ? L" " : L"";
         }
         out += L"\r\n";
         for (const auto& r : res.rows)
         {
             for (size_t i = 0; i < cols.size(); ++i)
             {
-                std::wstring v = cellText(res, r, cols[i], d); v.resize(w[i], L' ');
-                out += v; out += (i + 1 < cols.size()) ? L" " : L"";
+                std::wstring v = cellText(res, r, cols[i], d);
+                v.resize(w[i], L' ');
+                out += v;
+                out += (i + 1 < cols.size()) ? L" " : L"";
             }
             out += L"\r\n";
         }
@@ -164,12 +228,16 @@ std::wstring BuildReport(const WmiResult& res, ExportFormat format, const Export
     case ExportFormat::Csv:
     {
         for (size_t i = 0; i < cols.size(); ++i)
+        {
             out += csvField(res.columns[cols[i]].name) + (i + 1 < cols.size() ? L"," : L"");
+        }
         out += L"\r\n";
         for (const auto& r : res.rows)
         {
             for (size_t i = 0; i < cols.size(); ++i)
+            {
                 out += csvField(cellText(res, r, cols[i], d)) + (i + 1 < cols.size() ? L"," : L"");
+            }
             out += L"\r\n";
         }
         break;
@@ -177,18 +245,28 @@ std::wstring BuildReport(const WmiResult& res, ExportFormat format, const Export
     case ExportFormat::HtmlHorizontal:
     {
         out += L"<html><head><meta http-equiv='content-type' content='text/html;charset=utf-8'>";
-        out += L"<title>"; out += kAppName; out += L"</title></head>\r\n<body>\r\n";
-        out += L"<h3>"; out += kAppName; out += L"</h3>\r\n";
-        out += L"<br><h4>Created by using "; out += kAppName; out += L"</h4><p>\r\n";
+        out += L"<title>";
+        out += kAppName;
+        out += L"</title></head>\r\n<body>\r\n";
+        out += L"<h3>";
+        out += kAppName;
+        out += L"</h3>\r\n";
+        out += L"<br><h4>Created by using ";
+        out += kAppName;
+        out += L"</h4><p>\r\n";
         out += L"<table border=\"1\" cellpadding=\"5\"><tr>";
         for (int c : cols)
+        {
             out += L"<th>" + htmlEscape(res.columns[c].name) + L"</th>";
+        }
         out += L"</tr>\r\n";
         for (const auto& r : res.rows)
         {
             out += L"<tr>";
             for (int c : cols)
+            {
                 out += L"<td nowrap>" + htmlEscape(cellText(res, r, c, d)) + L"</td>";
+            }
             out += L"</tr>\r\n";
         }
         out += L"</table>\r\n</body></html>\r\n";
@@ -197,15 +275,23 @@ std::wstring BuildReport(const WmiResult& res, ExportFormat format, const Export
     case ExportFormat::HtmlVertical:
     {
         out += L"<html><head><meta http-equiv='content-type' content='text/html;charset=utf-8'>";
-        out += L"<title>"; out += kAppName; out += L"</title></head>\r\n<body>\r\n";
-        out += L"<h3>"; out += kAppName; out += L"</h3>\r\n";
-        out += L"<br><h4>Created by using "; out += kAppName; out += L"</h4><p>\r\n";
+        out += L"<title>";
+        out += kAppName;
+        out += L"</title></head>\r\n<body>\r\n";
+        out += L"<h3>";
+        out += kAppName;
+        out += L"</h3>\r\n";
+        out += L"<br><h4>Created by using ";
+        out += kAppName;
+        out += L"</h4><p>\r\n";
         for (const auto& r : res.rows)
         {
             out += L"<table border=\"1\" cellpadding=\"5\">\r\n";
             for (int c : cols)
-                out += L"<tr><td nowrap><b>" + htmlEscape(res.columns[c].name) +
-                       L"</b></td><td>" + htmlEscape(cellText(res, r, c, d)) + L"</td></tr>\r\n";
+            {
+                out += L"<tr><td nowrap><b>" + htmlEscape(res.columns[c].name) + L"</b></td><td>" +
+                       htmlEscape(cellText(res, r, c, d)) + L"</td></tr>\r\n";
+            }
             out += L"</table><br>\r\n";
         }
         out += L"</body></html>\r\n";
@@ -237,7 +323,14 @@ std::wstring BuildReport(const WmiResult& res, ExportFormat format, const Export
             {
                 std::wstring v = cellText(res, res.rows[ri], cols[i], d);
                 std::wstring esc;
-                for (wchar_t ch : v) { if (ch == L'"' || ch == L'\\') esc += L'\\'; esc += ch; }
+                for (wchar_t ch : v)
+                {
+                    if (ch == L'"' || ch == L'\\')
+                    {
+                        esc += L'\\';
+                    }
+                    esc += ch;
+                }
                 out += L"\t\"" + res.columns[cols[i]].name + L"\": \"" + esc + L"\"" +
                        (i + 1 < cols.size() ? L",\r\n" : L"\r\n");
             }
@@ -250,8 +343,7 @@ std::wstring BuildReport(const WmiResult& res, ExportFormat format, const Export
     return out;
 }
 
-bool WriteReport(const std::wstring& path, const WmiResult& res,
-                 ExportFormat format, const ExportOptions& opt)
+bool WriteReport(const std::wstring& path, const WmiResult& res, ExportFormat format, const ExportOptions& opt)
 {
     std::wstring body = BuildReport(res, format, opt);
 
@@ -261,11 +353,17 @@ bool WriteReport(const std::wstring& path, const WmiResult& res,
     int enc = opt.encoding;
     bool utf16;
     if (enc == Enc_Default)
+    {
         utf16 = (format != ExportFormat::Csv);
+    }
     else
+    {
         utf16 = (enc == Enc_Unicode);
+    }
     if (enc == Enc_Default && format == ExportFormat::Csv)
+    {
         enc = Enc_Ansi;
+    }
 
     std::string bytes;
     if (utf16)
@@ -291,20 +389,55 @@ bool WriteReport(const std::wstring& path, const WmiResult& res,
     }
 
     std::ofstream f(path, std::ios::binary);
-    if (!f) return false;
+    if (!f)
+    {
+        return false;
+    }
     f.write(bytes.data(), (std::streamsize)bytes.size());
     return f.good();
 }
 
 bool FormatFromSwitch(const std::wstring& sw, ExportFormat& out)
 {
-    if (_wcsicmp(sw.c_str(), L"/stext") == 0)    { out = ExportFormat::Text;           return true; }
-    if (_wcsicmp(sw.c_str(), L"/stab") == 0)     { out = ExportFormat::Tab;            return true; }
-    if (_wcsicmp(sw.c_str(), L"/stabular") == 0) { out = ExportFormat::Tabular;        return true; }
-    if (_wcsicmp(sw.c_str(), L"/scomma") == 0)   { out = ExportFormat::Csv;            return true; }
-    if (_wcsicmp(sw.c_str(), L"/shtml") == 0)    { out = ExportFormat::HtmlHorizontal; return true; }
-    if (_wcsicmp(sw.c_str(), L"/sverhtml") == 0) { out = ExportFormat::HtmlVertical;   return true; }
-    if (_wcsicmp(sw.c_str(), L"/sxml") == 0)     { out = ExportFormat::Xml;            return true; }
-    if (_wcsicmp(sw.c_str(), L"/sjson") == 0)    { out = ExportFormat::Json;           return true; }
+    if (_wcsicmp(sw.c_str(), L"/stext") == 0)
+    {
+        out = ExportFormat::Text;
+        return true;
+    }
+    if (_wcsicmp(sw.c_str(), L"/stab") == 0)
+    {
+        out = ExportFormat::Tab;
+        return true;
+    }
+    if (_wcsicmp(sw.c_str(), L"/stabular") == 0)
+    {
+        out = ExportFormat::Tabular;
+        return true;
+    }
+    if (_wcsicmp(sw.c_str(), L"/scomma") == 0)
+    {
+        out = ExportFormat::Csv;
+        return true;
+    }
+    if (_wcsicmp(sw.c_str(), L"/shtml") == 0)
+    {
+        out = ExportFormat::HtmlHorizontal;
+        return true;
+    }
+    if (_wcsicmp(sw.c_str(), L"/sverhtml") == 0)
+    {
+        out = ExportFormat::HtmlVertical;
+        return true;
+    }
+    if (_wcsicmp(sw.c_str(), L"/sxml") == 0)
+    {
+        out = ExportFormat::Xml;
+        return true;
+    }
+    if (_wcsicmp(sw.c_str(), L"/sjson") == 0)
+    {
+        out = ExportFormat::Json;
+        return true;
+    }
     return false;
 }

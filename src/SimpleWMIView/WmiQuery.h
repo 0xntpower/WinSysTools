@@ -12,11 +12,11 @@
 
 struct WmiQueryParams
 {
-    std::wstring nameSpace = L"root\\CIMV2";   // Namespace (default)
+    std::wstring nameSpace = L"root\\CIMV2";      // Namespace (default)
     std::wstring classOrQuery = L"Win32_Process"; // Class, or a full WQL query
-    int          connectComputer = 1;          // 1 this computer, 2 remote
-    std::wstring computerName;                  // for connectComputer == 2
-    std::wstring userName;                      // optional remote credentials
+    int connectComputer = 1;                      // 1 this computer, 2 remote
+    std::wstring computerName;                    // for connectComputer == 2
+    std::wstring userName;                        // optional remote credentials
     std::wstring password;
 };
 

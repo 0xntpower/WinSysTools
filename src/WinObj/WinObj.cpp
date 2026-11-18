@@ -32,7 +32,9 @@ namespace
         if (LPWSTR* a = ::CommandLineToArgvW(::GetCommandLineW(), &n))
         {
             for (int i = 1; i < n; ++i)
+            {
                 v.emplace_back(a[i]);
+            }
             ::LocalFree(a);
         }
         return v;
@@ -41,8 +43,12 @@ namespace
     bool hasFlag(const std::vector<std::wstring>& a, const wchar_t* flag)
     {
         for (const std::wstring& s : a)
+        {
             if (_wcsicmp(s.c_str(), flag) == 0)
+            {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -50,30 +56,29 @@ namespace
     {
         HKEY key = nullptr;
         if (::RegOpenKeyExW(root, sub, 0, KEY_QUERY_VALUE | KEY_WOW64_64KEY, &key) != ERROR_SUCCESS)
+        {
             return false;
+        }
         DWORD data = 0, cb = sizeof(data), type = 0;
-        LSTATUS st = ::RegQueryValueExW(key, kEulaValue, nullptr, &type,
-                                        reinterpret_cast<LPBYTE>(&data), &cb);
+        LSTATUS st = ::RegQueryValueExW(key, kEulaValue, nullptr, &type, reinterpret_cast<LPBYTE>(&data), &cb);
         ::RegCloseKey(key);
         return st == ERROR_SUCCESS && data != 0;
     }
 
     bool eulaAccepted()
     {
-        return eulaFlagSet(HKEY_CURRENT_USER, kAppKey)
-            || eulaFlagSet(HKEY_CURRENT_USER, kSuiteKey)
-            || eulaFlagSet(HKEY_LOCAL_MACHINE, kSuiteKey);
+        return eulaFlagSet(HKEY_CURRENT_USER, kAppKey) || eulaFlagSet(HKEY_CURRENT_USER, kSuiteKey) ||
+               eulaFlagSet(HKEY_LOCAL_MACHINE, kSuiteKey);
     }
 
     void writeEulaAccepted()
     {
         HKEY key = nullptr;
-        if (::RegCreateKeyExW(HKEY_CURRENT_USER, kAppKey, 0, nullptr, 0,
-                              KEY_SET_VALUE, nullptr, &key, nullptr) == ERROR_SUCCESS)
+        if (::RegCreateKeyExW(HKEY_CURRENT_USER, kAppKey, 0, nullptr, 0, KEY_SET_VALUE, nullptr, &key, nullptr) ==
+            ERROR_SUCCESS)
         {
             DWORD one = 1;
-            ::RegSetValueExW(key, kEulaValue, 0, REG_DWORD,
-                             reinterpret_cast<const BYTE*>(&one), sizeof(one));
+            ::RegSetValueExW(key, kEulaValue, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&one), sizeof(one));
             ::RegCloseKey(key);
         }
     }
@@ -90,12 +95,12 @@ namespace
             return true;
         }
         int r = ::MessageBoxW(nullptr,
-            L"WinObj license terms.\r\n\r\n"
-            L"This is an independent, source-accurate recreation of the Sysinternals "
-            L"WinObj utility. It browses the Windows Object Manager namespace.\r\n\r\n"
-            L"You can also use the /accepteula command-line switch to accept the terms.\r\n\r\n"
-            L"Do you accept the license terms?",
-            L"WinObj License Agreement", MB_YESNO | MB_ICONINFORMATION);
+                              L"WinObj license terms.\r\n\r\n"
+                              L"This is an independent, source-accurate recreation of the Sysinternals "
+                              L"WinObj utility. It browses the Windows Object Manager namespace.\r\n\r\n"
+                              L"You can also use the /accepteula command-line switch to accept the terms.\r\n\r\n"
+                              L"Do you accept the license terms?",
+                              L"WinObj License Agreement", MB_YESNO | MB_ICONINFORMATION);
         if (r == IDYES)
         {
             writeEulaAccepted();
@@ -113,7 +118,9 @@ namespace
         // The original frame is created with the MFC default rectangle, so the
         // first-launch window cascades. Saved placement overrides on later runs.
         if (frame.CreateEx(nullptr) == nullptr)
+        {
             return 0;
+        }
         frame.ShowWindow(frame.m_havePlacement ? frame.m_placement.showCmd : nCmdShow);
         frame.UpdateWindow();
 
@@ -121,7 +128,7 @@ namespace
         _Module.RemoveMessageLoop();
         return ret;
     }
-}
+} // namespace
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 {
@@ -129,13 +136,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
     const bool acceptFlag = hasFlag(a, L"-accepteula") || hasFlag(a, L"/accepteula");
 
     if (!acceptEula(acceptFlag))
+    {
         return 0;
+    }
 
     ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
-    INITCOMMONCONTROLSEX icc{ sizeof(icc),
-        ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES |
-        ICC_TREEVIEW_CLASSES | ICC_LINK_CLASS };
+    INITCOMMONCONTROLSEX icc{sizeof(icc), ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES |
+                                              ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES | ICC_LINK_CLASS};
     PinToLightMode();
     if (!::InitCommonControlsEx(&icc))
     {

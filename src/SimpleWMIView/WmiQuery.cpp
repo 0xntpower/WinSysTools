@@ -19,13 +19,20 @@ namespace
     // with bIsLocal = FALSE, which the original uses.
     bool parseCimDateTime(const std::wstring& s, FILETIME& out)
     {
-        if (s.size() < 21) return false;
-        auto num = [&](size_t off, int len) -> int {
+        if (s.size() < 21)
+        {
+            return false;
+        }
+        auto num = [&](size_t off, int len) -> int
+        {
             int v = 0;
             for (int i = 0; i < len; ++i)
             {
                 wchar_t c = s[off + i];
-                if (c < L'0' || c > L'9') return -1;
+                if (c < L'0' || c > L'9')
+                {
+                    return -1;
+                }
                 v = v * 10 + (c - L'0');
             }
             return v;
@@ -35,14 +42,22 @@ namespace
         int hour = num(8, 2), minu = num(10, 2), sec = num(12, 2);
         int micro = num(15, 6);
         if (year < 0 || mon < 0 || day < 0 || hour < 0 || minu < 0 || sec < 0)
+        {
             return false;
-        st.wYear = (WORD)year; st.wMonth = (WORD)mon; st.wDay = (WORD)day;
-        st.wHour = (WORD)hour; st.wMinute = (WORD)minu; st.wSecond = (WORD)sec;
+        }
+        st.wYear = (WORD)year;
+        st.wMonth = (WORD)mon;
+        st.wDay = (WORD)day;
+        st.wHour = (WORD)hour;
+        st.wMinute = (WORD)minu;
+        st.wSecond = (WORD)sec;
         st.wMilliseconds = (WORD)(micro < 0 ? 0 : micro / 1000);
 
         FILETIME ft{};
         if (!::SystemTimeToFileTime(&st, &ft))
+        {
             return false;
+        }
 
         // Apply the UTC offset (+/- minutes) to get UTC.
         wchar_t sign = s[21];
@@ -53,7 +68,14 @@ namespace
             u.LowPart = ft.dwLowDateTime;
             u.HighPart = ft.dwHighDateTime;
             long long delta = (long long)offMin * 60 * 10000000LL;
-            if (sign == L'+') u.QuadPart -= delta; else u.QuadPart += delta;
+            if (sign == L'+')
+            {
+                u.QuadPart -= delta;
+            }
+            else
+            {
+                u.QuadPart += delta;
+            }
             ft.dwLowDateTime = u.LowPart;
             ft.dwHighDateTime = u.HighPart;
         }
@@ -67,20 +89,50 @@ namespace
         wchar_t b[32];
         switch (elemType)
         {
-        case VT_BSTR:  { BSTR v = ((BSTR*)p)[i]; out += bstrToStr(v); break; }
-        case VT_I4: case VT_UI4: case VT_INT: case VT_UINT:
-            _itow(((LONG*)p)[i], b, 10); out += b; break;
-        case VT_I2: case VT_UI2:
-            _itow(((SHORT*)p)[i], b, 10); out += b; break;
-        case VT_I1: case VT_UI1:
-            _itow(((BYTE*)p)[i], b, 10); out += b; break;
+        case VT_BSTR:
+        {
+            BSTR v = ((BSTR*)p)[i];
+            out += bstrToStr(v);
+            break;
+        }
+        case VT_I4:
+        case VT_UI4:
+        case VT_INT:
+        case VT_UINT:
+            _itow(((LONG*)p)[i], b, 10);
+            out += b;
+            break;
+        case VT_I2:
+        case VT_UI2:
+            _itow(((SHORT*)p)[i], b, 10);
+            out += b;
+            break;
+        case VT_I1:
+        case VT_UI1:
+            _itow(((BYTE*)p)[i], b, 10);
+            out += b;
+            break;
         case VT_BOOL:
-            out += ((VARIANT_BOOL*)p)[i] ? L"True" : L"False"; break;
-        case VT_I8:  _i64tow(((LONGLONG*)p)[i], b, 10); out += b; break;
-        case VT_UI8: _ui64tow(((ULONGLONG*)p)[i], b, 10); out += b; break;
-        case VT_R4:  _snwprintf(b, 31, L"%f", ((float*)p)[i]);  out += b; break;
-        case VT_R8:  _snwprintf(b, 31, L"%f", ((double*)p)[i]); out += b; break;
-        default: break;
+            out += ((VARIANT_BOOL*)p)[i] ? L"True" : L"False";
+            break;
+        case VT_I8:
+            _i64tow(((LONGLONG*)p)[i], b, 10);
+            out += b;
+            break;
+        case VT_UI8:
+            _ui64tow(((ULONGLONG*)p)[i], b, 10);
+            out += b;
+            break;
+        case VT_R4:
+            _snwprintf(b, 31, L"%f", ((float*)p)[i]);
+            out += b;
+            break;
+        case VT_R8:
+            _snwprintf(b, 31, L"%f", ((double*)p)[i]);
+            out += b;
+            break;
+        default:
+            break;
         }
     }
 
@@ -88,16 +140,25 @@ namespace
     {
         std::wstring out;
         SAFEARRAY* sa = (v.vt & VT_BYREF) ? *v.pparray : v.parray;
-        if (!sa) return out;
+        if (!sa)
+        {
+            return out;
+        }
         VARTYPE et = v.vt & VT_TYPEMASK;
         long lb = 0, ub = -1;
         ::SafeArrayGetLBound(sa, 1, &lb);
         ::SafeArrayGetUBound(sa, 1, &ub);
         void* data = nullptr;
-        if (FAILED(::SafeArrayAccessData(sa, &data))) return out;
+        if (FAILED(::SafeArrayAccessData(sa, &data)))
+        {
+            return out;
+        }
         for (long i = lb; i <= ub; ++i)
         {
-            if (i != lb) out += L", ";
+            if (i != lb)
+            {
+                out += L", ";
+            }
             appendArrayElement(out, et, data, i - lb);
         }
         ::SafeArrayUnaccessData(sa);
@@ -157,30 +218,68 @@ namespace
         switch (v.vt)
         {
         case VT_BSTR:
-            c.kind = Cell::Str; c.str = bstrToStr(v.bstrVal); break;
+            c.kind = Cell::Str;
+            c.str = bstrToStr(v.bstrVal);
+            break;
         case VT_BOOL:
-            c.kind = Cell::Bool; c.i64 = v.boolVal ? 1 : 0; break;
-        case VT_I1:  c.kind = Cell::Int;  c.i64 = v.cVal; break;
-        case VT_UI1: c.kind = (base == CIM_SINT8) ? Cell::Int : Cell::Uint; c.i64 = v.bVal; break;
-        case VT_I2:  c.kind = Cell::Int;  c.i64 = v.iVal; break;
-        case VT_UI2: c.kind = Cell::Uint; c.i64 = v.uiVal; break;
-        case VT_I4: case VT_INT:
-            c.kind = Cell::Int;  c.i64 = v.lVal; break;
-        case VT_UI4: case VT_UINT:
-            c.kind = Cell::Uint; c.i64 = (unsigned)v.ulVal; break;
-        case VT_I8:  c.kind = Cell::Int;  c.i64 = v.llVal; break;
-        case VT_UI8: c.kind = Cell::Uint; c.i64 = (long long)v.ullVal; break;
-        case VT_R4:  c.kind = Cell::Real; c.real = v.fltVal; break;
-        case VT_R8:  c.kind = Cell::Real; c.real = v.dblVal; break;
+            c.kind = Cell::Bool;
+            c.i64 = v.boolVal ? 1 : 0;
+            break;
+        case VT_I1:
+            c.kind = Cell::Int;
+            c.i64 = v.cVal;
+            break;
+        case VT_UI1:
+            c.kind = (base == CIM_SINT8) ? Cell::Int : Cell::Uint;
+            c.i64 = v.bVal;
+            break;
+        case VT_I2:
+            c.kind = Cell::Int;
+            c.i64 = v.iVal;
+            break;
+        case VT_UI2:
+            c.kind = Cell::Uint;
+            c.i64 = v.uiVal;
+            break;
+        case VT_I4:
+        case VT_INT:
+            c.kind = Cell::Int;
+            c.i64 = v.lVal;
+            break;
+        case VT_UI4:
+        case VT_UINT:
+            c.kind = Cell::Uint;
+            c.i64 = (unsigned)v.ulVal;
+            break;
+        case VT_I8:
+            c.kind = Cell::Int;
+            c.i64 = v.llVal;
+            break;
+        case VT_UI8:
+            c.kind = Cell::Uint;
+            c.i64 = (long long)v.ullVal;
+            break;
+        case VT_R4:
+            c.kind = Cell::Real;
+            c.real = v.fltVal;
+            break;
+        case VT_R8:
+            c.kind = Cell::Real;
+            c.real = v.dblVal;
+            break;
         default:
         {
             // Fall back to a string conversion for anything else.
             CComVariant copy;
             if (SUCCEEDED(copy.ChangeType(VT_BSTR, &v)) && copy.vt == VT_BSTR)
             {
-                c.kind = Cell::Str; c.str = bstrToStr(copy.bstrVal);
+                c.kind = Cell::Str;
+                c.str = bstrToStr(copy.bstrVal);
             }
-            else c.kind = Cell::Empty;
+            else
+            {
+                c.kind = Cell::Empty;
+            }
             break;
         }
         }
@@ -190,10 +289,14 @@ namespace
     // Read the property names and CIM types of a class object into the columns.
     void columnsFromObject(IWbemClassObject* obj, std::vector<WmiColumn>& cols)
     {
-        if (!obj) return;
+        if (!obj)
+        {
+            return;
+        }
         obj->BeginEnumeration(WBEM_FLAG_NONSYSTEM_ONLY);
         CComBSTR name;
-        VARIANT v; VariantInit(&v);
+        VARIANT v;
+        VariantInit(&v);
         CIMTYPE t = 0;
         while (obj->Next(0, &name, &v, &t, nullptr) == WBEM_S_NO_ERROR)
         {
@@ -208,7 +311,7 @@ namespace
         }
         obj->EndEnumeration();
     }
-}
+} // namespace
 
 WmiResult RunWmiQuery(const WmiQueryParams& p)
 {
@@ -218,11 +321,16 @@ WmiResult RunWmiQuery(const WmiQueryParams& p)
     // Build the namespace path. A remote connection uses \\computer\namespace.
     std::wstring ns = p.nameSpace;
     if (p.connectComputer == 2 && !p.computerName.empty())
+    {
         ns = L"\\\\" + p.computerName + L"\\" + p.nameSpace;
+    }
 
     CComPtr<IWbemLocator> locator;
     result.hr = locator.CoCreateInstance(CLSID_WbemLocator, nullptr, CLSCTX_INPROC_SERVER);
-    if (FAILED(result.hr) || !locator) return result;
+    if (FAILED(result.hr) || !locator)
+    {
+        return result;
+    }
 
     CComPtr<IWbemServices> services;
     CComBSTR nsPath(ns.c_str());
@@ -233,13 +341,15 @@ WmiResult RunWmiQuery(const WmiQueryParams& p)
         pass = p.password.c_str();
     }
     result.hr = locator->ConnectServer(nsPath, user, pass, nullptr, 0, nullptr, nullptr, &services);
-    if (FAILED(result.hr) || !services) return result;
+    if (FAILED(result.hr) || !services)
+    {
+        return result;
+    }
 
     // Set the proxy security on the connection (needed for remote, harmless
     // locally), matching the original's CoSetProxyBlanket use.
-    ::CoSetProxyBlanket(services, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, nullptr,
-                        RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE,
-                        nullptr, EOAC_NONE);
+    ::CoSetProxyBlanket(services, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, nullptr, RPC_C_AUTHN_LEVEL_CALL,
+                        RPC_C_IMP_LEVEL_IMPERSONATE, nullptr, EOAC_NONE);
 
     // A class name (no spaces) becomes "SELECT * FROM <class>". Anything with a
     // space is treated as a full WQL query, as the original does.
@@ -253,15 +363,15 @@ WmiResult RunWmiQuery(const WmiQueryParams& p)
         CComPtr<IWbemClassObject> classObj;
         CComBSTR cls(p.classOrQuery.c_str());
         if (SUCCEEDED(services->GetObject(cls, 0, nullptr, &classObj, nullptr)) && classObj)
+        {
             columnsFromObject(classObj, result.columns);
+        }
     }
 
     CComPtr<IEnumWbemClassObject> e;
     CComBSTR wql(L"WQL");
     CComBSTR wqlQuery(query.c_str());
-    result.hr = services->ExecQuery(wql, wqlQuery,
-                                    WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
-                                    nullptr, &e);
+    result.hr = services->ExecQuery(wql, wqlQuery, WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY, nullptr, &e);
     if (FAILED(result.hr) || !e)
     {
         result.queryTimeMs = ::GetTickCount() - start;
@@ -274,18 +384,23 @@ WmiResult RunWmiQuery(const WmiQueryParams& p)
         ULONG got = 0;
         HRESULT hrn = e->Next(WBEM_INFINITE, 1, &obj, &got);
         if (hrn != WBEM_S_NO_ERROR || got == 0 || !obj)
+        {
             break;
+        }
 
         // For a free query the columns come from the first returned object.
         if (result.columns.empty())
+        {
             columnsFromObject(obj, result.columns);
+        }
 
         WmiRow row;
         row.cells.resize(result.columns.size());
 
         obj->BeginEnumeration(WBEM_FLAG_NONSYSTEM_ONLY);
         CComBSTR name;
-        VARIANT v; VariantInit(&v);
+        VARIANT v;
+        VariantInit(&v);
         CIMTYPE t = 0;
         while (obj->Next(0, &name, &v, &t, nullptr) == WBEM_S_NO_ERROR)
         {
@@ -299,7 +414,10 @@ WmiResult RunWmiQuery(const WmiQueryParams& p)
                 nc.cimType = (t & ~CIM_FLAG_ARRAY);
                 nc.isArray = (t & CIM_FLAG_ARRAY) != 0;
                 result.columns.push_back(nc);
-                for (auto& r : result.rows) r.cells.resize(result.columns.size());
+                for (auto& r : result.rows)
+                {
+                    r.cells.resize(result.columns.size());
+                }
                 row.cells.resize(result.columns.size());
                 col = (int)result.columns.size() - 1;
             }

@@ -28,7 +28,7 @@ namespace nt
     {
         std::wstring name;
         std::wstring type;
-        std::wstring symlink;   // target, only for SymbolicLink entries
+        std::wstring symlink; // target, only for SymbolicLink entries
         bool isDirectory = false;
     };
 
@@ -82,4 +82,4 @@ namespace nt
     // True when the current process token is elevated (used for the window title
     // suffix and to decide whether the Run As Administrator command is offered).
     bool IsElevated();
-}
+} // namespace nt

@@ -306,3 +306,43 @@ change, which the surgical rule rules out.
 - First-launch geometry 640 by 480, matching the original.
 - Light toolbar. The elevated rebuild's ToolbarWindow32 empty area reads 240,240,240 at
   four points and the cropped strip shows the colour icons on a light band.
+
+## Header and cpp split
+
+Date 2026-11-18. Behaviour-preserving code motion plus the HRC clang-format pass, with
+no change to any other tool. The CMainFrame window-class method bodies moved out of
+MainFrame.h into a new MainFrame.cpp, so the header now carries only the class shape:
+members, the message map, DECLARE_FRAME_WND_CLASS, the WTL macros, the static kSplitBar
+constant and the method declarations. The one trivial accessor disp() stays inline. The
+golden template was src/WinObj (commit 4a3adc0).
+
+- MainFrame.h 788 to 222 lines. New MainFrame.cpp is 1083 lines, both after clang-format.
+  No other header in src/smsniff is over ~600 lines, so only MainFrame needed the move.
+- Bodies moved verbatim in the same order, with override dropped on the out-of-line
+  PreTranslateMessage definition and kept on the declaration. WTL handler signatures keep
+  their trailing BOOL&, the OnEraseBkgnd to FillFrameBtnFace call and the PinToolbarLight
+  and PinToLightMode calls are byte-identical. The message map, the custom m_uFindMsg
+  branch and the function-local FilterDlg dialog moved unchanged.
+- The new unit includes MainFrame.h first, so ATL pulls in the Win32 headers before the
+  bodies and no include-order fix was needed. MainFrame.cpp was added to the
+  smsniff.vcxproj ClCompile group. clang-format ran over src/smsniff/*.cpp and *.h with
+  the repo .clang-format.
+- Debug and Release x64 rebuilt clean with VS 2022 v143 and /t:Rebuild, only the usual
+  /Ob2 to /Ob3 override warning.
+
+### Re-validation (elevated, no capture)
+The Release binary launched elevated through .tools/launch-elevated.ps1 with
+/noloadsettings and the config cleared. No capture ran and no file was loaded, so the
+upper list and lower pane held no packet or credential data. The sampling ran elevated
+through the broker so it could read the requireAdministrator window.
+
+- Window class SmartSniff, outer size 640 by 480, matching the original geometry.
+- All four child panes render: SysListView32 upper list, Edit lower pane, ToolbarWindow32
+  toolbar and msctls_statusbar32 status bar. The status bar reads "0 TCP/IP conversations"
+  and "0 Packets". The menu is File, Edit, View, Options, Help and the toolbar shows its
+  colour icons.
+- The ToolbarWindow32 empty area reads 240,240,240 at five sampled points, so the
+  dark-toolbar fix survives the split. The toolbar child was found with
+  FindWindowExW(frame, 0, "ToolbarWindow32", null).
+- Full-window screenshot, empty of any packet data, at
+  `...\52a65869-da3e-48e8-af92-e3d78e1b4017\scratchpad\smsniff_toolbar_strip.png`.

@@ -80,7 +80,7 @@ namespace vm
             }
             return L"64-bit";
         }
-    }
+    } // namespace detail
 
     // Enumerate processes. The showAll toggle only affects which entries a
     // caller chooses to display. Processes that cannot be opened are still
@@ -127,11 +127,12 @@ namespace vm
             out.push_back(std::move(p));
         }
 
-        std::sort(out.begin(), out.end(), [](const ProcInfo& a, const ProcInfo& b)
-        {
-            int c = _wcsicmp(a.name.c_str(), b.name.c_str());
-            return c < 0 || (c == 0 && a.pid < b.pid);
-        });
+        std::sort(out.begin(), out.end(),
+                  [](const ProcInfo& a, const ProcInfo& b)
+                  {
+                      int c = _wcsicmp(a.name.c_str(), b.name.c_str());
+                      return c < 0 || (c == 0 && a.pid < b.pid);
+                  });
         return out;
     }
-}
+} // namespace vm

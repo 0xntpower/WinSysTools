@@ -159,3 +159,35 @@ ShowGridLines, MarkOddEvenRows, Sort, UseWMI and DataSource are preserved, `Colu
 is written as width/index pairs that decode to the default widths
 (`78 00 00 00` width 120 index 0, `BE 00 01 00` width 190 index 1, and so on), `WinPos`
 is a 44-byte WINDOWPLACEMENT in `2C 00 00 00 ...` hex, and no registry key is created.
+
+## Header/source split (2026-11-18)
+
+**Code motion -- MainFrame.h to MainFrame.cpp.** The `CMainFrame` method bodies moved
+out of `MainFrame.h` into a new `MainFrame.cpp`, following the WinObj template
+(commit 4a3adc0). The header now carries only the class shape -- members, the
+`DECLARE_FRAME_WND_CLASS` macro, the message map, the nested `ScanArg` type, the two
+`constexpr` roots, and the method declarations. Every body moved verbatim in the same
+order, with `override` and `static` dropped on the out-of-line definitions and kept on
+the declarations. The WTL handler signatures (trailing `BOOL&`) are preserved, and the
+`OnEraseBkgnd` to `FillFrameBtnFace` call, `PinToolbarLight`, and `PinToLightMode` are
+byte-identical. No other tool and no `.sln` were touched.
+
+- `MainFrame.h` -- 667 lines before, 190 after (declarations only).
+- `MainFrame.cpp` -- new, 797 lines (HRC clang-format, Allman, one-liners expanded).
+- `MainFrame.cpp` added to the `ProductKeyScanner.vcxproj` ClCompile group.
+- clang-format `--style=file` applied to both files.
+- Rebuild `/t:Rebuild` -- Debug and Release x64 both clean (the known `/Ob2`->`/Ob3`
+  D9025 note only). MainFrame.cpp compiles as its own translation unit.
+
+**GUI re-validation (counts and layout only, no key values captured).** The rebuilt
+Release exe launched with `/nosaveload`, the startup Scan Options dialog accepted with
+IDOK, and the scan ran to completion. The ListView populated **10 rows** across **7
+columns** (the Product ID, Product Key, Product Name, Scan Type, Registry Key, Registry
+Value, Modified Time layout). No cell value was read -- only `LVM_GETITEMCOUNT` and the
+header item count, both scalar. The toolbar child
+(`FindWindowExW(frame, 0, "ToolbarWindow32", null)`) empty band sampled **240,240,240**,
+so the dark-toolbar light fix holds. Frame geometry is the unchanged `CreateEx` default
+and is identical by construction, since OnCreate and the entry CreateEx call were not
+modified. No product key was captured, logged, or shown. The decoder was not re-run on
+real data -- this is code motion only and the known-vector round-trip from the original
+validation stands.

@@ -62,6 +62,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="smsniff.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="Packet.cpp" />
     <ClCompile Include="Export.cpp" />
   </ItemGroup>

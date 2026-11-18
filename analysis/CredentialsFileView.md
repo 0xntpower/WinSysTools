@@ -213,3 +213,48 @@ static_cast.
 Rebuild and re-validation. Debug and Release x64 rebuilt clean with v143. The decoder self
 check (/selftest) passes. The ToolbarWindow32 empty area reads 240,240,240 after the startup
 dialog is dismissed. The window renders at the default size with showCmd normal.
+
+## MainFrame header and source split
+
+Code-motion refactor following the WinObj golden template (commit 4a3adc0). The CMainFrame
+method bodies moved out of MainFrame.h into a new MainFrame.cpp, so the header now carries
+only the class shape. Behaviour is unchanged, and only whitespace and layout differ, from the
+HRC clang-format pass over both files.
+
+- MainFrame.h, 652 lines before and 193 lines after. It keeps the members, the
+  DECLARE_FRAME_WND_CLASS macro, the message map verbatim (including the raw m_uFindMsg
+  dispatch line), the static constexpr kBar, and every method declaration. PreTranslateMessage
+  keeps its override on the declaration, and BuildHexDump and BuildStrings keep static on the
+  declaration.
+- MainFrame.cpp, new, 875 lines and 23605 bytes. It includes MainFrame.h plus the tool's own
+  CredRecord, CredFile, Columns, Export, Config and Dialogs headers and the shared UiUtil, then
+  the out-of-line CMainFrame definitions in source order. The override and static keywords are
+  dropped on the definitions, the WTL handler signatures keep their trailing BOOL&, and the
+  OnEraseBkgnd to FillFrameBtnFace and PinToolbarLight calls are byte for byte the same.
+- CredentialsFileView.vcxproj gained MainFrame.cpp under ClCompile. The thin entry unit
+  CredentialsFileView.cpp is left as is.
+
+### Rebuild (pass)
+
+MSBuild v143 with /t:Rebuild, both x64 configurations clean with 0 errors. The only warning is
+the pre-existing repo-wide D9025 from the inline-depth hardening flag, which is present before
+this change.
+
+### Shell and layout re-validation (pass, no credential loaded)
+
+The rebuilt Release binary was launched with no /StartDecrypt switch, and the startup
+Credentials Decryption Options dialog was cancelled, so no decrypt ran and no credential file
+was read. The empty shell was then probed over Win32:
+
+- Frame window class CredentialsFileView renders at 1920x1023 with GetWindowPlacement showCmd
+  1, the same construction geometry recorded above for the original and the prior build.
+- Frame children all present and visible: ToolbarWindow32 (1904x26), msctls_statusbar32
+  (1904x23), SysListView32 (1900x590) with its SysHeader32 column header (1900x24), and the
+  lower Edit pane (1883x296). The hand-laid two-pane splitter layout holds.
+- The toolbar child, found through FindWindowExW(frame, 0, ToolbarWindow32, null), reads
+  240,240,240 in its empty band, sampled at x=1809 of the 1904 wide band, confirming the
+  PinToolbarLight fix still pins the toolbar to light mode after the split.
+
+No credential value was read, shown, logged or captured. The decoder crypto round-trip was
+validated against the synthetic self-check vector originally, and this change is code motion
+only, so it was not re-run against real data.

@@ -21,15 +21,18 @@
 // ---- About ---------------------------------------------------------------
 class CAboutDlg : public CDialogImpl<CAboutDlg>
 {
-public:
-    enum { IDD = IDD_ABOUT };
+  public:
+    enum
+    {
+        IDD = IDD_ABOUT
+    };
 
     BEGIN_MSG_MAP(CAboutDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnClose)
-        COMMAND_ID_HANDLER(IDCANCEL, OnClose)
-        NOTIFY_CODE_HANDLER(NM_CLICK, OnLink)
-        NOTIFY_CODE_HANDLER(NM_RETURN, OnLink)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnClose)
+    COMMAND_ID_HANDLER(IDCANCEL, OnClose)
+    NOTIFY_CODE_HANDLER(NM_CLICK, OnLink)
+    NOTIFY_CODE_HANDLER(NM_RETURN, OnLink)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -39,10 +42,9 @@ public:
         SetDlgItemTextW(IDC_ABOUT_VERSION, L"v1.52");
         // A lone & is an accelerator prefix in a static control, so the
         // ampersand is doubled and renders as a single &.
-        SetDlgItemTextW(IDC_ABOUT_DESC,
-            L"Independent source-accurate recreation of AD Explorer by Sysinternals, "
-            L"through reverse engineering and rewritten in modern C++20 && WTL 10.\r\n"
-            L"Author: 0xntpower");
+        SetDlgItemTextW(IDC_ABOUT_DESC, L"Independent source-accurate recreation of AD Explorer by Sysinternals, "
+                                        L"through reverse engineering and rewritten in modern C++20 && WTL 10.\r\n"
+                                        L"Author: 0xntpower");
         return TRUE;
     }
 
@@ -54,24 +56,31 @@ public:
         }
         return 0;
     }
-    LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }
+    LRESULT OnClose(WORD, WORD id, HWND, BOOL&)
+    {
+        EndDialog(id);
+        return 0;
+    }
 };
 
 // ---- Connect -------------------------------------------------------------
 class CConnectDlg : public CDialogImpl<CConnectDlg>
 {
-public:
-    enum { IDD = IDD_CONNECT };
+  public:
+    enum
+    {
+        IDD = IDD_CONNECT
+    };
 
     std::wstring m_server;
     std::wstring m_user;
     std::wstring m_password;
 
     BEGIN_MSG_MAP(CConnectDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnOK)
-        COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
-        COMMAND_ID_HANDLER(IDC_CONN_SAVE, OnToggleSave)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnOK)
+    COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
+    COMMAND_ID_HANDLER(IDC_CONN_SAVE, OnToggleSave)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -95,9 +104,9 @@ public:
         if (IsDlgButtonChecked(IDC_CONN_RADIO_SNAP) == BST_CHECKED)
         {
             ::MessageBoxW(m_hWnd,
-                L"Loading a saved snapshot is out of scope in this recreation.\r\n"
-                L"Select the Active Directory option to connect to a live directory.",
-                L"Active Directory Explorer", MB_OK | MB_ICONINFORMATION);
+                          L"Loading a saved snapshot is out of scope in this recreation.\r\n"
+                          L"Select the Active Directory option to connect to a live directory.",
+                          L"Active Directory Explorer", MB_OK | MB_ICONINFORMATION);
             return 0;
         }
         m_server = GetText(IDC_CONN_SERVER);
@@ -107,9 +116,13 @@ public:
         return 0;
     }
 
-    LRESULT OnCancel(WORD, WORD, HWND, BOOL&) { EndDialog(IDCANCEL); return 0; }
+    LRESULT OnCancel(WORD, WORD, HWND, BOOL&)
+    {
+        EndDialog(IDCANCEL);
+        return 0;
+    }
 
-private:
+  private:
     std::wstring GetText(int id)
     {
         wchar_t buf[512] = {};
@@ -121,16 +134,19 @@ private:
 // ---- Attribute Properties (read-only) ------------------------------------
 class CAttrPropsDlg : public CDialogImpl<CAttrPropsDlg>
 {
-public:
-    enum { IDD = IDD_ATTR_PROPS };
+  public:
+    enum
+    {
+        IDD = IDD_ATTR_PROPS
+    };
 
     std::wstring m_object;
     ad::Attribute m_attr;
 
     BEGIN_MSG_MAP(CAttrPropsDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnClose)
-        COMMAND_ID_HANDLER(IDCANCEL, OnClose)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnClose)
+    COMMAND_ID_HANDLER(IDCANCEL, OnClose)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -147,9 +163,13 @@ public:
         return TRUE;
     }
 
-    LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }
+    LRESULT OnClose(WORD, WORD id, HWND, BOOL&)
+    {
+        EndDialog(id);
+        return 0;
+    }
 
-private:
+  private:
     static void Replace(std::wstring& s, const std::wstring& from, const std::wstring& to)
     {
         size_t pos = 0;
@@ -164,22 +184,25 @@ private:
 // ---- Search Container ----------------------------------------------------
 class CSearchDlg : public CDialogImpl<CSearchDlg>
 {
-public:
-    enum { IDD = IDD_SEARCH };
+  public:
+    enum
+    {
+        IDD = IDD_SEARCH
+    };
 
     ad::Client* m_client = nullptr;
     std::wstring m_baseDn;
-    std::wstring m_selectedDn;     // the DN to navigate to, set on OK-navigate
+    std::wstring m_selectedDn; // the DN to navigate to, set on OK-navigate
 
     CListViewCtrl m_list;
     CComboBox m_scope;
     std::vector<ad::Child> m_results;
 
     BEGIN_MSG_MAP(CSearchDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnSearch)
-        COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
-        NOTIFY_HANDLER(IDC_SEARCH_LIST, NM_DBLCLK, OnDblClk)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnSearch)
+    COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
+    NOTIFY_HANDLER(IDC_SEARCH_LIST, NM_DBLCLK, OnDblClk)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -211,9 +234,15 @@ public:
         ADS_SCOPEENUM scope = ADS_SCOPE_SUBTREE;
         switch (m_scope.GetCurSel())
         {
-        case 1: scope = ADS_SCOPE_ONELEVEL; break;
-        case 2: scope = ADS_SCOPE_BASE; break;
-        default: scope = ADS_SCOPE_SUBTREE; break;
+        case 1:
+            scope = ADS_SCOPE_ONELEVEL;
+            break;
+        case 2:
+            scope = ADS_SCOPE_BASE;
+            break;
+        default:
+            scope = ADS_SCOPE_SUBTREE;
+            break;
         }
 
         HCURSOR prev = ::SetCursor(::LoadCursorW(nullptr, IDC_WAIT));
@@ -246,9 +275,13 @@ public:
         return 0;
     }
 
-    LRESULT OnCancel(WORD, WORD, HWND, BOOL&) { EndDialog(IDCANCEL); return 0; }
+    LRESULT OnCancel(WORD, WORD, HWND, BOOL&)
+    {
+        EndDialog(IDCANCEL);
+        return 0;
+    }
 
-private:
+  private:
     std::wstring GetText(int id)
     {
         wchar_t buf[1024] = {};

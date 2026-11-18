@@ -247,3 +247,32 @@ was needed.
 Rebuild and re-validation. Debug and Release x64 rebuilt clean with the v143 toolset. The
 ToolbarWindow32 empty area reads 240,240,240. The source is unchanged, so the earlier 1212
 row /scomma match and the geometry result still hold.
+
+## MainFrame split into header and source
+
+MainFrame.h carried the whole CMainFrame window class with every method body inline, 851
+lines. The bodies moved out to a new MainFrame.cpp, leaving the header with the class shape
+only: the members, the DECLARE_FRAME_WND_CLASS macro, the message map, the AppOptions struct
+and the method declarations. The header is now 217 lines. MainFrame.cpp is 1114 lines after
+the HRC clang-format pass, 33350 bytes. This is behaviour-preserving code motion in the WinObj
+pattern. MainFrame.cpp was added to the project ClCompile group. The out-of-line definitions
+drop override and static and keep const, in the same order as the header.
+
+Re-validation after the split:
+
+- Both x64 configs rebuilt clean with the VS 2022 Community MSBuild at the v143 toolset.
+- The /scomma export of the full type list is byte-identical between the pre-split and the
+  post-split Release binary. Each writes 1212 rows with sha256
+  `9DF070F335C49BA14FF0D0F78D049F9301A19767D729AE3C355A1A6DE75BD3EB`. The export path in
+  FileTypesMan.cpp calls no CMainFrame method, so the move cannot reach it, and the byte match
+  confirms that. The pre-split binary was built from the original 851-line header in an
+  isolated copy of the working tree.
+- The elevated GUI, launched read-only with /nosaveload through the broker, loads the upper
+  file-type list with 1212 rows, the same count as the export. The lower actions pane is empty
+  until a type is picked, as in the original.
+- Window geometry is 640x480, matching the original CreateWindowEx default with the config
+  cleared.
+- The ToolbarWindow32 empty area reads 240,240,240 under elevation, so the light-toolbar fix
+  holds after the split. The band renders its 8 icons rather than a dark box. An elevated
+  helper routed the capture, since a medium integrity session cannot PrintWindow an elevated
+  window.

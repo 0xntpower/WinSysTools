@@ -31,14 +31,23 @@ namespace
         int n = 0;
         if (LPWSTR* a = ::CommandLineToArgvW(::GetCommandLineW(), &n))
         {
-            for (int i = 1; i < n; ++i) v.emplace_back(a[i]);
+            for (int i = 1; i < n; ++i)
+            {
+                v.emplace_back(a[i]);
+            }
             ::LocalFree(a);
         }
         return v;
     }
     int indexOf(const std::vector<std::wstring>& a, const wchar_t* sw)
     {
-        for (int i = 0; i < (int)a.size(); ++i) if (_wcsicmp(a[i].c_str(), sw) == 0) return i;
+        for (int i = 0; i < (int)a.size(); ++i)
+        {
+            if (_wcsicmp(a[i].c_str(), sw) == 0)
+            {
+                return i;
+            }
+        }
         return -1;
     }
     std::wstring at(const std::vector<std::wstring>& a, int i)
@@ -50,14 +59,22 @@ namespace
     {
         int col = st.sortColumn;
         bool asc = st.sortAscending;
-        std::stable_sort(rows.begin(), rows.end(), [&](const SnapshotRecord& a, const SnapshotRecord& b) {
-            bool na = false, nb = false;
-            long long ka = a.sortKey(col, na), kb = b.sortKey(col, nb);
-            int c;
-            if (na && nb) c = (ka < kb) ? -1 : (ka > kb) ? 1 : 0;
-            else          c = _wcsicmp(a.column(col).c_str(), b.column(col).c_str());
-            return asc ? (c < 0) : (c > 0);
-        });
+        std::stable_sort(rows.begin(), rows.end(),
+                         [&](const SnapshotRecord& a, const SnapshotRecord& b)
+                         {
+                             bool na = false, nb = false;
+                             long long ka = a.sortKey(col, na), kb = b.sortKey(col, nb);
+                             int c;
+                             if (na && nb)
+                             {
+                                 c = (ka < kb) ? -1 : (ka > kb) ? 1 : 0;
+                             }
+                             else
+                             {
+                                 c = _wcsicmp(a.column(col).c_str(), b.column(col).c_str());
+                             }
+                             return asc ? (c < 0) : (c > 0);
+                         });
     }
 
     // /s* <file>: enumerate snapshots and export the list, then quit.
@@ -66,13 +83,25 @@ namespace
         ExportFormat fmt{};
         int fmtPos = -1;
         for (size_t i = 0; i < a.size(); ++i)
-            if (FormatFromSwitch(a[i], fmt)) { fmtPos = (int)i; break; }
-        if (fmtPos < 0) return false;
+        {
+            if (FormatFromSwitch(a[i], fmt))
+            {
+                fmtPos = (int)i;
+                break;
+            }
+        }
+        if (fmtPos < 0)
+        {
+            return false;
+        }
 
         std::wstring file = at(a, fmtPos + 1);
 
         Config cfg;
-        if (!noSaveLoad) cfg.load();
+        if (!noSaveLoad)
+        {
+            cfg.load();
+        }
 
         ::CoInitializeEx(nullptr, COINIT_MULTITHREADED);
         std::vector<SnapshotRecord> snaps = EnumerateSnapshots(DisplayOptions{}, nullptr);
@@ -83,7 +112,10 @@ namespace
         r.columns = cfg.snapCols.visible;
         r.reportTitle = L"Shadow Copies List";
         r.rowCount = (int)snaps.size();
-        r.cell = [&snaps](int row, int col) { return snaps[row].column(col); };
+        r.cell = [&snaps](int row, int col)
+        {
+            return snaps[row].column(col);
+        };
         WriteReport(file, r, fmt);
         ::CoUninitialize();
         return true;
@@ -93,7 +125,10 @@ namespace
     bool runCopyFileCli(const std::vector<std::wstring>& a)
     {
         int i = indexOf(a, L"/CopyFile");
-        if (i < 0) return false;
+        if (i < 0)
+        {
+            return false;
+        }
         std::wstring shadow = at(a, i + 1);
         std::wstring source = at(a, i + 2);
         std::wstring dest = at(a, i + 3);
@@ -107,7 +142,10 @@ namespace
     {
         std::wstring p = Config::DefaultPath();
         size_t dot = p.rfind(L".cfg");
-        if (dot != std::wstring::npos) p.replace(dot, std::wstring::npos, L"_lng.ini");
+        if (dot != std::wstring::npos)
+        {
+            p.replace(dot, std::wstring::npos, L"_lng.ini");
+        }
         std::ofstream f(p, std::ios::binary);
         f << "[General]\r\nTranslatorName=\r\nTranslatorURL=\r\n";
     }
@@ -135,19 +173,34 @@ namespace
         ::CoUninitialize();
         return ret;
     }
-}
+} // namespace
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 {
     const auto a = args();
     const bool noSaveLoad = indexOf(a, L"/nosaveload") >= 0;
 
-    if (indexOf(a, L"/savelangfile") >= 0) { saveLangFile(); return 0; }
-    if (indexOf(a, L"/deleteregkey") >= 0) { ::DeleteFileW(Config::DefaultPath().c_str()); return 0; }
-    if (runCopyFileCli(a)) return 0;
-    if (runExportCli(a, noSaveLoad)) return 0;
+    if (indexOf(a, L"/savelangfile") >= 0)
+    {
+        saveLangFile();
+        return 0;
+    }
+    if (indexOf(a, L"/deleteregkey") >= 0)
+    {
+        ::DeleteFileW(Config::DefaultPath().c_str());
+        return 0;
+    }
+    if (runCopyFileCli(a))
+    {
+        return 0;
+    }
+    if (runExportCli(a, noSaveLoad))
+    {
+        return 0;
+    }
 
-    INITCOMMONCONTROLSEX icc{ sizeof(icc), ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES };
+    INITCOMMONCONTROLSEX icc{sizeof(icc),
+                             ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES};
     PinToLightMode();
     if (!::InitCommonControlsEx(&icc))
     {

@@ -20,23 +20,31 @@
 
 class DbwinCapture
 {
-public:
+  public:
     DbwinCapture() = default;
     DbwinCapture(const DbwinCapture&) = delete;
     DbwinCapture& operator=(const DbwinCapture&) = delete;
-    ~DbwinCapture() { stop(); }
+    ~DbwinCapture()
+    {
+        stop();
+    }
 
-    bool running() const noexcept { return thread_ != nullptr; }
+    bool running() const noexcept
+    {
+        return thread_ != nullptr;
+    }
 
     // Create the shared objects and start the reader thread. Each captured line
     // is posted to hwnd as msg with lParam a heap DbgRow the window takes over.
     bool start(HWND hwnd, UINT msg)
     {
         if (thread_)
+        {
             return true;
+        }
 
         hwnd_ = hwnd;
-        msg_  = msg;
+        msg_ = msg;
         ::QueryPerformanceFrequency(&freq_);
 
         SECURITY_ATTRIBUTES sa{};
@@ -54,7 +62,9 @@ public:
 
         bool ok = createObjects(psa);
         if (sd)
+        {
             ::LocalFree(sd);
+        }
         if (!ok)
         {
             cleanup();
@@ -82,7 +92,9 @@ public:
         if (thread_)
         {
             if (stopEvent_)
+            {
                 ::SetEvent(stopEvent_);
+            }
             ::WaitForSingleObject(thread_, 2000);
             ::CloseHandle(thread_);
             thread_ = nullptr;
@@ -90,34 +102,61 @@ public:
         cleanup();
     }
 
-private:
+  private:
     bool createObjects(SECURITY_ATTRIBUTES* psa)
     {
         // A named mutex marks the single live monitor, exactly as the original.
         hMutex_ = ::CreateMutexW(psa, FALSE, L"DBWinMutex");
 
-        hMap_ = ::CreateFileMappingW(INVALID_HANDLE_VALUE, psa, PAGE_READWRITE,
-                                     0, kBufferSize, L"DBWIN_BUFFER");
+        hMap_ = ::CreateFileMappingW(INVALID_HANDLE_VALUE, psa, PAGE_READWRITE, 0, kBufferSize, L"DBWIN_BUFFER");
         if (!hMap_)
+        {
             return false;
+        }
 
         buffer_ = ::MapViewOfFile(hMap_, FILE_MAP_READ | FILE_MAP_WRITE, 0, 0, kBufferSize);
         if (!buffer_)
+        {
             return false;
+        }
 
-        hDataReady_   = ::CreateEventW(psa, FALSE, FALSE, L"DBWIN_DATA_READY");
+        hDataReady_ = ::CreateEventW(psa, FALSE, FALSE, L"DBWIN_DATA_READY");
         hBufferReady_ = ::CreateEventW(psa, FALSE, FALSE, L"DBWIN_BUFFER_READY");
         return hDataReady_ && hBufferReady_;
     }
 
     void cleanup()
     {
-        if (stopEvent_)    { ::CloseHandle(stopEvent_);    stopEvent_ = nullptr; }
-        if (buffer_)       { ::UnmapViewOfFile(buffer_);   buffer_ = nullptr; }
-        if (hMap_)         { ::CloseHandle(hMap_);         hMap_ = nullptr; }
-        if (hDataReady_)   { ::CloseHandle(hDataReady_);   hDataReady_ = nullptr; }
-        if (hBufferReady_) { ::CloseHandle(hBufferReady_); hBufferReady_ = nullptr; }
-        if (hMutex_)       { ::CloseHandle(hMutex_);       hMutex_ = nullptr; }
+        if (stopEvent_)
+        {
+            ::CloseHandle(stopEvent_);
+            stopEvent_ = nullptr;
+        }
+        if (buffer_)
+        {
+            ::UnmapViewOfFile(buffer_);
+            buffer_ = nullptr;
+        }
+        if (hMap_)
+        {
+            ::CloseHandle(hMap_);
+            hMap_ = nullptr;
+        }
+        if (hDataReady_)
+        {
+            ::CloseHandle(hDataReady_);
+            hDataReady_ = nullptr;
+        }
+        if (hBufferReady_)
+        {
+            ::CloseHandle(hBufferReady_);
+            hBufferReady_ = nullptr;
+        }
+        if (hMutex_)
+        {
+            ::CloseHandle(hMutex_);
+            hMutex_ = nullptr;
+        }
     }
 
     static DWORD WINAPI threadEntry(LPVOID self)
@@ -131,12 +170,14 @@ private:
         // Mark the buffer free so the first writer may proceed.
         ::SetEvent(hBufferReady_);
 
-        HANDLE waits[2] = { hDataReady_, stopEvent_ };
+        HANDLE waits[2] = {hDataReady_, stopEvent_};
         for (;;)
         {
             DWORD r = ::WaitForMultipleObjects(2, waits, FALSE, INFINITE);
             if (r != WAIT_OBJECT_0)
-                break;   // stop signalled or a wait failure
+            {
+                break; // stop signalled or a wait failure
+            }
 
             // Snapshot the record before releasing the buffer back to writers.
             const BYTE* p = static_cast<const BYTE*>(buffer_);
@@ -168,7 +209,9 @@ private:
         // Drop a single trailing CR or LF so a plain "line\n" yields one row.
         size_t end = n;
         while (end > start && (msg[end - 1] == '\n' || msg[end - 1] == '\r'))
+        {
             --end;
+        }
 
         if (end == start)
         {
@@ -181,7 +224,9 @@ private:
             {
                 size_t segEnd = i;
                 if (segEnd > start && msg[segEnd - 1] == '\r')
+                {
                     --segEnd;
+                }
                 post(pid, widen(msg.substr(start, segEnd - start)), ft, qpc);
                 start = i + 1;
             }
@@ -196,12 +241,17 @@ private:
         row->qpc = qpc;
         row->message = std::move(text);
         if (!::PostMessageW(hwnd_, msg_, 0, reinterpret_cast<LPARAM>(row)))
-            delete row;   // window gone, drop the row rather than leak
+        {
+            delete row; // window gone, drop the row rather than leak
+        }
     }
 
     static std::wstring widen(const std::string& a)
     {
-        if (a.empty()) return std::wstring();
+        if (a.empty())
+        {
+            return std::wstring();
+        }
         int n = ::MultiByteToWideChar(CP_ACP, 0, a.c_str(), static_cast<int>(a.size()), nullptr, 0);
         std::wstring w(n, L'\0');
         ::MultiByteToWideChar(CP_ACP, 0, a.c_str(), static_cast<int>(a.size()), w.data(), n);
@@ -210,14 +260,14 @@ private:
 
     static constexpr DWORD kBufferSize = 4096;
 
-    HWND          hwnd_        = nullptr;
-    UINT          msg_         = 0;
-    HANDLE        hMap_        = nullptr;
-    void*         buffer_      = nullptr;
-    HANDLE        hDataReady_  = nullptr;
-    HANDLE        hBufferReady_ = nullptr;
-    HANDLE        hMutex_      = nullptr;
-    HANDLE        stopEvent_   = nullptr;
-    HANDLE        thread_      = nullptr;
-    LARGE_INTEGER freq_        { };
+    HWND hwnd_ = nullptr;
+    UINT msg_ = 0;
+    HANDLE hMap_ = nullptr;
+    void* buffer_ = nullptr;
+    HANDLE hDataReady_ = nullptr;
+    HANDLE hBufferReady_ = nullptr;
+    HANDLE hMutex_ = nullptr;
+    HANDLE stopEvent_ = nullptr;
+    HANDLE thread_ = nullptr;
+    LARGE_INTEGER freq_{};
 };

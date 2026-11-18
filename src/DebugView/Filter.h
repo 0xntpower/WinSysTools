@@ -10,7 +10,7 @@
 
 class Filter
 {
-public:
+  public:
     std::wstring include = L"*";
     std::wstring exclude;
     std::wstring highlight;
@@ -19,9 +19,13 @@ public:
     {
         std::wstring lo = lower(line);
         if (!matchesAny(include, lo, true))
+        {
             return false;
+        }
         if (matchesAny(exclude, lo, false))
+        {
             return false;
+        }
         return true;
     }
 
@@ -30,11 +34,14 @@ public:
         return matchesAny(highlight, lower(line), false);
     }
 
-private:
+  private:
     static std::wstring lower(const std::wstring& s)
     {
         std::wstring r = s;
-        for (wchar_t& c : r) c = static_cast<wchar_t>(towlower(c));
+        for (wchar_t& c : r)
+        {
+            c = static_cast<wchar_t>(towlower(c));
+        }
         return r;
     }
 
@@ -45,17 +52,25 @@ private:
     {
         std::vector<std::wstring> parts = split(patterns);
         if (parts.empty())
+        {
             return emptyMatchesAll;
+        }
         bool any = false;
         for (const std::wstring& p : parts)
         {
             if (p.empty())
+            {
                 continue;
+            }
             any = true;
             if (p == L"*")
+            {
                 return true;
+            }
             if (wildContains(lowLine, lower(p)))
+            {
                 return true;
+            }
         }
         return any ? false : emptyMatchesAll;
     }
@@ -72,7 +87,9 @@ private:
                 size_t a = tok.find_first_not_of(L" \t");
                 size_t b = tok.find_last_not_of(L" \t");
                 if (a != std::wstring::npos)
+                {
                     out.push_back(tok.substr(a, b - a + 1));
+                }
                 start = i + 1;
             }
         }
@@ -93,11 +110,15 @@ private:
             {
                 size_t at = line.find(piece, pos);
                 if (at == std::wstring::npos)
+                {
                     return false;
+                }
                 pos = at + piece.size();
             }
             if (star == std::wstring::npos)
+            {
                 break;
+            }
             seg = star + 1;
         }
         return true;

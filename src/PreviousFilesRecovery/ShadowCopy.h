@@ -8,10 +8,10 @@
 
 struct ShadowCopy
 {
-    std::wstring deviceObject;    // the shadow-copy device object path (GLOBALROOT)
-    std::wstring originalVolume;  // the volume GUID name
-    std::wstring driveLetter;     // mapped volume path such as C: (may be empty)
-    FILETIME     creationTime{};  // snapshot creation time (local-convertible UTC)
+    std::wstring deviceObject;   // the shadow-copy device object path (GLOBALROOT)
+    std::wstring originalVolume; // the volume GUID name
+    std::wstring driveLetter;    // mapped volume path such as C: (may be empty)
+    FILETIME creationTime{};     // snapshot creation time (local-convertible UTC)
 };
 
 // Enumerate every shadow copy. When driveFilter is a letter the list is limited to

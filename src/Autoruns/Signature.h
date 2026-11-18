@@ -67,7 +67,11 @@ namespace ar::sig
 
         // Pick the first translation, then fall back to the common US-English
         // and Unicode code-page pairings when no translation table is present.
-        struct LangCp { WORD lang; WORD cp; } pair{ 0x0409, 0x04B0 };
+        struct LangCp
+        {
+            WORD lang;
+            WORD cp;
+        } pair{0x0409, 0x04B0};
         void* tp = nullptr;
         UINT tn = 0;
         if (::VerQueryValueW(block, L"\\VarFileInfo\\Translation", &tp, &tn) && tp && tn >= sizeof(LangCp))
@@ -95,9 +99,8 @@ namespace ar::sig
     {
         HCERTSTORE store = nullptr;
         HCRYPTMSG msg = nullptr;
-        if (!::CryptQueryObject(CERT_QUERY_OBJECT_FILE, path.c_str(),
-                CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED, CERT_QUERY_FORMAT_FLAG_BINARY,
-                0, nullptr, nullptr, nullptr, &store, &msg, nullptr))
+        if (!::CryptQueryObject(CERT_QUERY_OBJECT_FILE, path.c_str(), CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
+                                CERT_QUERY_FORMAT_FLAG_BINARY, 0, nullptr, nullptr, nullptr, &store, &msg, nullptr))
         {
             return {};
         }
@@ -112,12 +115,10 @@ namespace ar::sig
                 CERT_INFO ci{};
                 ci.Issuer = si->Issuer;
                 ci.SerialNumber = si->SerialNumber;
-                if (PCCERT_CONTEXT cert = ::CertFindCertificateInStore(store,
-                        X509_ASN_ENCODING | PKCS_7_ASN_ENCODING, 0,
-                        CERT_FIND_SUBJECT_CERT, &ci, nullptr))
+                if (PCCERT_CONTEXT cert = ::CertFindCertificateInStore(store, X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+                                                                       0, CERT_FIND_SUBJECT_CERT, &ci, nullptr))
                 {
-                    const DWORD n = ::CertGetNameStringW(cert, CERT_NAME_SIMPLE_DISPLAY_TYPE,
-                        0, nullptr, nullptr, 0);
+                    const DWORD n = ::CertGetNameStringW(cert, CERT_NAME_SIMPLE_DISPLAY_TYPE, 0, nullptr, nullptr, 0);
                     if (n > 1)
                     {
                         result.resize(n);
@@ -128,8 +129,14 @@ namespace ar::sig
                 }
             }
         }
-        if (msg) ::CryptMsgClose(msg);
-        if (store) ::CertCloseStore(store, 0);
+        if (msg)
+        {
+            ::CryptMsgClose(msg);
+        }
+        if (store)
+        {
+            ::CertCloseStore(store, 0);
+        }
         return result;
     }
 
@@ -164,8 +171,8 @@ namespace ar::sig
     // the original reports these images as verified.
     inline bool VerifyCatalog(const std::wstring& path, std::wstring& signer)
     {
-        HANDLE file = ::CreateFileW(path.c_str(), GENERIC_READ,
-            FILE_SHARE_READ | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+        HANDLE file = ::CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_DELETE, nullptr,
+                                    OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
         if (file == INVALID_HANDLE_VALUE)
         {
             return false;
@@ -265,4 +272,4 @@ namespace ar::sig
         }
         return out;
     }
-}
+} // namespace ar::sig

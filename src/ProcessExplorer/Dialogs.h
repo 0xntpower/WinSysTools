@@ -36,15 +36,15 @@ namespace pe
         {
             return std::wstring();
         }
-        FILETIME ft{ static_cast<DWORD>(ft100ns & 0xFFFFFFFF), static_cast<DWORD>(ft100ns >> 32) };
+        FILETIME ft{static_cast<DWORD>(ft100ns & 0xFFFFFFFF), static_cast<DWORD>(ft100ns >> 32)};
         SYSTEMTIME utc{}, local{};
         if (!::FileTimeToSystemTime(&ft, &utc) || !::SystemTimeToTzSpecificLocalTime(nullptr, &utc, &local))
         {
             return std::wstring();
         }
         wchar_t buf[64] = {};
-        swprintf(buf, 64, L"%02d:%02d:%02d %d/%d/%04d",
-                 local.wHour, local.wMinute, local.wSecond, local.wMonth, local.wDay, local.wYear);
+        swprintf(buf, 64, L"%02d:%02d:%02d %d/%d/%04d", local.wHour, local.wMinute, local.wSecond, local.wMonth,
+                 local.wDay, local.wYear);
         return buf;
     }
 
@@ -56,27 +56,33 @@ namespace pe
         int c = 0;
         for (auto it = digits.rbegin(); it != digits.rend(); ++it)
         {
-            if (c && c % 3 == 0) out.push_back(L',');
+            if (c && c % 3 == 0)
+            {
+                out.push_back(L',');
+            }
             out.push_back(*it);
             ++c;
         }
         std::reverse(out.begin(), out.end());
         return out;
     }
-}
+} // namespace pe
 
 // ---- About ---------------------------------------------------------------
 class CAboutDlg : public CDialogImpl<CAboutDlg>
 {
-public:
-    enum { IDD = IDD_ABOUT };
+  public:
+    enum
+    {
+        IDD = IDD_ABOUT
+    };
 
     BEGIN_MSG_MAP(CAboutDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnClose)
-        COMMAND_ID_HANDLER(IDCANCEL, OnClose)
-        NOTIFY_CODE_HANDLER(NM_CLICK, OnLink)
-        NOTIFY_CODE_HANDLER(NM_RETURN, OnLink)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnClose)
+    COMMAND_ID_HANDLER(IDCANCEL, OnClose)
+    NOTIFY_CODE_HANDLER(NM_CLICK, OnLink)
+    NOTIFY_CODE_HANDLER(NM_RETURN, OnLink)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -85,10 +91,9 @@ public:
         SetDlgItemTextW(IDC_ABOUT_NAME, L"Process Explorer v16.0");
         // A lone & is a mnemonic prefix in a static control, so the ampersand
         // is doubled to render as a single &.
-        SetDlgItemTextW(IDC_ABOUT_DESC,
-            L"Independent source-accurate recreation of Process Explorer by Sysinternals, "
-            L"through reverse engineering and rewritten in modern C++20 && WTL 10.\r\n"
-            L"Author: 0xntpower");
+        SetDlgItemTextW(IDC_ABOUT_DESC, L"Independent source-accurate recreation of Process Explorer by Sysinternals, "
+                                        L"through reverse engineering and rewritten in modern C++20 && WTL 10.\r\n"
+                                        L"Author: 0xntpower");
         return TRUE;
     }
 
@@ -100,24 +105,34 @@ public:
         }
         return 0;
     }
-    LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }
+    LRESULT OnClose(WORD, WORD id, HWND, BOOL&)
+    {
+        EndDialog(id);
+        return 0;
+    }
 };
 
 // ---- Image page ----------------------------------------------------------
 class CImagePage : public CPropertyPageImpl<CImagePage>
 {
-public:
-    enum { IDD = IDD_PROP_IMAGE };
+  public:
+    enum
+    {
+        IDD = IDD_PROP_IMAGE
+    };
     const pe::ProcRow& m_row;
     std::wstring m_parentName;
     HICON m_icon = nullptr;
 
     explicit CImagePage(const pe::ProcRow& row, std::wstring parentName)
-        : m_row(row), m_parentName(std::move(parentName)) {}
+        : m_row(row)
+        , m_parentName(std::move(parentName))
+    {
+    }
 
     BEGIN_MSG_MAP(CImagePage)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        CHAIN_MSG_MAP(CPropertyPageImpl<CImagePage>)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    CHAIN_MSG_MAP(CPropertyPageImpl<CImagePage>)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -148,7 +163,10 @@ public:
         std::wstring parent = m_parentName;
         wchar_t pbuf[64] = {};
         swprintf(pbuf, 64, L" (%u)", m_row.parentPid);
-        if (!parent.empty()) parent += pbuf;
+        if (!parent.empty())
+        {
+            parent += pbuf;
+        }
         SetDlgItemTextW(IDC_IMG_PARENT, parent.c_str());
         SetDlgItemTextW(IDC_IMG_USER, user.c_str());
         SetDlgItemTextW(IDC_IMG_STARTED, pe::FormatFileTime(m_row.createTime).c_str());
@@ -169,23 +187,32 @@ public:
 
     ~CImagePage()
     {
-        if (m_icon) ::DestroyIcon(m_icon);
+        if (m_icon)
+        {
+            ::DestroyIcon(m_icon);
+        }
     }
 };
 
 // ---- Threads page --------------------------------------------------------
 class CThreadsPage : public CPropertyPageImpl<CThreadsPage>
 {
-public:
-    enum { IDD = IDD_PROP_THREADS };
+  public:
+    enum
+    {
+        IDD = IDD_PROP_THREADS
+    };
     const pe::ProcRow& m_row;
     CListViewCtrl m_list;
 
-    explicit CThreadsPage(const pe::ProcRow& row) : m_row(row) {}
+    explicit CThreadsPage(const pe::ProcRow& row)
+        : m_row(row)
+    {
+    }
 
     BEGIN_MSG_MAP(CThreadsPage)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        CHAIN_MSG_MAP(CPropertyPageImpl<CThreadsPage>)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    CHAIN_MSG_MAP(CPropertyPageImpl<CThreadsPage>)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -214,16 +241,22 @@ public:
 // ---- TCP/IP page ---------------------------------------------------------
 class CTcpipPage : public CPropertyPageImpl<CTcpipPage>
 {
-public:
-    enum { IDD = IDD_PROP_TCPIP };
+  public:
+    enum
+    {
+        IDD = IDD_PROP_TCPIP
+    };
     DWORD m_pid;
     CListViewCtrl m_list;
 
-    explicit CTcpipPage(DWORD pid) : m_pid(pid) {}
+    explicit CTcpipPage(DWORD pid)
+        : m_pid(pid)
+    {
+    }
 
     BEGIN_MSG_MAP(CTcpipPage)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        CHAIN_MSG_MAP(CPropertyPageImpl<CTcpipPage>)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    CHAIN_MSG_MAP(CPropertyPageImpl<CTcpipPage>)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -242,19 +275,32 @@ public:
     {
         switch (s)
         {
-        case MIB_TCP_STATE_CLOSED: return L"CLOSED";
-        case MIB_TCP_STATE_LISTEN: return L"LISTEN";
-        case MIB_TCP_STATE_SYN_SENT: return L"SYN_SENT";
-        case MIB_TCP_STATE_SYN_RCVD: return L"SYN_RCVD";
-        case MIB_TCP_STATE_ESTAB: return L"ESTABLISHED";
-        case MIB_TCP_STATE_FIN_WAIT1: return L"FIN_WAIT1";
-        case MIB_TCP_STATE_FIN_WAIT2: return L"FIN_WAIT2";
-        case MIB_TCP_STATE_CLOSE_WAIT: return L"CLOSE_WAIT";
-        case MIB_TCP_STATE_CLOSING: return L"CLOSING";
-        case MIB_TCP_STATE_LAST_ACK: return L"LAST_ACK";
-        case MIB_TCP_STATE_TIME_WAIT: return L"TIME_WAIT";
-        case MIB_TCP_STATE_DELETE_TCB: return L"DELETE_TCB";
-        default: return L"";
+        case MIB_TCP_STATE_CLOSED:
+            return L"CLOSED";
+        case MIB_TCP_STATE_LISTEN:
+            return L"LISTEN";
+        case MIB_TCP_STATE_SYN_SENT:
+            return L"SYN_SENT";
+        case MIB_TCP_STATE_SYN_RCVD:
+            return L"SYN_RCVD";
+        case MIB_TCP_STATE_ESTAB:
+            return L"ESTABLISHED";
+        case MIB_TCP_STATE_FIN_WAIT1:
+            return L"FIN_WAIT1";
+        case MIB_TCP_STATE_FIN_WAIT2:
+            return L"FIN_WAIT2";
+        case MIB_TCP_STATE_CLOSE_WAIT:
+            return L"CLOSE_WAIT";
+        case MIB_TCP_STATE_CLOSING:
+            return L"CLOSING";
+        case MIB_TCP_STATE_LAST_ACK:
+            return L"LAST_ACK";
+        case MIB_TCP_STATE_TIME_WAIT:
+            return L"TIME_WAIT";
+        case MIB_TCP_STATE_DELETE_TCB:
+            return L"DELETE_TCB";
+        default:
+            return L"";
         }
     }
 
@@ -268,7 +314,8 @@ public:
     void AddTcp4(int& row)
     {
         ULONG size = 0;
-        if (::GetExtendedTcpTable(nullptr, &size, FALSE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0) != ERROR_INSUFFICIENT_BUFFER)
+        if (::GetExtendedTcpTable(nullptr, &size, FALSE, AF_INET, TCP_TABLE_OWNER_PID_ALL, 0) !=
+            ERROR_INSUFFICIENT_BUFFER)
         {
             return;
         }
@@ -286,8 +333,10 @@ public:
                 continue;
             }
             wchar_t local[64] = {}, remote[64] = {};
-            IN_ADDR la{}; la.S_un.S_addr = e.dwLocalAddr;
-            IN_ADDR ra{}; ra.S_un.S_addr = e.dwRemoteAddr;
+            IN_ADDR la{};
+            la.S_un.S_addr = e.dwLocalAddr;
+            IN_ADDR ra{};
+            ra.S_un.S_addr = e.dwRemoteAddr;
             wchar_t ip[48] = {};
             ::InetNtopW(AF_INET, &la, ip, 48);
             swprintf(local, 64, L"%s:%u", ip, ntohs(static_cast<USHORT>(e.dwLocalPort)));
@@ -304,7 +353,8 @@ public:
     void AddTcp6(int& row)
     {
         ULONG size = 0;
-        if (::GetExtendedTcpTable(nullptr, &size, FALSE, AF_INET6, TCP_TABLE_OWNER_PID_ALL, 0) != ERROR_INSUFFICIENT_BUFFER)
+        if (::GetExtendedTcpTable(nullptr, &size, FALSE, AF_INET6, TCP_TABLE_OWNER_PID_ALL, 0) !=
+            ERROR_INSUFFICIENT_BUFFER)
         {
             return;
         }
@@ -338,13 +388,15 @@ public:
 // ---- Property sheet ------------------------------------------------------
 class CProcPropSheet : public CPropertySheetImpl<CProcPropSheet>
 {
-public:
-    CImagePage   m_image;
+  public:
+    CImagePage m_image;
     CThreadsPage m_threads;
-    CTcpipPage   m_tcpip;
+    CTcpipPage m_tcpip;
 
     CProcPropSheet(const pe::ProcRow& row, const std::wstring& parentName)
-        : m_image(row, parentName), m_threads(row), m_tcpip(row.pid)
+        : m_image(row, parentName)
+        , m_threads(row)
+        , m_tcpip(row.pid)
     {
         std::wstring title = (row.name.empty() ? L"Process" : row.name) + L" Properties";
         SetTitle(title.c_str());
@@ -360,17 +412,23 @@ public:
 // original's Find Handle or DLL feature.
 class CFindHandleDlg : public CDialogImpl<CFindHandleDlg>
 {
-public:
-    enum { IDD = IDD_FINDHANDLE };
+  public:
+    enum
+    {
+        IDD = IDD_FINDHANDLE
+    };
     const std::vector<pe::ProcRow>& m_procs;
     CListViewCtrl m_list;
 
-    explicit CFindHandleDlg(const std::vector<pe::ProcRow>& procs) : m_procs(procs) {}
+    explicit CFindHandleDlg(const std::vector<pe::ProcRow>& procs)
+        : m_procs(procs)
+    {
+    }
 
     BEGIN_MSG_MAP(CFindHandleDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDC_FIND_SEARCH, OnSearch)
-        COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDC_FIND_SEARCH, OnSearch)
+    COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -437,5 +495,9 @@ public:
         ++row;
     }
 
-    LRESULT OnCancel(WORD, WORD, HWND, BOOL&) { EndDialog(IDCANCEL); return 0; }
+    LRESULT OnCancel(WORD, WORD, HWND, BOOL&)
+    {
+        EndDialog(IDCANCEL);
+        return 0;
+    }
 };

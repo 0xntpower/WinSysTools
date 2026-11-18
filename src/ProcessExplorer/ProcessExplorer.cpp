@@ -68,7 +68,7 @@ namespace
         _Module.RemoveMessageLoop();
         return ret;
     }
-}
+} // namespace
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 {
@@ -80,9 +80,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
         return 0;
     }
 
-    INITCOMMONCONTROLSEX icc{ sizeof(icc),
-        ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES |
-        ICC_TREEVIEW_CLASSES | ICC_LINK_CLASS };
+    INITCOMMONCONTROLSEX icc{sizeof(icc), ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES |
+                                              ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES | ICC_LINK_CLASS};
     PinToLightMode();
     if (!::InitCommonControlsEx(&icc))
     {

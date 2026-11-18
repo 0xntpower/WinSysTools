@@ -17,26 +17,21 @@ std::vector<SnapshotRecord> EnumerateSnapshots(const DisplayOptions& opt, HRESUL
 
 // List the files and folders directly under folder (for example "\\Windows") inside
 // the given snapshot. folder is empty for the snapshot root.
-std::vector<FileRecord> EnumerateFiles(const SnapshotRecord& snap,
-                                       const std::wstring& folder,
+std::vector<FileRecord> EnumerateFiles(const SnapshotRecord& snap, const std::wstring& folder,
                                        const DisplayOptions& opt);
 
 // Copy a set of selected names (files or folders) from folder inside the snapshot to
 // destDir on a local disk. Folders copy recursively. A name that already exists in the
 // destination is copied under a numbered name instead of overwriting, matching the
 // original. Returns the number of files copied.
-int CopyItemsFromSnapshot(const SnapshotRecord& snap,
-                          const std::wstring& folder,
-                          const std::vector<std::wstring>& names,
-                          const std::wstring& destDir);
+int CopyItemsFromSnapshot(const SnapshotRecord& snap, const std::wstring& folder,
+                          const std::vector<std::wstring>& names, const std::wstring& destDir);
 
 // /CopyFile: copy one file named by sourcePath (no drive letter, for example
 // "Windows\\system32\\config\\SYSTEM") from the shadow copy identified by shadowId
 // (a device object path, a number such as "3", or a volume such as "C:\\") into the
 // full path destFile. Returns true on success.
-bool CopyFileFromShadow(const std::wstring& shadowId,
-                        const std::wstring& sourcePath,
-                        const std::wstring& destFile);
+bool CopyFileFromShadow(const std::wstring& shadowId, const std::wstring& sourcePath, const std::wstring& destFile);
 
 // Format a FILETIME the way the columns show it: the user locale short date, a space,
 // then the user locale time. Local time unless gmt is set. Empty for a zero time.

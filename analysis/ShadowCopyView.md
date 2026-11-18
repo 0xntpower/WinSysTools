@@ -208,3 +208,29 @@ no behavior change. No other edit.
 Rebuild and re-validation. Debug and Release x64 rebuilt clean with v143. The /scomma export
 is byte identical to the original at 182 bytes. The ToolbarWindow32 empty area reads
 240,240,240.
+
+## Header and body split (MainFrame.cpp)
+
+Behaviour-preserving code motion, matching the WinObj golden template. The CMainFrame
+window-class method bodies moved out of MainFrame.h into a new MainFrame.cpp. The header
+dropped from 751 lines to 213 and now carries only the class shape, the members, the
+message map with its DECLARE_FRAME_WND_CLASS and the WTL macros, the two trivial accessors
+disp and focusIsFile, the SortList function template (which has to stay in the header), and
+the method declarations. The forty-odd out-of-line definitions live in MainFrame.cpp at 944
+lines, in the same order, unchanged. The out-of-line PreTranslateMessage drops its override
+keyword while the declaration keeps it. MainFrame.cpp was added to the project ClCompile
+group. The HRC clang-format pass ran over both files.
+
+Rebuild. Debug and Release x64 rebuilt clean with v143 and MSBuild /t:Rebuild. The only
+warning is the harmless /Ob2 overridden by /Ob3, the same as every other tool.
+
+Re-validation, now with a live snapshot. The machine gained one Volume Shadow Copy since the
+first pass, HarddiskVolumeShadowCopy3 created 2026-11-18. The rebuilt Release binary launched
+elevated through launch-elevated.ps1 and filled the snapshot list with that one entry. The
+/scomma export of the rebuilt binary is byte identical to the original target binary at 551
+bytes, same SHA256, including the comma-joined Attributes field (Persistent, Client-Accessible,
+No Auto-Release, Differential, Auto Recover) and all three GUID columns, which the first pass
+could not exercise without a snapshot. The ToolbarWindow32 empty area reads 240,240,240 under
+elevation, captured through the broker. The frame size is 1920x1023, the CW_USEDEFAULT
+geometry, matching the earlier launch. The run was read only, no shadow copy was modified or
+removed.

@@ -23,7 +23,13 @@ namespace
         return name[0] == L'.' && (name[1] == 0 || (name[1] == L'.' && name[2] == 0));
     }
 
-    struct LiveFile { unsigned long long size; FILETIME modified; DWORD attrs; bool dir; };
+    struct LiveFile
+    {
+        unsigned long long size;
+        FILETIME modified;
+        DWORD attrs;
+        bool dir;
+    };
 
     struct Scan
     {
@@ -35,13 +41,19 @@ namespace
 
         void report()
         {
-            if (progress && !progress((int)out.size())) cancelled = true;
+            if (progress && !progress((int)out.size()))
+            {
+                cancelled = true;
+            }
         }
 
         // folder is the full live path, e.g. C:\Users\Me\Documents.
         void walk(const std::wstring& folder, int level)
         {
-            if (cancelled) return;
+            if (cancelled)
+            {
+                return;
+            }
 
             // Gather the live folder's entries that match the wildcard.
             std::unordered_map<std::wstring, LiveFile> live;
@@ -52,23 +64,31 @@ namespace
                 {
                     do
                     {
-                        if (isDots(fd.cFileName)) continue;
+                        if (isDots(fd.cFileName))
+                        {
+                            continue;
+                        }
                         std::wstring key = fd.cFileName;
                         std::transform(key.begin(), key.end(), key.begin(), towlower);
-                        live[key] = { sizeOf(fd), fd.ftLastWriteTime, fd.dwFileAttributes,
-                                      (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0 };
+                        live[key] = {sizeOf(fd), fd.ftLastWriteTime, fd.dwFileAttributes,
+                                     (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0};
                     } while (::FindNextFileW(h, &fd));
                     ::FindClose(h);
                 }
             }
 
-            std::wstring rel = folder.size() >= 2 ? folder.substr(2) : std::wstring();  // strip "X:"
+            std::wstring rel = folder.size() >= 2 ? folder.substr(2) : std::wstring(); // strip "X:"
 
             for (const auto& sc : shadows)
             {
-                if (cancelled) return;
+                if (cancelled)
+                {
+                    return;
+                }
                 if (opt.mode == 4 && _wcsicmp(sc.deviceObject.c_str(), opt.selectedShadow.c_str()) != 0)
+                {
                     continue;
+                }
                 compareFolder(folder, rel, live, sc);
             }
 
@@ -81,9 +101,14 @@ namespace
                 {
                     do
                     {
-                        if (cancelled) break;
+                        if (cancelled)
+                        {
+                            break;
+                        }
                         if ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && !isDots(fd.cFileName))
+                        {
                             walk(folder + L"\\" + fd.cFileName, level + 1);
+                        }
                     } while (::FindNextFileW(h, &fd));
                     ::FindClose(h);
                 }
@@ -91,17 +116,26 @@ namespace
         }
 
         void compareFolder(const std::wstring& folder, const std::wstring& rel,
-                            const std::unordered_map<std::wstring, LiveFile>& live, const ShadowCopy& sc)
+                           const std::unordered_map<std::wstring, LiveFile>& live, const ShadowCopy& sc)
         {
             std::wstring snapFolder = sc.deviceObject + rel;
             WIN32_FIND_DATAW fd{};
             HANDLE h = ::FindFirstFileW((snapFolder + L"\\" + opt.wildcard).c_str(), &fd);
-            if (h == INVALID_HANDLE_VALUE) return;
+            if (h == INVALID_HANDLE_VALUE)
+            {
+                return;
+            }
 
             do
             {
-                if (cancelled) break;
-                if (isDots(fd.cFileName)) continue;
+                if (cancelled)
+                {
+                    break;
+                }
+                if (isDots(fd.cFileName))
+                {
+                    continue;
+                }
                 bool dir = (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
 
                 std::wstring key = fd.cFileName;
@@ -163,40 +197,64 @@ namespace
     // Mode 3 keeps only the newest previous version of each existing file.
     void keepLatestOnly(std::vector<PrevFileRecord>& rows)
     {
-        std::map<std::wstring, size_t> best;   // folder\filename -> index of newest kept
+        std::map<std::wstring, size_t> best; // folder\filename -> index of newest kept
         std::vector<PrevFileRecord> kept;
         for (auto& r : rows)
         {
-            if (r.type != ItemType::OlderFileVersion) { kept.push_back(std::move(r)); continue; }
+            if (r.type != ItemType::OlderFileVersion)
+            {
+                kept.push_back(std::move(r));
+                continue;
+            }
             std::wstring key = r.folder + L"\\" + r.filename;
             auto it = best.find(key);
-            auto newer = [](const FILETIME& a, const FILETIME& b) {
+            auto newer = [](const FILETIME& a, const FILETIME& b)
+            {
                 return ((unsigned long long)a.dwHighDateTime << 32 | a.dwLowDateTime) >
                        ((unsigned long long)b.dwHighDateTime << 32 | b.dwLowDateTime);
             };
-            if (it == best.end()) { best[key] = kept.size(); kept.push_back(std::move(r)); }
-            else if (newer(r.previousModified, kept[it->second].previousModified)) kept[it->second] = std::move(r);
+            if (it == best.end())
+            {
+                best[key] = kept.size();
+                kept.push_back(std::move(r));
+            }
+            else if (newer(r.previousModified, kept[it->second].previousModified))
+            {
+                kept[it->second] = std::move(r);
+            }
         }
         rows.swap(kept);
     }
-}
+} // namespace
 
 std::vector<PrevFileRecord> ScanPreviousFiles(const ScanOptions& opt, const ScanProgress& progress)
 {
     std::vector<PrevFileRecord> out;
 
     // The base folder must be a local drive path (X:\...), as the original requires.
-    if (opt.baseFolder.size() < 2 || opt.baseFolder[1] != L':') return out;
+    if (opt.baseFolder.size() < 2 || opt.baseFolder[1] != L':')
+    {
+        return out;
+    }
 
     std::vector<ShadowCopy> shadows = EnumerateShadowCopies(opt.baseFolder[0]);
-    if (shadows.empty()) return out;
+    if (shadows.empty())
+    {
+        return out;
+    }
 
     std::wstring base = opt.baseFolder;
-    while (base.size() > 3 && base.back() == L'\\') base.pop_back();  // keep "X:\" but trim trailing slashes
+    while (base.size() > 3 && base.back() == L'\\')
+    {
+        base.pop_back(); // keep "X:\" but trim trailing slashes
+    }
 
-    Scan scan{ opt, shadows, progress, out };
+    Scan scan{opt, shadows, progress, out};
     scan.walk(base, 0);
 
-    if (opt.mode == 3) keepLatestOnly(out);
+    if (opt.mode == 3)
+    {
+        keepLatestOnly(out);
+    }
     return out;
 }

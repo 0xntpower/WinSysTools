@@ -53,18 +53,30 @@ namespace vm
     {
         switch (c)
         {
-        case Category::Total:       return L"Total";
-        case Category::Image:       return L"Image";
-        case Category::MappedFile:  return L"Mapped File";
-        case Category::Shareable:   return L"Shareable";
-        case Category::Heap:        return L"Heap";
-        case Category::ManagedHeap: return L"Managed Heap";
-        case Category::Stack:       return L"Stack";
-        case Category::PrivateData: return L"Private Data";
-        case Category::PageTable:   return L"Page Table";
-        case Category::Unusable:    return L"Unusable";
-        case Category::Free:        return L"Free";
-        default:                    return L"";
+        case Category::Total:
+            return L"Total";
+        case Category::Image:
+            return L"Image";
+        case Category::MappedFile:
+            return L"Mapped File";
+        case Category::Shareable:
+            return L"Shareable";
+        case Category::Heap:
+            return L"Heap";
+        case Category::ManagedHeap:
+            return L"Managed Heap";
+        case Category::Stack:
+            return L"Stack";
+        case Category::PrivateData:
+            return L"Private Data";
+        case Category::PageTable:
+            return L"Page Table";
+        case Category::Unusable:
+            return L"Unusable";
+        case Category::Free:
+            return L"Free";
+        default:
+            return L"";
         }
     }
 
@@ -116,22 +128,48 @@ namespace vm
     // RAII handle wrapper.
     class Handle
     {
-    public:
+      public:
         Handle() = default;
-        explicit Handle(HANDLE h) : h_(h) {}
-        ~Handle() { close(); }
+        explicit Handle(HANDLE h)
+            : h_(h)
+        {
+        }
+        ~Handle()
+        {
+            close();
+        }
         Handle(const Handle&) = delete;
         Handle& operator=(const Handle&) = delete;
-        Handle(Handle&& o) noexcept : h_(o.h_) { o.h_ = nullptr; }
+        Handle(Handle&& o) noexcept
+            : h_(o.h_)
+        {
+            o.h_ = nullptr;
+        }
         Handle& operator=(Handle&& o) noexcept
         {
-            if (this != &o) { close(); h_ = o.h_; o.h_ = nullptr; }
+            if (this != &o)
+            {
+                close();
+                h_ = o.h_;
+                o.h_ = nullptr;
+            }
             return *this;
         }
-        [[nodiscard]] HANDLE get() const { return h_; }
-        [[nodiscard]] bool valid() const { return h_ != nullptr && h_ != INVALID_HANDLE_VALUE; }
-        void reset(HANDLE h) { close(); h_ = h; }
-    private:
+        [[nodiscard]] HANDLE get() const
+        {
+            return h_;
+        }
+        [[nodiscard]] bool valid() const
+        {
+            return h_ != nullptr && h_ != INVALID_HANDLE_VALUE;
+        }
+        void reset(HANDLE h)
+        {
+            close();
+            h_ = h;
+        }
+
+      private:
         void close()
         {
             if (h_ != nullptr && h_ != INVALID_HANDLE_VALUE)
@@ -198,13 +236,13 @@ namespace vm
             DWORD len = ::GetLogicalDriveStringsW(static_cast<DWORD>(std::size(drives)) - 1, drives);
             for (const wchar_t* d = drives; d < drives + len && *d; d += wcslen(d) + 1)
             {
-                wchar_t letter[3] = { d[0], L':', 0 };
+                wchar_t letter[3] = {d[0], L':', 0};
                 wchar_t target[MAX_PATH] = {};
                 if (::QueryDosDeviceW(letter, target, static_cast<DWORD>(std::size(target))) != 0)
                 {
                     const size_t tl = wcslen(target);
-                    if (devicePath.size() > tl && _wcsnicmp(devicePath.c_str(), target, tl) == 0
-                        && devicePath[tl] == L'\\')
+                    if (devicePath.size() > tl && _wcsnicmp(devicePath.c_str(), target, tl) == 0 &&
+                        devicePath[tl] == L'\\')
                     {
                         return std::wstring(letter) + devicePath.substr(tl);
                     }
@@ -261,12 +299,13 @@ namespace vm
                 // NT_TIB.StackBase sits at offset 8 of the TEB.
                 uint64_t stackBase = 0;
                 SIZE_T got = 0;
-                if (::ReadProcessMemory(proc, static_cast<char*>(tbi.TebBaseAddress) + 8,
-                                        &stackBase, sizeof(stackBase), &got) && got == sizeof(stackBase)
-                    && stackBase != 0)
+                if (::ReadProcessMemory(proc, static_cast<char*>(tbi.TebBaseAddress) + 8, &stackBase, sizeof(stackBase),
+                                        &got) &&
+                    got == sizeof(stackBase) && stackBase != 0)
                 {
                     MEMORY_BASIC_INFORMATION mbi{};
-                    if (::VirtualQueryEx(proc, reinterpret_cast<LPCVOID>(stackBase - 1), &mbi, sizeof(mbi)) == sizeof(mbi))
+                    if (::VirtualQueryEx(proc, reinterpret_cast<LPCVOID>(stackBase - 1), &mbi, sizeof(mbi)) ==
+                        sizeof(mbi))
                     {
                         stackBases.push_back(reinterpret_cast<uint64_t>(mbi.AllocationBase));
                     }
@@ -313,8 +352,8 @@ namespace vm
                 return;
             }
             std::vector<uint64_t> arr(count, 0);
-            if (::ReadProcessMemory(proc, reinterpret_cast<LPCVOID>(heapsPtr), arr.data(),
-                                    count * sizeof(uint64_t), &got))
+            if (::ReadProcessMemory(proc, reinterpret_cast<LPCVOID>(heapsPtr), arr.data(), count * sizeof(uint64_t),
+                                    &got))
             {
                 for (uint64_t b : arr)
                 {
@@ -376,7 +415,7 @@ namespace vm
                 }
             }
         }
-    }
+    } // namespace detail
 
     [[nodiscard]] inline std::wstring ProtectionText(const Region& r)
     {
@@ -392,15 +431,33 @@ namespace vm
         std::wstring s;
         switch (base)
         {
-        case PAGE_NOACCESS:          s = L"No access"; break;
-        case PAGE_READONLY:          s = L"Read"; break;
-        case PAGE_READWRITE:         s = L"Read/Write"; break;
-        case PAGE_WRITECOPY:         s = L"Copy on Write"; break;
-        case PAGE_EXECUTE:           s = L"Execute"; break;
-        case PAGE_EXECUTE_READ:      s = L"Execute/Read"; break;
-        case PAGE_EXECUTE_READWRITE: s = L"Execute/Read/Write"; break;
-        case PAGE_EXECUTE_WRITECOPY: s = L"Execute/Copy on Write"; break;
-        default:                     s = L"Read/Write"; break;
+        case PAGE_NOACCESS:
+            s = L"No access";
+            break;
+        case PAGE_READONLY:
+            s = L"Read";
+            break;
+        case PAGE_READWRITE:
+            s = L"Read/Write";
+            break;
+        case PAGE_WRITECOPY:
+            s = L"Copy on Write";
+            break;
+        case PAGE_EXECUTE:
+            s = L"Execute";
+            break;
+        case PAGE_EXECUTE_READ:
+            s = L"Execute/Read";
+            break;
+        case PAGE_EXECUTE_READWRITE:
+            s = L"Execute/Read/Write";
+            break;
+        case PAGE_EXECUTE_WRITECOPY:
+            s = L"Execute/Copy on Write";
+            break;
+        default:
+            s = L"Read/Write";
+            break;
         }
         if (r.protect & PAGE_GUARD)
         {
@@ -466,8 +523,8 @@ namespace vm
 
         uint64_t addr = 0;
         MEMORY_BASIC_INFORMATION mbi{};
-        while (addr <= maxAddr
-               && ::VirtualQueryEx(proc.get(), reinterpret_cast<LPCVOID>(addr), &mbi, sizeof(mbi)) == sizeof(mbi))
+        while (addr <= maxAddr &&
+               ::VirtualQueryEx(proc.get(), reinterpret_cast<LPCVOID>(addr), &mbi, sizeof(mbi)) == sizeof(mbi))
         {
             Region r;
             r.base = reinterpret_cast<uint64_t>(mbi.BaseAddress);
@@ -632,4 +689,4 @@ namespace vm
         snap.ok = true;
         return snap;
     }
-}
+} // namespace vm

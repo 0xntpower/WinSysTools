@@ -10,9 +10,9 @@
 
 struct DbgRow
 {
-    unsigned     seq  = 0;
-    FILETIME     ft   { 0, 0 };   // UTC file time at capture
-    long long    qpc  = 0;        // performance counter at capture
-    unsigned int pid  = 0;        // writer process id, from buffer offset 0
-    std::wstring message;         // the OutputDebugString payload
+    unsigned seq = 0;
+    FILETIME ft{0, 0};    // UTC file time at capture
+    long long qpc = 0;    // performance counter at capture
+    unsigned int pid = 0; // writer process id, from buffer offset 0
+    std::wstring message; // the OutputDebugString payload
 };

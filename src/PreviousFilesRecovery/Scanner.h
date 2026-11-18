@@ -10,14 +10,14 @@
 
 struct ScanOptions
 {
-    std::wstring baseFolder;      // BaseFolder
-    std::wstring wildcard = L"*"; // FilesWildcard
-    int  depth = 0;               // SubfoldersDepth (0 = Unlimited)
-    bool findPrevVersions = true; // FindPreviousFiles
-    bool findDeletedFiles = true; // FindDeletedFiles
+    std::wstring baseFolder;        // BaseFolder
+    std::wstring wildcard = L"*";   // FilesWildcard
+    int depth = 0;                  // SubfoldersDepth (0 = Unlimited)
+    bool findPrevVersions = true;   // FindPreviousFiles
+    bool findDeletedFiles = true;   // FindDeletedFiles
     bool findDeletedFolders = true; // FindDeletedFolders
-    int  mode = 2;                // MultipleCopiesMode: 1 all, 2 different, 3 latest, 4 selected
-    std::wstring selectedShadow;  // device object path when mode == 4
+    int mode = 2;                   // MultipleCopiesMode: 1 all, 2 different, 3 latest, 4 selected
+    std::wstring selectedShadow;    // device object path when mode == 4
     DisplayOptions disp;
 };
 

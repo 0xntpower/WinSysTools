@@ -151,6 +151,27 @@ the original. The GUI launch geometry is 580 x 636 px, matching the original's
 dark-mode system. Evidence in `analysis/VMMap-gui.png` (the main window over a
 notepad snapshot) and `analysis/VMMap-about.png` (the About credit).
 
+### MainFrame header and source split (2026-11-18)
+
+`CMainFrame`'s window-class method bodies were moved out of `MainFrame.h` into a
+new `MainFrame.cpp`, leaving the header with only the class shape: members, the
+WTL macros, the message map and the method declarations. The move is behaviour
+preserving and matches the WinObj split that came before it, followed by the HRC
+clang-format pass over `src/VMMap`. `MemSnapshot.h` is a namespace of inline free
+functions and data rather than a class, so it stayed a header and only took the
+format pass. `MainFrame.h` went from 816 to 163 lines, the new `MainFrame.cpp`
+is 744 lines, and the new unit was added to `VMMap.vcxproj`. Both x64
+configurations rebuild clean.
+
+The rebuilt Release binary was pointed at a `notepad.exe` spawned for the check.
+The summary category table filled with all 11 category rows and the detail
+region list filled with 607 region rows. The window came up at 580 x 636 px,
+client 564 x 577, matching the first-launch footprint. No `ToolbarWindow32`
+child exists, confirming VMMap has no toolbar band, so the toolbar light fix
+stays inapplicable. Backgrounds read light under a `PrintWindow` capture: the
+detail list at 255,255,255, the summary list at 240,240,240 and the menu bar at
+255,255,255. The capture matches the pre-refactor window.
+
 ### Known differences
 
 All consistent with a clean snapshot recreation and noted deliberately:

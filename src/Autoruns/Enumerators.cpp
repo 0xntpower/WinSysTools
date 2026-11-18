@@ -37,9 +37,15 @@ namespace
     // ---- small RAII registry key ---------------------------------------
     class RegKey
     {
-    public:
+      public:
         RegKey() = default;
-        ~RegKey() { if (m_key) ::RegCloseKey(m_key); }
+        ~RegKey()
+        {
+            if (m_key)
+            {
+                ::RegCloseKey(m_key);
+            }
+        }
         RegKey(const RegKey&) = delete;
         RegKey& operator=(const RegKey&) = delete;
 
@@ -48,9 +54,22 @@ namespace
             Close();
             return ::RegOpenKeyExW(root, sub, 0, KEY_READ | extra, &m_key) == ERROR_SUCCESS;
         }
-        void Close() { if (m_key) { ::RegCloseKey(m_key); m_key = nullptr; } }
-        [[nodiscard]] HKEY get() const { return m_key; }
-        [[nodiscard]] bool valid() const { return m_key != nullptr; }
+        void Close()
+        {
+            if (m_key)
+            {
+                ::RegCloseKey(m_key);
+                m_key = nullptr;
+            }
+        }
+        [[nodiscard]] HKEY get() const
+        {
+            return m_key;
+        }
+        [[nodiscard]] bool valid() const
+        {
+            return m_key != nullptr;
+        }
 
         [[nodiscard]] bool QueryString(const wchar_t* name, std::wstring& out) const
         {
@@ -65,8 +84,8 @@ namespace
                 return false;
             }
             std::wstring buf(cb / sizeof(wchar_t) + 1, L'\0');
-            if (::RegQueryValueExW(m_key, name, nullptr, nullptr,
-                    reinterpret_cast<LPBYTE>(buf.data()), &cb) != ERROR_SUCCESS)
+            if (::RegQueryValueExW(m_key, name, nullptr, nullptr, reinterpret_cast<LPBYTE>(buf.data()), &cb) !=
+                ERROR_SUCCESS)
             {
                 return false;
             }
@@ -80,8 +99,9 @@ namespace
             DWORD type = 0;
             DWORD data = 0;
             DWORD cb = sizeof(data);
-            if (::RegQueryValueExW(m_key, name, nullptr, &type,
-                    reinterpret_cast<LPBYTE>(&data), &cb) == ERROR_SUCCESS && type == REG_DWORD)
+            if (::RegQueryValueExW(m_key, name, nullptr, &type, reinterpret_cast<LPBYTE>(&data), &cb) ==
+                    ERROR_SUCCESS &&
+                type == REG_DWORD)
             {
                 out = data;
                 return true;
@@ -92,8 +112,8 @@ namespace
         [[nodiscard]] std::wstring LastWriteTime() const
         {
             FILETIME ft{};
-            if (::RegQueryInfoKeyW(m_key, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-                    nullptr, nullptr, nullptr, nullptr, &ft) != ERROR_SUCCESS)
+            if (::RegQueryInfoKeyW(m_key, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+                                   nullptr, nullptr, &ft) != ERROR_SUCCESS)
             {
                 return {};
             }
@@ -108,8 +128,7 @@ namespace
             }
             SYSTEMTIME utc{};
             SYSTEMTIME local{};
-            if (!::FileTimeToSystemTime(&ft, &utc) ||
-                !::SystemTimeToTzSpecificLocalTime(nullptr, &utc, &local))
+            if (!::FileTimeToSystemTime(&ft, &utc) || !::SystemTimeToTzSpecificLocalTime(nullptr, &utc, &local))
             {
                 return {};
             }
@@ -120,7 +139,7 @@ namespace
             return std::wstring(d) + L" " + t;
         }
 
-    private:
+      private:
         HKEY m_key = nullptr;
     };
 
@@ -213,10 +232,19 @@ namespace
             {
                 return {};
             }
-            if (FileExists(cand)) return cand;
-            if (FileExists(cand + L".exe")) return cand + L".exe";
+            if (FileExists(cand))
+            {
+                return cand;
+            }
+            if (FileExists(cand + L".exe"))
+            {
+                return cand + L".exe";
+            }
             const std::wstring sysRel = WinDir() + L"\\" + cand;
-            if (FileExists(sysRel)) return sysRel;
+            if (FileExists(sysRel))
+            {
+                return sysRel;
+            }
             if (cand.find(L'\\') == std::wstring::npos)
             {
                 wchar_t found[MAX_PATH]{};
@@ -257,8 +285,8 @@ namespace
     std::wstring ResolveShortcut(const std::wstring& path);
 
     // ---- Logon ----------------------------------------------------------
-    void ReadRunKey(HKEY root, const wchar_t* sub, REGSAM wow, const wchar_t* label,
-                    const wchar_t* jump, std::vector<Location>& out)
+    void ReadRunKey(HKEY root, const wchar_t* sub, REGSAM wow, const wchar_t* label, const wchar_t* jump,
+                    std::vector<Location>& out)
     {
         RegKey k;
         if (!k.Open(root, sub, wow))
@@ -375,20 +403,21 @@ namespace
     void EnumLogon(std::vector<Location>& out)
     {
         ReadRunKey(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 0,
-            L"HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-            L"Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", out);
+                   L"HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+                   L"Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", out);
         ReadRunKey(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", 0,
-            L"HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
-            L"Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", out);
+                   L"HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
+                   L"Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", out);
         ReadRunKey(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", 0,
-            L"HKLM\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
-            L"Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", out);
+                   L"HKLM\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+                   L"Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+                   out);
         ReadRunKey(HKEY_CURRENT_USER, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", 0,
-            L"HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-            L"Computer\\HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", out);
+                   L"HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+                   L"Computer\\HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", out);
         ReadRunKey(HKEY_CURRENT_USER, L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", 0,
-            L"HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
-            L"Computer\\HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", out);
+                   L"HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
+                   L"Computer\\HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", out);
         ReadStartupFolder(CSIDL_COMMON_STARTUP, L"Common Startup Folder", out);
         ReadStartupFolder(CSIDL_STARTUP, L"User Startup Folder", out);
     }
@@ -408,8 +437,7 @@ namespace
         loc.timestamp = k.LastWriteTime();
         loc.category = Category::Winlogon;
 
-        const wchar_t* values[] = { L"Userinit", L"Shell", L"Taskman", L"VmApplet",
-                                    L"GinaDLL", L"System", L"AppSetup" };
+        const wchar_t* values[] = {L"Userinit", L"Shell", L"Taskman", L"VmApplet", L"GinaDLL", L"System", L"AppSetup"};
         for (const wchar_t* v : values)
         {
             std::wstring data;
@@ -438,7 +466,7 @@ namespace
     // ---- Services and Drivers -------------------------------------------
     // Service control manager Type flags: the Win32 service bits mark a user-mode
     // service, the lower values mark a kernel or file-system driver.
-    constexpr DWORD kServiceWin32 = 0x10 | 0x20;   // own-process | share-process
+    constexpr DWORD kServiceWin32 = 0x10 | 0x20; // own-process | share-process
     constexpr DWORD kStartAuto = 2;
     constexpr DWORD kStartDemand = 3;
     constexpr DWORD kStartDisabled = 4;
@@ -463,8 +491,7 @@ namespace
         for (;;)
         {
             DWORD cch = static_cast<DWORD>(std::size(name));
-            const LSTATUS st = ::RegEnumKeyExW(root.get(), index, name, &cch,
-                nullptr, nullptr, nullptr, nullptr);
+            const LSTATUS st = ::RegEnumKeyExW(root.get(), index, name, &cch, nullptr, nullptr, nullptr, nullptr);
             if (st == ERROR_NO_MORE_ITEMS)
             {
                 break;
@@ -488,7 +515,7 @@ namespace
             const bool isWin32 = (type & kServiceWin32) != 0;
             if (drivers)
             {
-                if (isWin32)  // keep only the kernel and file-system drivers here
+                if (isWin32) // keep only the kernel and file-system drivers here
                 {
                     continue;
                 }
@@ -512,7 +539,8 @@ namespace
             {
                 image = ResolveImage(serviceDll);
             }
-            else if (params.Open(svc.get(), L"Parameters") && params.QueryString(L"ServiceDll", serviceDll) && !serviceDll.empty())
+            else if (params.Open(svc.get(), L"Parameters") && params.QueryString(L"ServiceDll", serviceDll) &&
+                     !serviceDll.empty())
             {
                 image = ResolveImage(serviceDll);
             }
@@ -539,12 +567,18 @@ namespace
         }
 
         std::sort(loc.entries.begin(), loc.entries.end(),
-            [](const AutorunEntry& a, const AutorunEntry& b) { return _wcsicmp(a.name.c_str(), b.name.c_str()) < 0; });
+                  [](const AutorunEntry& a, const AutorunEntry& b)
+                  {
+                      return _wcsicmp(a.name.c_str(), b.name.c_str()) < 0;
+                  });
         out.push_back(std::move(loc));
     }
 
     // ---- Scheduled Tasks ------------------------------------------------
-    std::wstring Bstr(BSTR b) { return (b && *b) ? std::wstring(b, ::SysStringLen(b)) : std::wstring(); }
+    std::wstring Bstr(BSTR b)
+    {
+        return (b && *b) ? std::wstring(b, ::SysStringLen(b)) : std::wstring();
+    }
 
     void WalkTaskFolder(ITaskFolder* folder, Location& loc)
     {
@@ -662,7 +696,7 @@ namespace
         }
         out.push_back(std::move(loc));
     }
-}
+} // namespace
 
 namespace ar
 {
@@ -676,4 +710,4 @@ namespace ar
         EnumWinlogon(out);
         return out;
     }
-}
+} // namespace ar

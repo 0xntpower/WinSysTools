@@ -17,7 +17,10 @@
 inline std::wstring ExpandEnv(const std::wstring& s)
 {
     DWORD n = ::ExpandEnvironmentStringsW(s.c_str(), nullptr, 0);
-    if (!n) return s;
+    if (!n)
+    {
+        return s;
+    }
     std::wstring out(n, L'\0');
     ::ExpandEnvironmentStringsW(s.c_str(), out.data(), n);
     out.resize(n ? n - 1 : 0);
@@ -27,61 +30,90 @@ inline std::wstring ExpandEnv(const std::wstring& s)
 // ---- About ---------------------------------------------------------------
 class CAboutDlg : public CDialogImpl<CAboutDlg>
 {
-public:
-    enum { IDD = IDD_ABOUT };
+  public:
+    enum
+    {
+        IDD = IDD_ABOUT
+    };
 
     BEGIN_MSG_MAP(CAboutDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnClose)
-        COMMAND_ID_HANDLER(IDCANCEL, OnClose)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnClose)
+    COMMAND_ID_HANDLER(IDCANCEL, OnClose)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
     {
         SetWindowTextW(L"About CredentialsFileView");
         SetDlgItemTextW(IDC_ABOUT_PRODUCT, L"CredentialsFileView v1.12");
-        SetDlgItemTextW(IDC_ABOUT_COPYRIGHT, L"Independent source-accurate recreation of CredentialsFileView by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
-        if (CWindow t1 = GetDlgItem(1005)) t1.ShowWindow(SW_HIDE);
-        if (CWindow t2 = GetDlgItem(1006)) t2.ShowWindow(SW_HIDE);
+        SetDlgItemTextW(IDC_ABOUT_COPYRIGHT,
+                        L"Independent source-accurate recreation of CredentialsFileView by NirSoft, through reverse "
+                        L"engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
+        if (CWindow t1 = GetDlgItem(1005))
+        {
+            t1.ShowWindow(SW_HIDE);
+        }
+        if (CWindow t2 = GetDlgItem(1006))
+        {
+            t2.ShowWindow(SW_HIDE);
+        }
         return TRUE;
     }
-    LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }
+    LRESULT OnClose(WORD, WORD id, HWND, BOOL&)
+    {
+        EndDialog(id);
+        return 0;
+    }
 };
 
 // ---- Properties (Property / Value list for one record) -------------------
 class CPropertiesDlg : public CDialogImpl<CPropertiesDlg>, public CDialogResize<CPropertiesDlg>
 {
-public:
-    enum { IDD = IDD_PROPERTIES };
+  public:
+    enum
+    {
+        IDD = IDD_PROPERTIES
+    };
 
     const CredRecord& m_rec;
     const std::vector<int>& m_cols;
     CListViewCtrl m_list;
 
-    CPropertiesDlg(const CredRecord& r, const std::vector<int>& cols) : m_rec(r), m_cols(cols) {}
+    CPropertiesDlg(const CredRecord& r, const std::vector<int>& cols)
+        : m_rec(r)
+        , m_cols(cols)
+    {
+    }
 
     BEGIN_DLGRESIZE_MAP(CPropertiesDlg)
-        DLGRESIZE_CONTROL(IDC_PROP_VALUE, DLSZ_SIZE_X | DLSZ_SIZE_Y)
-        DLGRESIZE_CONTROL(IDOK, DLSZ_MOVE_X | DLSZ_MOVE_Y)
+    DLGRESIZE_CONTROL(IDC_PROP_VALUE, DLSZ_SIZE_X | DLSZ_SIZE_Y)
+    DLGRESIZE_CONTROL(IDOK, DLSZ_MOVE_X | DLSZ_MOVE_Y)
     END_DLGRESIZE_MAP()
 
     BEGIN_MSG_MAP(CPropertiesDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnClose)
-        COMMAND_ID_HANDLER(IDCANCEL, OnClose)
-        CHAIN_MSG_MAP(CDialogResize<CPropertiesDlg>)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnClose)
+    COMMAND_ID_HANDLER(IDCANCEL, OnClose)
+    CHAIN_MSG_MAP(CDialogResize<CPropertiesDlg>)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
     {
         SetWindowTextW(L"Properties");
-        if (CWindow lbl = GetDlgItem(IDC_PROP_LABEL)) lbl.ShowWindow(SW_HIDE);
-        if (CWindow edit = GetDlgItem(IDC_PROP_VALUE)) edit.ShowWindow(SW_HIDE);
+        if (CWindow lbl = GetDlgItem(IDC_PROP_LABEL))
+        {
+            lbl.ShowWindow(SW_HIDE);
+        }
+        if (CWindow edit = GetDlgItem(IDC_PROP_VALUE))
+        {
+            edit.ShowWindow(SW_HIDE);
+        }
 
-        CRect rc; GetClientRect(&rc);
+        CRect rc;
+        GetClientRect(&rc);
         rc.bottom -= 28;
-        m_list.Create(m_hWnd, rc, nullptr,
-            WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SHOWSELALWAYS, WS_EX_CLIENTEDGE, IDC_PROP_VALUE + 100);
+        m_list.Create(m_hWnd, rc, nullptr, WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SHOWSELALWAYS, WS_EX_CLIENTEDGE,
+                      IDC_PROP_VALUE + 100);
         m_list.SetExtendedListViewStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
         m_list.InsertColumn(0, L"Property", LVCFMT_LEFT, 150);
         m_list.InsertColumn(1, L"Value", LVCFMT_LEFT, 360);
@@ -93,22 +125,32 @@ public:
         DlgResize_Init(true, true);
         return TRUE;
     }
-    LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }
+    LRESULT OnClose(WORD, WORD id, HWND, BOOL&)
+    {
+        EndDialog(id);
+        return 0;
+    }
 };
 
 // ---- Credentials Decryption Options (startup dialog) ---------------------
 class CDecryptOptionsDlg : public CDialogImpl<CDecryptOptionsDlg>
 {
-public:
-    enum { IDD = IDD_DECRYPT_OPTIONS };
+  public:
+    enum
+    {
+        IDD = IDD_DECRYPT_OPTIONS
+    };
 
     Config& m_cfg;
-    explicit CDecryptOptionsDlg(Config& cfg) : m_cfg(cfg) {}
+    explicit CDecryptOptionsDlg(Config& cfg)
+        : m_cfg(cfg)
+    {
+    }
 
     BEGIN_MSG_MAP(CDecryptOptionsDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnOK)
-        COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnOK)
+    COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
     END_MSG_MAP()
 
     static std::wstring textOf(CWindow w)
@@ -135,11 +177,16 @@ public:
         source.SetCurSel(sel);
 
         // Auto-fill the current user's folders when nothing is stored yet.
-        std::wstring cred1 = m_cfg.credFolder1.empty() ? ExpandEnv(L"%LOCALAPPDATA%\\Microsoft\\Credentials") : m_cfg.credFolder1;
-        std::wstring cred2 = m_cfg.credFolder2.empty() ? ExpandEnv(L"%APPDATA%\\Microsoft\\Credentials") : m_cfg.credFolder2;
-        std::wstring prot1 = m_cfg.protectFolder1.empty() ? ExpandEnv(L"%APPDATA%\\Microsoft\\Protect") : m_cfg.protectFolder1;
-        std::wstring prot2 = m_cfg.protectFolder2.empty() ? ExpandEnv(L"%WINDIR%\\System32\\Microsoft\\Protect") : m_cfg.protectFolder2;
-        std::wstring hive = m_cfg.regHiveFolder.empty() ? ExpandEnv(L"%WINDIR%\\System32\\Config") : m_cfg.regHiveFolder;
+        std::wstring cred1 =
+            m_cfg.credFolder1.empty() ? ExpandEnv(L"%LOCALAPPDATA%\\Microsoft\\Credentials") : m_cfg.credFolder1;
+        std::wstring cred2 =
+            m_cfg.credFolder2.empty() ? ExpandEnv(L"%APPDATA%\\Microsoft\\Credentials") : m_cfg.credFolder2;
+        std::wstring prot1 =
+            m_cfg.protectFolder1.empty() ? ExpandEnv(L"%APPDATA%\\Microsoft\\Protect") : m_cfg.protectFolder1;
+        std::wstring prot2 =
+            m_cfg.protectFolder2.empty() ? ExpandEnv(L"%WINDIR%\\System32\\Microsoft\\Protect") : m_cfg.protectFolder2;
+        std::wstring hive =
+            m_cfg.regHiveFolder.empty() ? ExpandEnv(L"%WINDIR%\\System32\\Config") : m_cfg.regHiveFolder;
 
         SetDlgItemTextW(IDC_DEC_CREDFOLDER1, cred1.c_str());
         SetDlgItemTextW(IDC_DEC_CREDFOLDER2, cred2.c_str());
@@ -151,8 +198,12 @@ public:
 
         if (CComboBox user = GetDlgItem(IDC_DEC_USERNAME); user.m_hWnd)
         {
-            wchar_t name[256]{}; DWORD cch = 256;
-            if (::GetUserNameW(name, &cch)) user.AddString(name);
+            wchar_t name[256]{};
+            DWORD cch = 256;
+            if (::GetUserNameW(name, &cch))
+            {
+                user.AddString(name);
+            }
             user.SetWindowTextW(m_cfg.userName.empty() ? name : m_cfg.userName.c_str());
         }
         return TRUE;
@@ -170,35 +221,48 @@ public:
         m_cfg.protectFolder2 = textOf(GetDlgItem(IDC_DEC_PROTECT2));
         m_cfg.regHiveFolder = textOf(GetDlgItem(IDC_DEC_REGHIVE));
         m_cfg.password_ = textOf(GetDlgItem(IDC_DEC_PASSWORD));
-        if (CWindow user = GetDlgItem(IDC_DEC_USERNAME); user.m_hWnd) m_cfg.userName = textOf(user);
+        if (CWindow user = GetDlgItem(IDC_DEC_USERNAME); user.m_hWnd)
+        {
+            m_cfg.userName = textOf(user);
+        }
         EndDialog(IDOK);
         return 0;
     }
-    LRESULT OnCancel(WORD, WORD, HWND, BOOL&) { EndDialog(IDCANCEL); return 0; }
+    LRESULT OnCancel(WORD, WORD, HWND, BOOL&)
+    {
+        EndDialog(IDCANCEL);
+        return 0;
+    }
 };
 
 // ---- Column Settings -----------------------------------------------------
 class CColumnsDlg : public CDialogImpl<CColumnsDlg>
 {
-public:
-    enum { IDD = IDD_COLUMNS };
+  public:
+    enum
+    {
+        IDD = IDD_COLUMNS
+    };
 
     std::vector<int> m_visible;
     std::vector<int> m_widths;
     CListViewCtrl m_list;
 
     CColumnsDlg(std::vector<int> vis, std::vector<int> wid)
-        : m_visible(std::move(vis)), m_widths(std::move(wid)) {}
+        : m_visible(std::move(vis))
+        , m_widths(std::move(wid))
+    {
+    }
 
     BEGIN_MSG_MAP(CColumnsDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDC_COL_MOVEUP, OnMoveUp)
-        COMMAND_ID_HANDLER(IDC_COL_MOVEDOWN, OnMoveDown)
-        COMMAND_ID_HANDLER(IDC_COL_SHOW, OnShow)
-        COMMAND_ID_HANDLER(IDC_COL_HIDE, OnHide)
-        COMMAND_ID_HANDLER(IDC_COL_DEFAULT, OnDefault)
-        COMMAND_ID_HANDLER(IDOK, OnOK)
-        COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDC_COL_MOVEUP, OnMoveUp)
+    COMMAND_ID_HANDLER(IDC_COL_MOVEDOWN, OnMoveDown)
+    COMMAND_ID_HANDLER(IDC_COL_SHOW, OnShow)
+    COMMAND_ID_HANDLER(IDC_COL_HIDE, OnHide)
+    COMMAND_ID_HANDLER(IDC_COL_DEFAULT, OnDefault)
+    COMMAND_ID_HANDLER(IDOK, OnOK)
+    COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -224,6 +288,7 @@ public:
             ++row;
         }
         for (int c = 0; c < kColumnCount; ++c)
+        {
             if (!shown[c])
             {
                 m_list.InsertItem(row, kColumns[c].title);
@@ -231,9 +296,13 @@ public:
                 m_list.SetCheckState(row, FALSE);
                 ++row;
             }
+        }
     }
 
-    int sel() { return m_list.GetNextItem(-1, LVNI_SELECTED); }
+    int sel()
+    {
+        return m_list.GetNextItem(-1, LVNI_SELECTED);
+    }
 
     void swapRows(int a, int b)
     {
@@ -242,21 +311,58 @@ public:
         m_list.GetItemText(b, 0, tb, 256);
         DWORD_PTR da = m_list.GetItemData(a), db = m_list.GetItemData(b);
         BOOL ca = m_list.GetCheckState(a), cb = m_list.GetCheckState(b);
-        m_list.SetItemText(a, 0, tb); m_list.SetItemData(a, db); m_list.SetCheckState(a, cb);
-        m_list.SetItemText(b, 0, ta); m_list.SetItemData(b, da); m_list.SetCheckState(b, ca);
+        m_list.SetItemText(a, 0, tb);
+        m_list.SetItemData(a, db);
+        m_list.SetCheckState(a, cb);
+        m_list.SetItemText(b, 0, ta);
+        m_list.SetItemData(b, da);
+        m_list.SetCheckState(b, ca);
     }
 
     LRESULT OnMoveUp(WORD, WORD, HWND, BOOL&)
-    { int i = sel(); if (i > 0) { swapRows(i, i - 1); m_list.SetItemState(i - 1, LVIS_SELECTED, LVIS_SELECTED); } return 0; }
+    {
+        int i = sel();
+        if (i > 0)
+        {
+            swapRows(i, i - 1);
+            m_list.SetItemState(i - 1, LVIS_SELECTED, LVIS_SELECTED);
+        }
+        return 0;
+    }
     LRESULT OnMoveDown(WORD, WORD, HWND, BOOL&)
-    { int i = sel(); if (i >= 0 && i < m_list.GetItemCount() - 1) { swapRows(i, i + 1); m_list.SetItemState(i + 1, LVIS_SELECTED, LVIS_SELECTED); } return 0; }
-    LRESULT OnShow(WORD, WORD, HWND, BOOL&) { if (int i = sel(); i >= 0) m_list.SetCheckState(i, TRUE); return 0; }
-    LRESULT OnHide(WORD, WORD, HWND, BOOL&) { if (int i = sel(); i >= 0) m_list.SetCheckState(i, FALSE); return 0; }
+    {
+        int i = sel();
+        if (i >= 0 && i < m_list.GetItemCount() - 1)
+        {
+            swapRows(i, i + 1);
+            m_list.SetItemState(i + 1, LVIS_SELECTED, LVIS_SELECTED);
+        }
+        return 0;
+    }
+    LRESULT OnShow(WORD, WORD, HWND, BOOL&)
+    {
+        if (int i = sel(); i >= 0)
+        {
+            m_list.SetCheckState(i, TRUE);
+        }
+        return 0;
+    }
+    LRESULT OnHide(WORD, WORD, HWND, BOOL&)
+    {
+        if (int i = sel(); i >= 0)
+        {
+            m_list.SetCheckState(i, FALSE);
+        }
+        return 0;
+    }
     LRESULT OnDefault(WORD, WORD, HWND, BOOL&)
     {
         m_visible.assign(std::begin(kDefaultOrder), std::end(kDefaultOrder));
         m_widths.clear();
-        for (int c : m_visible) m_widths.push_back(kColumns[c].width);
+        for (int c : m_visible)
+        {
+            m_widths.push_back(kColumns[c].width);
+        }
         Populate();
         return 0;
     }
@@ -265,15 +371,25 @@ public:
     {
         std::vector<int> vis, wid;
         for (int r = 0; r < m_list.GetItemCount(); ++r)
+        {
             if (m_list.GetCheckState(r))
             {
                 int c = (int)m_list.GetItemData(r);
                 vis.push_back(c);
                 wid.push_back(kColumns[c].width);
             }
-        if (!vis.empty()) { m_visible = vis; m_widths = wid; }
+        }
+        if (!vis.empty())
+        {
+            m_visible = vis;
+            m_widths = wid;
+        }
         EndDialog(IDOK);
         return 0;
     }
-    LRESULT OnCancel(WORD, WORD, HWND, BOOL&) { EndDialog(IDCANCEL); return 0; }
+    LRESULT OnCancel(WORD, WORD, HWND, BOOL&)
+    {
+        EndDialog(IDCANCEL);
+        return 0;
+    }
 };

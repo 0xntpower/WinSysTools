@@ -6,10 +6,10 @@
 
 struct HeapScanOptions
 {
-    bool     useFromSize = true;    // Filter.UseFromSize, default on
-    uint32_t fromSize    = 80;      // Filter.FromSize, default 80 bytes
-    bool     useToSize   = false;   // Filter.UseToSize, default off
-    uint32_t toSize      = 10000;   // Filter.ToSize, default 10000
+    bool useFromSize = true; // Filter.UseFromSize, default on
+    uint32_t fromSize = 80;  // Filter.FromSize, default 80 bytes
+    bool useToSize = false;  // Filter.UseToSize, default off
+    uint32_t toSize = 10000; // Filter.ToSize, default 10000
 };
 
 // Enumerate every busy heap block of the process that passes the size filter.

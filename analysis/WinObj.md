@@ -68,10 +68,14 @@ original byte-for-byte if that is preferred.
   `EnumerateDirectory`, `ResolveSymlink`, a per-type open dispatch used by both
   the Details counts (`NtQueryObject` ObjectBasicInformation) and the Security
   page (`NtQuerySecurityObject`), and an elevation check.
-- `MainFrame.h` -- `CFrameWindowImpl` frame with tree, list, a draggable
+- `MainFrame.h/.cpp` -- `CFrameWindowImpl` frame with tree, list, a draggable
   vertical splitter, toolbar, status bar and a quick-find band. Full tree build
   from the namespace root, owner-data list, per-type row icons, column sort,
   copy commands, pause and update-interval timer, always-on-top, font chooser.
+  The header carries the class shape (members, the WTL macros, the message map
+  and method declarations), and `MainFrame.cpp` carries the method bodies. The
+  message map and `DECLARE_FRAME_WND_CLASS` stay in the header, which is where
+  WTL expands them, and the method bodies are plain out-of-line definitions.
 - `Dialogs.h` -- the About box and the Properties sheet (Details page plus the
   ACLUI Security page).
 - `Security.h` -- the read-only `ISecurityInformation` for the Security page.
@@ -145,3 +149,42 @@ MSBuild src\WinObj\WinObj.vcxproj /p:Configuration=Release /p:Platform=x64
 
 Both configurations build clean. The only warnings are the `/Ob2` to `/Ob3`
 override from the shared `Directory.Build.targets`, shared by every tool.
+
+## Header and unit split (MainFrame.cpp)
+
+The `CMainFrame` method bodies were moved out of `MainFrame.h` into a new
+`MainFrame.cpp`, behaviour preserving. The header fell from 1023 lines to 215
+(class shape only), and `MainFrame.cpp` holds the 933 lines of moved bodies.
+`MainFrame.cpp` was added to the `ClCompile` group in `WinObj.vcxproj` next to
+`WinObj.cpp`. All WinObj sources were re-run through clang-format, and both
+Debug and Release x64 rebuilt clean with only the shared `/Ob3` override note.
+
+Re-validated after the split, elevated through `.tools/launch-elevated.ps1`:
+
+- **Opens and populates.** The namespace tree fills from the root with all the
+  expected top-level nodes present, among them `\`, `\Device`,
+  `\BaseNamedObjects`, `\GLOBAL??` and `\ObjectTypes`. The list shows Name, Type
+  and Symbolic Link Target with links resolved (`Dfs` to `\Device\DfsClient`,
+  `DosDevices` to `\??`), and the status bar reads the object count.
+- **Toolbar stays light.** The `ToolbarWindow32` child client area is 1904 by 26
+  and every empty-area sample reads **240,240,240**, the button-face value, so
+  the `PinToolbarLight` plus `OnEraseBkgnd` fix came through the move intact.
+- **Geometry matches.** With no saved placement the frame opens at 1920 by 1023
+  and cascades from the default origin, the same as before the split.
+
+### WTL notes for the scaling pass
+
+- The message map (`BEGIN_MSG_MAP` through `END_MSG_MAP`) and
+  `DECLARE_FRAME_WND_CLASS` stay in the header. The map expands into
+  `ProcessWindowMessage` inside the class and needs only the method
+  declarations, not the bodies, so handlers move out freely.
+- The templated base `CFrameWindowImpl<CMainFrame>` is no obstacle. `CMainFrame`
+  itself is a plain class, so its members get ordinary `CMainFrame::Method`
+  definitions in the `.cpp` with no template boilerplate.
+- Drop the `override` keyword and the `static` keyword on the out-of-line
+  definitions. `PreTranslateMessage` keeps `override` on its declaration only,
+  and `addStock` and `IniPath` keep `static` on their declarations only.
+- Keep the WTL handler parameter lists exact, including the trailing `BOOL&`
+  reference, or the map macros fail to bind the handler.
+- Every method moved out here. There were no trivial one-line accessors worth
+  keeping inline, so the header is pure declarations.

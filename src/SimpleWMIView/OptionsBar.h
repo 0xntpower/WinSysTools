@@ -19,14 +19,17 @@ struct IBarHost
 
 class COptionsBar : public CDialogImpl<COptionsBar>
 {
-public:
-    enum { IDD = IDD_WMIBAR };
+  public:
+    enum
+    {
+        IDD = IDD_WMIBAR
+    };
 
     IBarHost* m_host = nullptr;
 
     BEGIN_MSG_MAP(COptionsBar)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDC_BAR_UPDATE_BTN, OnUpdate)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDC_BAR_UPDATE_BTN, OnUpdate)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -62,18 +65,27 @@ public:
         c.userName = getText(IDC_BAR_USERNAME_EDIT);
         BOOL ok = FALSE;
         UINT t = GetDlgItemInt(IDC_BAR_TIMEOUT_EDIT, &ok, FALSE);
-        if (ok) c.timeout = (int)t;
+        if (ok)
+        {
+            c.timeout = (int)t;
+        }
     }
 
-    std::wstring getPassword() { return getText(IDC_BAR_PASSWORD_EDIT); }
+    std::wstring getPassword()
+    {
+        return getText(IDC_BAR_PASSWORD_EDIT);
+    }
 
     LRESULT OnUpdate(WORD, WORD, HWND, BOOL&)
     {
-        if (m_host) m_host->OnBarUpdate();
+        if (m_host)
+        {
+            m_host->OnBarUpdate();
+        }
         return 0;
     }
 
-private:
+  private:
     std::wstring getText(int id)
     {
         wchar_t buf[4096]{};

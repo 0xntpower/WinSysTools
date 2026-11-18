@@ -7,20 +7,26 @@
 #include <windows.h>
 #include <array>
 
-enum ColId { COL_SEQ = 0, COL_TIME = 1, COL_PID = 2, COL_MESSAGE = 3 };
+enum ColId
+{
+    COL_SEQ = 0,
+    COL_TIME = 1,
+    COL_PID = 2,
+    COL_MESSAGE = 3
+};
 
 struct ColumnDef
 {
     const wchar_t* title;
-    int            width;
-    int            format;   // LVCFMT_LEFT or LVCFMT_RIGHT
+    int width;
+    int format; // LVCFMT_LEFT or LVCFMT_RIGHT
 };
 
 inline constexpr ColumnDef kColumns[] = {
-    { L"#",            52, LVCFMT_RIGHT },  // sequence number
-    { L"Time",         95, LVCFMT_LEFT  },  // clock time or elapsed seconds
-    { L"PID",          56, LVCFMT_RIGHT },  // writer process id
-    { L"Debug Print", 760, LVCFMT_LEFT  },  // the OutputDebugString message
+    {L"#", 52, LVCFMT_RIGHT},           // sequence number
+    {L"Time", 95, LVCFMT_LEFT},         // clock time or elapsed seconds
+    {L"PID", 56, LVCFMT_RIGHT},         // writer process id
+    {L"Debug Print", 760, LVCFMT_LEFT}, // the OutputDebugString message
 };
 
 inline constexpr int kColumnCount = static_cast<int>(std::size(kColumns));

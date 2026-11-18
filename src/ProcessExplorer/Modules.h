@@ -19,8 +19,8 @@ namespace pe
         std::wstring company;
         std::wstring version;
         std::wstring path;
-        uint64_t     base = 0;
-        uint64_t     size = 0;
+        uint64_t base = 0;
+        uint64_t size = 0;
     };
 
     [[nodiscard]] inline std::vector<ModuleRow> EnumModules(DWORD pid)
@@ -53,4 +53,4 @@ namespace pe
         ::CloseHandle(snap);
         return mods;
     }
-}
+} // namespace pe

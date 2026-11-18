@@ -63,6 +63,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Autoruns.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="Enumerators.cpp" />
   </ItemGroup>
   <ItemGroup>

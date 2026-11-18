@@ -20,7 +20,10 @@ namespace
         int n = 0;
         if (LPWSTR* a = ::CommandLineToArgvW(::GetCommandLineW(), &n))
         {
-            for (int i = 1; i < n; ++i) v.emplace_back(a[i]);
+            for (int i = 1; i < n; ++i)
+            {
+                v.emplace_back(a[i]);
+            }
             ::LocalFree(a);
         }
         return v;
@@ -28,7 +31,13 @@ namespace
 
     bool hasSwitch(const std::vector<std::wstring>& a, const wchar_t* sw)
     {
-        for (const auto& s : a) if (_wcsicmp(s.c_str(), sw) == 0) return true;
+        for (const auto& s : a)
+        {
+            if (_wcsicmp(s.c_str(), sw) == 0)
+            {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -49,7 +58,7 @@ namespace
 
     bool preVistaOrOlderUnsupported()
     {
-        OSVERSIONINFOW vi{ sizeof(vi) };
+        OSVERSIONINFOW vi{sizeof(vi)};
 #pragma warning(push)
 #pragma warning(disable : 4996)
         ::GetVersionExW(&vi);
@@ -57,7 +66,7 @@ namespace
         // The original requires Windows 2000 or later (platform NT, major >= 5).
         return !(vi.dwPlatformId == VER_PLATFORM_WIN32_NT && vi.dwMajorVersion >= 5);
     }
-}
+} // namespace
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int nCmdShow)
 {
@@ -65,18 +74,26 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR,
 
     if (preVistaOrOlderUnsupported())
     {
-        ::MessageBoxW(nullptr, L"This utility cannot work on operating system earlier than Windows 2000",
-                      L"Error", MB_ICONERROR);
+        ::MessageBoxW(nullptr, L"This utility cannot work on operating system earlier than Windows 2000", L"Error",
+                      MB_ICONERROR);
         return 0;
     }
 
-    if (hasSwitch(a, L"/savelangfile")) { saveLangFile(); return 0; }
-    if (hasSwitch(a, L"/deleteregkey")) { deleteRegKey(); return 0; }
+    if (hasSwitch(a, L"/savelangfile"))
+    {
+        saveLangFile();
+        return 0;
+    }
+    if (hasSwitch(a, L"/deleteregkey"))
+    {
+        deleteRegKey();
+        return 0;
+    }
     const bool noSaveLoad = hasSwitch(a, L"/nosaveload");
 
     PinToLightMode();
     ::InitCommonControls();
-    INITCOMMONCONTROLSEX icc{ sizeof(icc), ICC_LISTVIEW_CLASSES | ICC_BAR_CLASSES | ICC_COOL_CLASSES };
+    INITCOMMONCONTROLSEX icc{sizeof(icc), ICC_LISTVIEW_CLASSES | ICC_BAR_CLASSES | ICC_COOL_CLASSES};
     ::InitCommonControlsEx(&icc);
     ::CoInitialize(nullptr);
 
@@ -87,9 +104,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR,
 
         CMainFrame frame;
         frame.m_noSaveLoad = noSaveLoad;
-        RECT rc = { 0, 0, 640, 480 }; // original CreateWindowExA launches at (0,0), 640x480
+        RECT rc = {0, 0, 640, 480}; // original CreateWindowExA launches at (0,0), 640x480
         if (frame.CreateEx(nullptr, rc) == nullptr)
+        {
             return 1;
+        }
         frame.ShowWindow(nCmdShow);
         frame.UpdateWindow();
 

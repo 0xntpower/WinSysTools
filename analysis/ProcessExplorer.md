@@ -53,6 +53,18 @@ Launched the rebuild and the original side by side on the same machine.
 - About credit renders exactly: `Independent source-accurate recreation of Process Explorer by Sysinternals, through reverse engineering and rewritten in modern C++20 & WTL 10.` and `Author: 0xntpower`, with a Sysinternals link.
 - Build: Debug and Release, x64, both clean with VS 2022 Community MSBuild and the v143 toolset.
 
+### MainFrame header and source split
+
+The `CMainFrame` window-class method bodies were moved out of `MainFrame.h` into a new `MainFrame.cpp`, matching the WinObj layout. The header keeps the class shape alone: the members, the `DECLARE_FRAME_WND_CLASS` macro, the message map, the static constants and the method declarations. The move is behaviour-preserving, with the HRC clang-format pass applied to both files. `MainFrame.h` went from 1121 to 224 lines, and `MainFrame.cpp` is 1135 lines. The new source was added to the project under ClCompile.
+
+Rebuilt and revalidated the Release x64 binary after the split:
+- Both Debug and Release x64 rebuild clean.
+- The toolbar `ToolbarWindow32` empty area reads RGB 240,240,240 across five sample points.
+- The process tree fills with the seven columns (Process, PID, CPU, Private Bytes, Working Set, Description, Company Name) over the full live row set.
+- Row colours render by the scheme, measured with real pixels: an `svchost.exe` service row reads RGB 255,225,225 pink and the viewer's own `ProcessExplorer.exe` row reads RGB 204,232,255 blue.
+- The lower pane shows the DLL list for a benign `cmd.exe` launched for the check, nine modules, found by matching its PID in the tree.
+- Window geometry restores from the saved WindowPlacement as before, unchanged by the split.
+
 ### Notes and known limits
 - Thread start addresses come back as zero from `SystemProcessInformation` for a non-elevated viewer, because the modern kernel withholds that field. Full start-address and stack resolution needs elevation plus symbols, which is out of scope. The Threads tab still shows the TID and CPU.
 - Handles and DLLs of a higher-integrity or AppContainer process are not readable without elevation, so those panes come up empty for such a target, matching the original without Show Details for All Processes. The Windows 11 Store Notepad runs in an AppContainer, so the validation used a classic Win32 process launched for the test.

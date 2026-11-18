@@ -68,7 +68,7 @@ namespace vm
             }
             out.push_back(L'"');
         }
-    }
+    } // namespace detail
 
     [[nodiscard]] inline std::wstring BuildCsv(const Snapshot& s, bool includeFree = false)
     {
@@ -88,15 +88,15 @@ namespace vm
             out += L"\r\n";
         };
 
-        row({ L"Process:", s.processName });
+        row({L"Process:", s.processName});
         out += L"\r\n";
         wchar_t pid[32] = {};
         swprintf(pid, 32, L"%lu", s.pid);
-        row({ L"PID:", pid });
+        row({L"PID:", pid});
         out += L"\r\n\r\n";
 
-        row({ L"Type", L"Size", L"Committed", L"Private", L"Total WS", L"Private WS",
-              L"Shareable WS", L"Shared WS", L"Locked WS", L"Blocks", L"Largest" });
+        row({L"Type", L"Size", L"Committed", L"Private", L"Total WS", L"Private WS", L"Shareable WS", L"Shared WS",
+             L"Locked WS", L"Blocks", L"Largest"});
         for (int c = 0; c < kCategoryCount; ++c)
         {
             const CategoryTotal& t = s.totals[c];
@@ -105,25 +105,22 @@ namespace vm
             {
                 swprintf(blocks, 16, L"%lu", t.blocks);
             }
-            row({ CategoryName(static_cast<Category>(c)), Kb(t.size), Kb(t.committed),
-                  Kb(t.privateBytes), Kb(t.totalWs), Kb(t.privateWs),
-                  Kb(t.shareableWs), Kb(t.sharedWs), Kb(t.lockedWs),
-                  blocks, Kb(t.largest) });
+            row({CategoryName(static_cast<Category>(c)), Kb(t.size), Kb(t.committed), Kb(t.privateBytes), Kb(t.totalWs),
+                 Kb(t.privateWs), Kb(t.shareableWs), Kb(t.sharedWs), Kb(t.lockedWs), blocks, Kb(t.largest)});
         }
         out += L"\r\n";
 
-        row({ L"Address", L"Type", L"Size", L"Committed", L"Private", L"Total WS", L"Private WS",
-              L"Shareable WS", L"Shared WS", L"Locked WS", L"Blocks", L"Protection", L"Details" });
+        row({L"Address", L"Type", L"Size", L"Committed", L"Private", L"Total WS", L"Private WS", L"Shareable WS",
+             L"Shared WS", L"Locked WS", L"Blocks", L"Protection", L"Details"});
         for (const Region& r : s.regions)
         {
             if (!includeFree && r.category == Category::Free)
             {
                 continue;
             }
-            row({ HexAddr(r.base), CategoryName(r.category), Kb(r.size), Kb(r.committed),
-                  Kb(r.privateBytes), Kb(r.totalWs), Kb(r.privateWs),
-                  Kb(r.shareableWs), Kb(r.sharedWs), Kb(r.lockedWs),
-                  L"1", ProtectionText(r), r.details });
+            row({HexAddr(r.base), CategoryName(r.category), Kb(r.size), Kb(r.committed), Kb(r.privateBytes),
+                 Kb(r.totalWs), Kb(r.privateWs), Kb(r.shareableWs), Kb(r.sharedWs), Kb(r.lockedWs), L"1",
+                 ProtectionText(r), r.details});
         }
         return out;
     }
@@ -137,9 +134,9 @@ namespace vm
             return false;
         }
         const std::wstring csv = BuildCsv(s, includeFree);
-        const unsigned char bom[2] = { 0xFF, 0xFE };
+        const unsigned char bom[2] = {0xFF, 0xFE};
         DWORD wr = 0;
         ::WriteFile(f.get(), bom, 2, &wr, nullptr);
         return ::WriteFile(f.get(), csv.data(), static_cast<DWORD>(csv.size() * sizeof(wchar_t)), &wr, nullptr) != 0;
     }
-}
+} // namespace vm

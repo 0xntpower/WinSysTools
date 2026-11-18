@@ -22,7 +22,10 @@ CAppModule _Module;
 
 namespace
 {
-    bool ieq(const std::wstring& a, const wchar_t* b) { return _wcsicmp(a.c_str(), b) == 0; }
+    bool ieq(const std::wstring& a, const wchar_t* b)
+    {
+        return _wcsicmp(a.c_str(), b) == 0;
+    }
 
     struct CmdLine
     {
@@ -35,12 +38,21 @@ namespace
         CmdLine c;
         int argc = 0;
         LPWSTR* argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
-        if (!argv) return c;
+        if (!argv)
+        {
+            return c;
+        }
         for (int i = 1; i < argc; ++i)
         {
             std::wstring a = argv[i];
-            if (ieq(a, L"-accepteula") || ieq(a, L"/accepteula")) c.acceptEula = true;
-            else if (ieq(a, L"/?") || ieq(a, L"-?")) c.showHelp = true;
+            if (ieq(a, L"-accepteula") || ieq(a, L"/accepteula"))
+            {
+                c.acceptEula = true;
+            }
+            else if (ieq(a, L"/?") || ieq(a, L"-?"))
+            {
+                c.showHelp = true;
+            }
         }
         ::LocalFree(argv);
         return c;
@@ -55,9 +67,11 @@ namespace
         // The original CreateWindowExA uses X=100, Y=100, width=500, height=300
         // on a first launch (sub_140008730), so pass that exact rect. A saved
         // placement from the registry overrides it inside OnCreate.
-        RECT rc = { 100, 100, 100 + 500, 100 + 300 };
+        RECT rc = {100, 100, 100 + 500, 100 + 300};
         if (frame.CreateEx(nullptr, rc) == nullptr)
+        {
             return 0;
+        }
         int show = frame.m_cfg.havePlacement ? frame.m_cfg.placement.showCmd : nCmdShow;
         frame.ShowWindow(show);
         frame.UpdateWindow();
@@ -66,11 +80,12 @@ namespace
         _Module.RemoveMessageLoop();
         return ret;
     }
-}
+} // namespace
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 {
-    INITCOMMONCONTROLSEX icc{ sizeof(icc), ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES | ICC_UPDOWN_CLASS };
+    INITCOMMONCONTROLSEX icc{sizeof(icc), ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES |
+                                              ICC_LISTVIEW_CLASSES | ICC_UPDOWN_CLASS};
     PinToLightMode();
     if (!::InitCommonControlsEx(&icc))
     {
@@ -84,10 +99,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
     if (cmd.showHelp)
     {
         ::MessageBoxW(nullptr,
-            L"DebugView captures Win32 debug output.\n\n"
-            L"Usage: DebugView [-accepteula]\n\n"
-            L"-accepteula   accept the Sysinternals license without prompting.",
-            L"DebugView", MB_OK | MB_ICONINFORMATION);
+                      L"DebugView captures Win32 debug output.\n\n"
+                      L"Usage: DebugView [-accepteula]\n\n"
+                      L"-accepteula   accept the Sysinternals license without prompting.",
+                      L"DebugView", MB_OK | MB_ICONINFORMATION);
         _Module.Term();
         return 0;
     }

@@ -19,21 +19,27 @@
 #include <string>
 #include <cstdio>
 
-inline constexpr DWORD kHeapEntrySize = 16;   // x64 _HEAP_ENTRY header length
+inline constexpr DWORD kHeapEntrySize = 16; // x64 _HEAP_ENTRY header length
 
 struct HeapBlock
 {
-    uint64_t heap     = 0;   // th32HeapID (heap base / "Heap Handle")
-    uint64_t header   = 0;   // address of the block's _HEAP_ENTRY
-    uint32_t rawSize  = 0;   // 16 * (encodedSize ^ encodingKey), includes the header
-    uint32_t flags    = 0;   // decoded _HEAP_ENTRY flags byte (bit 0 = busy)
-    int32_t  segIndex = 0;   // segment ordinal within the heap
-    bool     isNew    = false;
-    bool     previewDone = false;  // Data Preview filled in yet
-    std::wstring preview;    // Data Preview text, computed on demand
+    uint64_t heap = 0;    // th32HeapID (heap base / "Heap Handle")
+    uint64_t header = 0;  // address of the block's _HEAP_ENTRY
+    uint32_t rawSize = 0; // 16 * (encodedSize ^ encodingKey), includes the header
+    uint32_t flags = 0;   // decoded _HEAP_ENTRY flags byte (bit 0 = busy)
+    int32_t segIndex = 0; // segment ordinal within the heap
+    bool isNew = false;
+    bool previewDone = false; // Data Preview filled in yet
+    std::wstring preview;     // Data Preview text, computed on demand
 
-    uint64_t dataAddress() const { return header + kHeapEntrySize; }
-    uint32_t blockSize()   const { return rawSize - kHeapEntrySize; }
+    uint64_t dataAddress() const
+    {
+        return header + kHeapEntrySize;
+    }
+    uint32_t blockSize() const
+    {
+        return rawSize - kHeapEntrySize;
+    }
 
     static std::wstring hex64(uint64_t v)
     {
@@ -47,14 +53,24 @@ struct HeapBlock
         wchar_t num[24];
         switch (index)
         {
-        case 0: return hex64(dataAddress());
-        case 1: return hex64(header);
-        case 2: swprintf(num, 24, L"%u", blockSize()); return num;
-        case 3: return hex64(heap);
-        case 4: swprintf(num, 24, L"%d", segIndex); return num;
-        case 5: return isNew ? L"*" : L"";
-        case 6: return preview;
-        default: return L"";
+        case 0:
+            return hex64(dataAddress());
+        case 1:
+            return hex64(header);
+        case 2:
+            swprintf(num, 24, L"%u", blockSize());
+            return num;
+        case 3:
+            return hex64(heap);
+        case 4:
+            swprintf(num, 24, L"%d", segIndex);
+            return num;
+        case 5:
+            return isNew ? L"*" : L"";
+        case 6:
+            return preview;
+        default:
+            return L"";
         }
     }
 
@@ -65,11 +81,16 @@ struct HeapBlock
     {
         switch (col)
         {
-        case 2: return (rawSize > o.rawSize) - (rawSize < o.rawSize);
-        case 4: return (segIndex > o.segIndex) - (segIndex < o.segIndex);
-        case 5: return (isNew ? 1 : 0) - (o.isNew ? 1 : 0);
-        case 6: return _wcsicmp(preview.c_str(), o.preview.c_str());
-        default: return (header > o.header) - (header < o.header);
+        case 2:
+            return (rawSize > o.rawSize) - (rawSize < o.rawSize);
+        case 4:
+            return (segIndex > o.segIndex) - (segIndex < o.segIndex);
+        case 5:
+            return (isNew ? 1 : 0) - (o.isNew ? 1 : 0);
+        case 6:
+            return _wcsicmp(preview.c_str(), o.preview.c_str());
+        default:
+            return (header > o.header) - (header < o.header);
         }
     }
 };

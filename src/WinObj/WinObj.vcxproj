@@ -65,6 +65,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="WinObj.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="NtObjMgr.cpp" />
   </ItemGroup>
   <ItemGroup>

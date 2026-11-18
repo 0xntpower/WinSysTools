@@ -12,20 +12,20 @@
 
 struct DisplayOptions
 {
-    bool showTimeInGmt = false;   // Options -> Show Time In GMT (cfg ShowTimeInGMT)
+    bool showTimeInGmt = false; // Options -> Show Time In GMT (cfg ShowTimeInGMT)
 };
 
 struct CredRecord
 {
     std::array<std::wstring, kColumnCount> cells;
-    std::vector<BYTE> plain;   // decrypted entry bytes, for the lower pane
+    std::vector<BYTE> plain; // decrypted entry bytes, for the lower pane
 
     // typed sort keys
-    long long modifiedKey = 0;      // col 3
-    long long fileModifiedKey = 0;  // col 11
-    long long fileCreatedKey = 0;   // col 12
-    long long decryptedSize = 0;    // col 2
-    long long fileSize = 0;         // col 10
+    long long modifiedKey = 0;     // col 3
+    long long fileModifiedKey = 0; // col 11
+    long long fileCreatedKey = 0;  // col 12
+    long long decryptedSize = 0;   // col 2
+    long long fileSize = 0;        // col 10
 
     const std::wstring& column(int col) const
     {
@@ -38,12 +38,19 @@ struct CredRecord
         numeric = true;
         switch (col)
         {
-        case 2:  return decryptedSize;
-        case 3:  return modifiedKey;
-        case 10: return fileSize;
-        case 11: return fileModifiedKey;
-        case 12: return fileCreatedKey;
-        default: numeric = false; return 0;
+        case 2:
+            return decryptedSize;
+        case 3:
+            return modifiedKey;
+        case 10:
+            return fileSize;
+        case 11:
+            return fileModifiedKey;
+        case 12:
+            return fileCreatedKey;
+        default:
+            numeric = false;
+            return 0;
         }
     }
 };

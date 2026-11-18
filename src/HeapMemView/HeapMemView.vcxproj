@@ -63,6 +63,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="HeapMemView.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="HeapEnumerator.cpp" />
     <ClCompile Include="ProcessList.cpp" />
     <ClCompile Include="Export.cpp" />

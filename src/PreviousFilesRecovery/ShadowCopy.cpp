@@ -13,30 +13,37 @@
 namespace
 {
     using CreateVssFn = HRESULT(STDAPICALLTYPE*)(IVssBackupComponents**);
-    using FreePropFn  = void(STDAPICALLTYPE*)(VSS_SNAPSHOT_PROP*);
+    using FreePropFn = void(STDAPICALLTYPE*)(VSS_SNAPSHOT_PROP*);
 
     std::wstring mapVolumeToDrive(const std::wstring& volumeName)
     {
-        if (volumeName.empty()) return {};
+        if (volumeName.empty())
+        {
+            return {};
+        }
         wchar_t names[4096]{};
         DWORD len = 0;
         if (::GetVolumePathNamesForVolumeNameW(volumeName.c_str(), names, 4096, &len) && names[0])
-            return names;   // first mapped path, such as the drive root
+        {
+            return names; // first mapped path, such as the drive root
+        }
         return {};
     }
-}
+} // namespace
 
 std::vector<ShadowCopy> EnumerateShadowCopies(wchar_t driveFilter)
 {
     std::vector<ShadowCopy> out;
 
     HMODULE vssApi = ::LoadLibraryW(L"VssApi.dll");
-    if (!vssApi) return out;
+    if (!vssApi)
+    {
+        return out;
+    }
 
     auto create = reinterpret_cast<CreateVssFn>(
         ::GetProcAddress(vssApi, "?CreateVssBackupComponents@@YAJPEAPEAVIVssBackupComponents@@@Z"));
-    auto freeProp = reinterpret_cast<FreePropFn>(
-        ::GetProcAddress(vssApi, "VssFreeSnapshotProperties"));
+    auto freeProp = reinterpret_cast<FreePropFn>(::GetProcAddress(vssApi, "VssFreeSnapshotProperties"));
 
     if (create)
     {
@@ -55,17 +62,28 @@ std::vector<ShadowCopy> EnumerateShadowCopies(wchar_t driveFilter)
                 {
                     VSS_SNAPSHOT_PROP& s = prop.Obj.Snap;
                     ShadowCopy sc;
-                    if (s.m_pwszSnapshotDeviceObject) sc.deviceObject = s.m_pwszSnapshotDeviceObject;
-                    if (s.m_pwszOriginalVolumeName)   sc.originalVolume = s.m_pwszOriginalVolumeName;
+                    if (s.m_pwszSnapshotDeviceObject)
+                    {
+                        sc.deviceObject = s.m_pwszSnapshotDeviceObject;
+                    }
+                    if (s.m_pwszOriginalVolumeName)
+                    {
+                        sc.originalVolume = s.m_pwszOriginalVolumeName;
+                    }
                     sc.driveLetter = mapVolumeToDrive(sc.originalVolume);
                     *reinterpret_cast<LONGLONG*>(&sc.creationTime) = s.m_tsCreationTimestamp;
 
-                    if (freeProp) freeProp(&s);
+                    if (freeProp)
+                    {
+                        freeProp(&s);
+                    }
 
                     bool keep = driveFilter == 0 ||
-                        (!sc.driveLetter.empty() && towlower(sc.driveLetter[0]) == towlower(driveFilter));
+                                (!sc.driveLetter.empty() && towlower(sc.driveLetter[0]) == towlower(driveFilter));
                     if (keep && !sc.deviceObject.empty())
+                    {
                         out.push_back(std::move(sc));
+                    }
                 }
                 en->Release();
             }

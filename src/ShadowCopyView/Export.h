@@ -12,22 +12,22 @@
 
 enum class ExportFormat
 {
-    Text,            // /stext
-    Tab,             // /stab
-    Tabular,         // /stabular
-    HtmlHorizontal,  // /shtml
-    HtmlVertical,    // /sverhtml
-    Xml,             // /sxml
-    Comma,           // /scomma
+    Text,           // /stext
+    Tab,            // /stab
+    Tabular,        // /stabular
+    HtmlHorizontal, // /shtml
+    HtmlVertical,   // /sverhtml
+    Xml,            // /sxml
+    Comma,          // /scomma
 };
 
 struct ExportRequest
 {
     int rowCount = 0;
     const ColumnDef* colDefs = nullptr;
-    std::vector<int> columns;                            // visible column indices, in order
+    std::vector<int> columns; // visible column indices, in order
     std::function<std::wstring(int row, int col)> cell;
-    const wchar_t* reportTitle = L"Shadow Copies List";  // STRINGTABLE 8
+    const wchar_t* reportTitle = L"Shadow Copies List"; // STRINGTABLE 8
 };
 
 std::wstring BuildReport(const ExportRequest& req, ExportFormat format);

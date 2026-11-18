@@ -212,3 +212,32 @@ ANSI tool keeps its own inline helpers rather than the Unicode `CfgIni.h`.
 **Rebuild and re-validation.** Debug and Release x64 both build clean. Config
 round-trips to `HeapMemView.cfg`: seeded ShowGridLines, BytesPerLine and
 DataPreviewBytes are preserved and `WinPos` is written as `2C 00 00 00 ...` hex.
+
+## MainFrame.cpp split (2026-11-18)
+
+Moved every `CMainFrame` window-class method body out of `MainFrame.h` into a new
+`MainFrame.cpp`, matching the WinObj golden shape. The header now carries only the class
+declaration -- members, the static constexpr `kDivider` and `kSplitRange`, the member
+initializers, `DECLARE_FRAME_WND_CLASS`, the message map, and the method declarations.
+The bodies moved in source order, unchanged. `override` and `static` stay on the
+declarations and come off the out-of-line definitions, `const` stays on both, and the WTL
+handler signatures keep their trailing `BOOL&`. `MainFrame.cpp` was added to the project
+ClCompile list. The `OnEraseBkgnd` to `FillFrameBtnFace` hand-off and the
+`PinToolbarLight` plus `PinToLightMode` calls are byte-for-byte the same.
+
+- **MainFrame.h**: 736 lines before, 179 after (declarations only).
+- **MainFrame.cpp**: new, 929 lines (about 27 KB).
+- **clang-format**: the HRC `--style=file` pass ran over both files, clean.
+- **Build**: Debug and Release x64 both rebuilt clean under the VS 2022 Community MSBuild.
+
+**Live validation.** Spawned a plain Notepad, launched the rebuilt Release build with
+`/nosaveload`, and drove it from PowerShell:
+- Window class reads `HeapMemView`, geometry is `(0,0)` at `640x480`, matching the
+  original `CreateWindowExA` rect.
+- The toolbar child -- found with `FindWindowExW(frame, 0, "ToolbarWindow32", null)` --
+  reads `240,240,240` in its empty band, so the dark-toolbar fix still holds on this
+  dark-mode host.
+- Pointing it at the self-spawned Notepad (its row matched by PID in Select Process)
+  filled the upper list with 91 heap blocks and set the caption to
+  `HeapMemView - Notepad.exe [PID]`. Only the block count was read back, never any heap
+  content of the inspected process.

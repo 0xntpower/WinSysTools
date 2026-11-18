@@ -15,8 +15,8 @@
 namespace Eula
 {
     inline constexpr const wchar_t* kSuiteKey = L"Software\\Sysinternals";
-    inline constexpr const wchar_t* kAppKey   = L"Software\\Sysinternals\\Process Explorer";
-    inline constexpr const wchar_t* kValue    = L"EulaAccepted";
+    inline constexpr const wchar_t* kAppKey = L"Software\\Sysinternals\\Process Explorer";
+    inline constexpr const wchar_t* kValue = L"EulaAccepted";
 
     [[nodiscard]] inline bool FlagSet(HKEY root, const wchar_t* sub)
     {
@@ -28,28 +28,25 @@ namespace Eula
         DWORD data = 0;
         DWORD cb = sizeof(data);
         DWORD type = 0;
-        const LSTATUS st = ::RegQueryValueExW(key, kValue, nullptr, &type,
-                                              reinterpret_cast<LPBYTE>(&data), &cb);
+        const LSTATUS st = ::RegQueryValueExW(key, kValue, nullptr, &type, reinterpret_cast<LPBYTE>(&data), &cb);
         ::RegCloseKey(key);
         return st == ERROR_SUCCESS && data != 0;
     }
 
     [[nodiscard]] inline bool IsAccepted()
     {
-        return FlagSet(HKEY_LOCAL_MACHINE, kSuiteKey)
-            || FlagSet(HKEY_CURRENT_USER, kSuiteKey)
-            || FlagSet(HKEY_CURRENT_USER, kAppKey);
+        return FlagSet(HKEY_LOCAL_MACHINE, kSuiteKey) || FlagSet(HKEY_CURRENT_USER, kSuiteKey) ||
+               FlagSet(HKEY_CURRENT_USER, kAppKey);
     }
 
     inline void RecordAccepted()
     {
         HKEY key = nullptr;
-        if (::RegCreateKeyExW(HKEY_CURRENT_USER, kAppKey, 0, nullptr, 0,
-                              KEY_SET_VALUE, nullptr, &key, nullptr) == ERROR_SUCCESS)
+        if (::RegCreateKeyExW(HKEY_CURRENT_USER, kAppKey, 0, nullptr, 0, KEY_SET_VALUE, nullptr, &key, nullptr) ==
+            ERROR_SUCCESS)
         {
             DWORD one = 1;
-            ::RegSetValueExW(key, kValue, 0, REG_DWORD,
-                             reinterpret_cast<const BYTE*>(&one), sizeof(one));
+            ::RegSetValueExW(key, kValue, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&one), sizeof(one));
             ::RegCloseKey(key);
         }
     }
@@ -63,15 +60,13 @@ namespace Eula
             RecordAccepted();
             return true;
         }
-        const wchar_t* body =
-            L"Process Explorer shows the processes running on your system, the DLLs "
-            L"and handles they have open, and detailed per-process information.\r\n\r\n"
-            L"This is an independent source-accurate recreation of the Sysinternals "
-            L"Process Explorer utility. The Sysinternals Software License Terms apply "
-            L"to the original.\r\n\r\nYou can also use the /accepteula command-line "
-            L"switch to accept the license.\r\n\r\nDo you accept the license terms?";
-        const int r = ::MessageBoxW(owner, body, L"Process Explorer License Agreement",
-                                    MB_YESNO | MB_ICONINFORMATION);
+        const wchar_t* body = L"Process Explorer shows the processes running on your system, the DLLs "
+                              L"and handles they have open, and detailed per-process information.\r\n\r\n"
+                              L"This is an independent source-accurate recreation of the Sysinternals "
+                              L"Process Explorer utility. The Sysinternals Software License Terms apply "
+                              L"to the original.\r\n\r\nYou can also use the /accepteula command-line "
+                              L"switch to accept the license.\r\n\r\nDo you accept the license terms?";
+        const int r = ::MessageBoxW(owner, body, L"Process Explorer License Agreement", MB_YESNO | MB_ICONINFORMATION);
         if (r == IDYES)
         {
             RecordAccepted();
@@ -79,4 +74,4 @@ namespace Eula
         }
         return false;
     }
-}
+} // namespace Eula

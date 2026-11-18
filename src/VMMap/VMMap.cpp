@@ -73,12 +73,20 @@ namespace
                 {
                     for (const vm::ProcInfo& p : procs)
                     {
-                        if (p.pid == asPid) { nameOut = p.name; return p.pid; }
+                        if (p.pid == asPid)
+                        {
+                            nameOut = p.name;
+                            return p.pid;
+                        }
                     }
                 }
                 for (const vm::ProcInfo& p : procs)
                 {
-                    if (StrStrIW(p.name.c_str(), want.c_str())) { nameOut = p.name; return p.pid; }
+                    if (StrStrIW(p.name.c_str(), want.c_str()))
+                    {
+                        nameOut = p.name;
+                        return p.pid;
+                    }
                 }
             }
         }
@@ -95,8 +103,8 @@ namespace
         if (HDC hdc = ::GetDC(nullptr))
         {
             const int h = -::MulDiv(8, ::GetDeviceCaps(hdc, LOGPIXELSY), 72);
-            HFONT f = ::CreateFontW(h, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-                OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, L"MS Shell Dlg");
+            HFONT f = ::CreateFontW(h, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+                                    CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, L"MS Shell Dlg");
             if (f)
             {
                 HGDIOBJ old = ::SelectObject(hdc, f);
@@ -118,7 +126,7 @@ namespace
         }
         const int cx = ::MulDiv(376, bx, 4);
         const int cy = ::MulDiv(355, by, 8);
-        RECT wr = { 0, 0, cx, cy };
+        RECT wr = {0, 0, cx, cy};
         ::AdjustWindowRectEx(&wr, WS_OVERLAPPEDWINDOW, TRUE, 0);
         const int w = wr.right - wr.left;
         const int hgt = wr.bottom - wr.top;
@@ -153,7 +161,7 @@ namespace
         _Module.RemoveMessageLoop();
         return ret;
     }
-}
+} // namespace
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 {
@@ -176,9 +184,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
         return (s.ok && vm::WriteCsv(s, outFile.c_str())) ? 0 : 1;
     }
 
-    INITCOMMONCONTROLSEX icc{ sizeof(icc),
-        ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES |
-        ICC_TREEVIEW_CLASSES | ICC_LINK_CLASS };
+    INITCOMMONCONTROLSEX icc{sizeof(icc), ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES |
+                                              ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES | ICC_LINK_CLASS};
     PinToLightMode();
     if (!::InitCommonControlsEx(&icc))
     {

@@ -145,6 +145,26 @@ Results (see `analysis/AdInsight-rebuild.png`):
   (`analysis/AdInsight-about.png`).
 - Column layout matches the original one for one.
 
+### Re-validated after the MainFrame.cpp split (2026-11-18)
+
+The refactor that moved the `CMainFrame` method bodies out of `MainFrame.h`
+(1001 lines) into a new `MainFrame.cpp`, leaving the header at declarations
+only, is behaviour-preserving. Both x64 configurations (Debug and Release)
+rebuild clean through `AdInsight.vcxproj`, which builds and embeds the hook DLL
+first. The synthetic harness was re-run against the rebuilt Release GUI:
+- Launched `AdInsight.exe -accepteula`, spawned `ldaptest.exe`, then ran
+  `AdInsight.exe -inject <pid>` on that benign client.
+- The GUI captured **8** rows, every one from `ldaptest.exe`, with the correct
+  `Request` (`ldap_initW`, `ldap_connect`, `ldap_simple_bind_sW`,
+  `ldap_search_sW`, `ldap_unbind`), `localhost` as the `Domain Controller` on
+  the connect call, the bind DN under `User`, and the parameters under `Input`.
+- The bind row records only the DN and `Method: LDAP_AUTH_SIMPLE` with
+  `Credentials: (present)`. A read of every captured cell confirms the test
+  client's placeholder password never appears.
+- Toolbar `ToolbarWindow32` empty area (child of the frame, found with
+  `FindWindowExW`) sampled at RGB **240,240,240**.
+- Main window geometry **1920 x 1023**, the same default size documented above.
+
 ## Build
 
 VS 2022 Community MSBuild, PlatformToolset v143, `stdcpp20`, Unicode, static CRT.

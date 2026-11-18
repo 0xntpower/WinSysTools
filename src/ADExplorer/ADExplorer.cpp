@@ -40,7 +40,9 @@ namespace
         if (LPWSTR* a = ::CommandLineToArgvW(::GetCommandLineW(), &n))
         {
             for (int i = 1; i < n; ++i)
+            {
                 v.emplace_back(a[i]);
+            }
             ::LocalFree(a);
         }
         return v;
@@ -49,8 +51,12 @@ namespace
     bool HasFlag(const std::vector<std::wstring>& a, const wchar_t* flag)
     {
         for (const std::wstring& s : a)
+        {
             if (_wcsicmp(s.c_str(), flag) == 0)
+            {
                 return true;
+            }
+        }
         return false;
     }
 
@@ -58,30 +64,29 @@ namespace
     {
         HKEY key = nullptr;
         if (::RegOpenKeyExW(root, sub, 0, KEY_QUERY_VALUE | KEY_WOW64_64KEY, &key) != ERROR_SUCCESS)
+        {
             return false;
+        }
         DWORD data = 0, cb = sizeof(data);
-        const LSTATUS st = ::RegQueryValueExW(key, kEulaValue, nullptr, nullptr,
-                                              reinterpret_cast<LPBYTE>(&data), &cb);
+        const LSTATUS st = ::RegQueryValueExW(key, kEulaValue, nullptr, nullptr, reinterpret_cast<LPBYTE>(&data), &cb);
         ::RegCloseKey(key);
         return st == ERROR_SUCCESS && data != 0;
     }
 
     bool EulaAccepted()
     {
-        return EulaFlagSet(HKEY_LOCAL_MACHINE, kSuiteKey)
-            || EulaFlagSet(HKEY_CURRENT_USER, kSuiteKey)
-            || EulaFlagSet(HKEY_CURRENT_USER, kAppKey);
+        return EulaFlagSet(HKEY_LOCAL_MACHINE, kSuiteKey) || EulaFlagSet(HKEY_CURRENT_USER, kSuiteKey) ||
+               EulaFlagSet(HKEY_CURRENT_USER, kAppKey);
     }
 
     void WriteEulaAccepted()
     {
         HKEY key = nullptr;
-        if (::RegCreateKeyExW(HKEY_CURRENT_USER, kAppKey, 0, nullptr, 0,
-                              KEY_SET_VALUE, nullptr, &key, nullptr) == ERROR_SUCCESS)
+        if (::RegCreateKeyExW(HKEY_CURRENT_USER, kAppKey, 0, nullptr, 0, KEY_SET_VALUE, nullptr, &key, nullptr) ==
+            ERROR_SUCCESS)
         {
             const DWORD one = 1;
-            ::RegSetValueExW(key, kEulaValue, 0, REG_DWORD,
-                             reinterpret_cast<const BYTE*>(&one), sizeof(one));
+            ::RegSetValueExW(key, kEulaValue, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&one), sizeof(one));
             ::RegCloseKey(key);
         }
     }
@@ -94,13 +99,13 @@ namespace
             return true;
         }
         const int r = ::MessageBoxW(nullptr,
-            L"Active Directory Explorer license terms.\r\n\r\n"
-            L"This is an independent, source-accurate recreation of the Sysinternals "
-            L"Active Directory Explorer utility. It browses and reads an Active "
-            L"Directory or LDAP directory.\r\n\r\n"
-            L"You can also use the /accepteula command-line switch to accept the terms.\r\n\r\n"
-            L"Do you accept the license terms?",
-            L"Active Directory Explorer License Agreement", MB_YESNO | MB_ICONINFORMATION);
+                                    L"Active Directory Explorer license terms.\r\n\r\n"
+                                    L"This is an independent, source-accurate recreation of the Sysinternals "
+                                    L"Active Directory Explorer utility. It browses and reads an Active "
+                                    L"Directory or LDAP directory.\r\n\r\n"
+                                    L"You can also use the /accepteula command-line switch to accept the terms.\r\n\r\n"
+                                    L"Do you accept the license terms?",
+                                    L"Active Directory Explorer License Agreement", MB_YESNO | MB_ICONINFORMATION);
         if (r == IDYES)
         {
             WriteEulaAccepted();
@@ -119,18 +124,22 @@ namespace
         if (HDC hdc = ::GetDC(nullptr))
         {
             const int h = -::MulDiv(8, ::GetDeviceCaps(hdc, LOGPIXELSY), 72);
-            HFONT f = ::CreateFontW(h, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET,
-                OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, L"MS Shell Dlg");
+            HFONT f = ::CreateFontW(h, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+                                    CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, L"MS Shell Dlg");
             if (f)
             {
                 HGDIOBJ old = ::SelectObject(hdc, f);
                 SIZE sz{};
                 const wchar_t* alpha = L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
                 if (::GetTextExtentPoint32W(hdc, alpha, 52, &sz))
+                {
                     bx = (sz.cx / 26 + 1) / 2;
+                }
                 TEXTMETRICW tm{};
                 if (::GetTextMetricsW(hdc, &tm))
+                {
                     by = tm.tmHeight;
+                }
                 ::SelectObject(hdc, old);
                 ::DeleteObject(f);
             }
@@ -138,7 +147,7 @@ namespace
         }
         const int cx = ::MulDiv(237, bx, 4);
         const int cy = ::MulDiv(173, by, 8);
-        RECT wr = { 0, 0, cx, cy };
+        RECT wr = {0, 0, cx, cy};
         ::AdjustWindowRectEx(&wr, WS_OVERLAPPEDWINDOW, TRUE, 0);
         const int w = wr.right - wr.left;
         const int hgt = wr.bottom - wr.top;
@@ -158,18 +167,22 @@ namespace
         RECT rc{};
         FirstLaunchRect(rc);
         if (frame.CreateEx(nullptr, &rc) == nullptr)
+        {
             return 0;
+        }
         frame.ShowWindow(frame.m_havePlacement ? frame.m_placement.showCmd : nCmdShow);
         frame.UpdateWindow();
 
         if (promptConnect)
+        {
             frame.PostMessage(WM_COMMAND, MAKEWPARAM(ID_FILE_CONNECT, 0), 0);
+        }
 
         const int ret = loop.Run();
         _Module.RemoveMessageLoop();
         return ret;
     }
-}
+} // namespace
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 {
@@ -178,17 +191,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
     const bool noConnectPrompt = HasFlag(a, L"-noconnectprompt") || HasFlag(a, L"/noconnectprompt");
 
     if (!AcceptEula(acceptFlag))
+    {
         return 0;
+    }
 
     ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
-    INITCOMMONCONTROLSEX icc{ sizeof(icc),
-        ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES |
-        ICC_TREEVIEW_CLASSES | ICC_LINK_CLASS };
+    INITCOMMONCONTROLSEX icc{sizeof(icc), ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES |
+                                              ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES | ICC_LINK_CLASS};
     PinToLightMode();
     if (!::InitCommonControlsEx(&icc))
     {
-        ::MessageBoxW(nullptr, L"Error: Cannot load the common control classes.", L"Active Directory Explorer", MB_ICONERROR);
+        ::MessageBoxW(nullptr, L"Error: Cannot load the common control classes.", L"Active Directory Explorer",
+                      MB_ICONERROR);
         ::CoUninitialize();
         return 1;
     }

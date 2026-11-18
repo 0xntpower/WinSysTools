@@ -9,7 +9,7 @@
 
 struct DisplayOptions
 {
-    bool showTimeInGmt = false;   // Options -> Show Time In GMT
+    bool showTimeInGmt = false; // Options -> Show Time In GMT
 };
 
 struct SnapshotRecord
@@ -17,10 +17,10 @@ struct SnapshotRecord
     std::array<std::wstring, kSnapColumnCount> cells;
 
     // kept for file browsing and the /CopyFile matcher
-    std::wstring deviceObject;        // \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopyN
-    std::wstring volumePath;          // mount point such as C: drive
-    std::wstring explorerPath;        // \\localhost\X$\@GMT-...
-    long long    creationKey = 0;     // creation FILETIME as a sort key
+    std::wstring deviceObject; // \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopyN
+    std::wstring volumePath;   // mount point such as C: drive
+    std::wstring explorerPath; // \\localhost\X$\@GMT-...
+    long long creationKey = 0; // creation FILETIME as a sort key
 
     const std::wstring& column(int c) const
     {
@@ -31,7 +31,10 @@ struct SnapshotRecord
     long long sortKey(int c, bool& numeric) const
     {
         numeric = true;
-        if (c == 6) return creationKey;
+        if (c == 6)
+        {
+            return creationKey;
+        }
         numeric = false;
         return 0;
     }
@@ -41,12 +44,12 @@ struct FileRecord
 {
     std::array<std::wstring, kFileColumnCount> cells;
 
-    std::wstring name;                // raw file name, for navigation and copy
-    bool         isDir = false;
-    long long    sizeKey = 0;
-    long long    modifiedKey = 0;
-    long long    createdKey = 0;
-    long long    entryModifiedKey = 0;
+    std::wstring name; // raw file name, for navigation and copy
+    bool isDir = false;
+    long long sizeKey = 0;
+    long long modifiedKey = 0;
+    long long createdKey = 0;
+    long long entryModifiedKey = 0;
 
     const std::wstring& column(int c) const
     {
@@ -59,11 +62,17 @@ struct FileRecord
         numeric = true;
         switch (c)
         {
-        case 1:  return modifiedKey;
-        case 2:  return createdKey;
-        case 3:  return sizeKey;
-        case 6:  return entryModifiedKey;
-        default: numeric = false; return 0;
+        case 1:
+            return modifiedKey;
+        case 2:
+            return createdKey;
+        case 3:
+            return sizeKey;
+        case 6:
+            return entryModifiedKey;
+        default:
+            numeric = false;
+            return 0;
         }
     }
 };

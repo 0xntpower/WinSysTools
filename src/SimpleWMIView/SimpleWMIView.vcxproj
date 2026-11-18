@@ -62,6 +62,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SimpleWMIView.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="WmiQuery.cpp" />
     <ClCompile Include="Export.cpp" />
   </ItemGroup>

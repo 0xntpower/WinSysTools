@@ -247,3 +247,36 @@ kept, and the one alignment comparison site was qualified. No behavior change.
 Rebuild and re-validation. Debug and Release x64 rebuilt clean with v143. The /scomma export
 is byte identical to the original at 195 bytes. The ToolbarWindow32 empty area reads
 240,240,240.
+
+## MainFrame header and body split
+
+The `CMainFrame` window-class method bodies were moved out of `MainFrame.h` into a new
+`MainFrame.cpp`, matching the WinObj golden template (commit 4a3adc0). Behaviour-preserving
+code motion plus the HRC clang-format pass, no logic change. The header now carries only the
+class shape, its members, the WTL macros, the message map and the method declarations. The
+`CSearchPanel` helper dialog stays inline in the header, the way WinObj keeps its `ScopedWait`
+helper. The out-of-line definitions drop `override` and `static` on the signature and keep it
+on the declaration, the WTL handler signatures keep the trailing `BOOL&`, and the flat-toolbar
+light fix (SetWindowTheme in CreateToolbar, OnEraseBkgnd filling the frame with button-face)
+is byte identical.
+
+- `MainFrame.h`: 628 lines before, 252 after.
+- `MainFrame.cpp`: new, 679 lines.
+- Added `MainFrame.cpp` to the vcxproj ClCompile group.
+- clang-format `--style=file` applied to both new files, exit 0.
+- Debug x64 and Release x64 both rebuilt clean with v143. The only warnings are the
+  pre-existing D9025 `/Ob2` to `/Ob3` override from the shared `Directory.Build.targets`,
+  which every tool emits and which this change does not touch.
+
+Re-validation, the Release binary launched elevated through `.tools\launch-elevated.ps1` with
+`/nosaveload`, the toolbar and geometry read back through the elevated broker against the live
+window, strictly read-only (no scan, no recover, no file touched, no reboot):
+
+- Geometry, config cleared: GetWindowRect 640 by 480, GetWindowPlacement showCmd 1 with a
+  normal size of 640 by 480. Cascade position 104,104 from CW_USEDEFAULT, as the original.
+- Toolbar empty area (ToolbarWindow32 child, point 609,13): reads 240,240,240, the light flat
+  band.
+- Previous-versions ListView present with 0 items, the expected empty state on a machine with
+  no Volume Shadow Copies.
+- The window closed cleanly on WM_CLOSE and no `PreviousFilesRecovery.cfg` was written next to
+  the executable under `/nosaveload`.

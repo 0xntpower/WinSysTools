@@ -6,9 +6,9 @@
 
 struct ProcessInfo
 {
-    DWORD        pid = 0;
-    std::wstring name;    // image base name, e.g. explorer.exe
-    std::wstring path;    // full image path when it can be read
+    DWORD pid = 0;
+    std::wstring name; // image base name, e.g. explorer.exe
+    std::wstring path; // full image path when it can be read
 };
 
 // Enumerate running processes. The original resolves the full path through psapi

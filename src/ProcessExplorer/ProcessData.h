@@ -28,26 +28,26 @@ namespace pe
 
     struct ThreadRow
     {
-        DWORD     tid = 0;
-        uint64_t  startAddr = 0;
-        double    cpu = 0.0;
-        uint64_t  cpuTime = 0;   // kernel+user, 100ns units
-        ULONG     state = 0;
+        DWORD tid = 0;
+        uint64_t startAddr = 0;
+        double cpu = 0.0;
+        uint64_t cpuTime = 0; // kernel+user, 100ns units
+        ULONG state = 0;
     };
 
     struct ProcRow
     {
-        DWORD     pid = 0;
-        DWORD     parentPid = 0;
-        uint64_t  createTime = 0;      // 100ns FILETIME
+        DWORD pid = 0;
+        DWORD parentPid = 0;
+        uint64_t createTime = 0; // 100ns FILETIME
         std::wstring name;
-        double    cpu = 0.0;
-        uint64_t  privateBytes = 0;
-        uint64_t  workingSet = 0;
-        uint64_t  virtualSize = 0;
-        ULONG     handleCount = 0;
-        ULONG     threadCount = 0;
-        DWORD     sessionId = 0;
+        double cpu = 0.0;
+        uint64_t privateBytes = 0;
+        uint64_t workingSet = 0;
+        uint64_t virtualSize = 0;
+        ULONG handleCount = 0;
+        ULONG threadCount = 0;
+        DWORD sessionId = 0;
 
         std::wstring imagePath;
         std::wstring description;
@@ -55,18 +55,21 @@ namespace pe
         std::wstring version;
         std::wstring user;
 
-        bool      isOwn = false;
-        bool      isService = false;
-        bool      isSuspended = false;
+        bool isOwn = false;
+        bool isService = false;
+        bool isSuspended = false;
 
         // Difference-highlight bookkeeping, filled by the view layer.
-        bool      isNew = false;
-        bool      isDead = false;
-        uint64_t  flashUntil = 0;
+        bool isNew = false;
+        bool isDead = false;
+        uint64_t flashUntil = 0;
 
         std::vector<ThreadRow> threads;
 
-        [[nodiscard]] uint64_t Key() const { return (static_cast<uint64_t>(pid) << 20) ^ createTime; }
+        [[nodiscard]] uint64_t Key() const
+        {
+            return (static_cast<uint64_t>(pid) << 20) ^ createTime;
+        }
     };
 
     // Per-process metadata resolved once and reused while the process lives.
@@ -110,11 +113,16 @@ namespace pe
         {
             return;
         }
-        struct LangCp { WORD lang; WORD cp; };
+        struct LangCp
+        {
+            WORD lang;
+            WORD cp;
+        };
         LangCp* langs = nullptr;
         UINT langBytes = 0;
-        if (!::VerQueryValueW(block.data(), L"\\VarFileInfo\\Translation",
-                              reinterpret_cast<void**>(&langs), &langBytes) || langBytes < sizeof(LangCp))
+        if (!::VerQueryValueW(block.data(), L"\\VarFileInfo\\Translation", reinterpret_cast<void**>(&langs),
+                              &langBytes) ||
+            langBytes < sizeof(LangCp))
         {
             return;
         }
@@ -189,15 +197,13 @@ namespace pe
             return std::wstring();
         }
         ULONG needed = 0;
-        ntx::NTSTATUS st = api.QueryInformationProcess(
-            hProc, ntx::kProcessCommandLineInformation, nullptr, 0, &needed);
+        ntx::NTSTATUS st = api.QueryInformationProcess(hProc, ntx::kProcessCommandLineInformation, nullptr, 0, &needed);
         if (needed == 0)
         {
             return std::wstring();
         }
         std::vector<BYTE> buf(needed);
-        st = api.QueryInformationProcess(
-            hProc, ntx::kProcessCommandLineInformation, buf.data(), needed, &needed);
+        st = api.QueryInformationProcess(hProc, ntx::kProcessCommandLineInformation, buf.data(), needed, &needed);
         if (st != ntx::kStatusSuccess)
         {
             return std::wstring();
@@ -221,16 +227,18 @@ namespace pe
         }
         ntx::ProcessBasicInformationBlock pbi{};
         ULONG got = 0;
-        if (api.QueryInformationProcess(hProc, ntx::kProcessBasicInformation, &pbi, sizeof(pbi), &got) != ntx::kStatusSuccess
-            || !pbi.PebBaseAddress)
+        if (api.QueryInformationProcess(hProc, ntx::kProcessBasicInformation, &pbi, sizeof(pbi), &got) !=
+                ntx::kStatusSuccess ||
+            !pbi.PebBaseAddress)
         {
             return std::wstring();
         }
         // PEB.ProcessParameters at offset 0x20 on x64.
         BYTE* procParams = nullptr;
         SIZE_T rd = 0;
-        if (!::ReadProcessMemory(hProc, reinterpret_cast<BYTE*>(pbi.PebBaseAddress) + 0x20,
-                                 &procParams, sizeof(procParams), &rd) || !procParams)
+        if (!::ReadProcessMemory(hProc, reinterpret_cast<BYTE*>(pbi.PebBaseAddress) + 0x20, &procParams,
+                                 sizeof(procParams), &rd) ||
+            !procParams)
         {
             return std::wstring();
         }
@@ -252,7 +260,7 @@ namespace pe
     // the service-process set so that each Refresh does the minimum work.
     class Engine
     {
-    public:
+      public:
         Engine()
         {
             SYSTEM_INFO si{};
@@ -261,7 +269,10 @@ namespace pe
             CaptureOwnSid();
         }
 
-        [[nodiscard]] DWORD CpuCount() const { return m_cpuCount; }
+        [[nodiscard]] DWORD CpuCount() const
+        {
+            return m_cpuCount;
+        }
 
         std::vector<ProcRow> Refresh()
         {
@@ -348,7 +359,7 @@ namespace pe
             return rows;
         }
 
-    private:
+      private:
         DWORD m_cpuCount = 1;
         uint64_t m_prevTime = 0;
         std::unordered_map<DWORD, uint64_t> m_prevCpu;
@@ -369,10 +380,15 @@ namespace pe
                 return 0.0;
             }
             const uint64_t delta = cpuTime - it->second;
-            const double pct = 100.0 * static_cast<double>(delta) /
-                               (static_cast<double>(wall) * m_cpuCount);
-            if (pct < 0.0) return 0.0;
-            if (pct > 100.0) return 100.0;
+            const double pct = 100.0 * static_cast<double>(delta) / (static_cast<double>(wall) * m_cpuCount);
+            if (pct < 0.0)
+            {
+                return 0.0;
+            }
+            if (pct > 100.0)
+            {
+                return 100.0;
+            }
             return pct;
         }
 
@@ -384,13 +400,18 @@ namespace pe
                 auto it = m_prevThreadCpu.find(tid);
                 if (it != m_prevThreadCpu.end() && cpuTime >= it->second)
                 {
-                    pct = 100.0 * static_cast<double>(cpuTime - it->second) /
-                          (static_cast<double>(wall) * m_cpuCount);
+                    pct = 100.0 * static_cast<double>(cpuTime - it->second) / (static_cast<double>(wall) * m_cpuCount);
                 }
             }
             m_prevThreadCpu[tid] = cpuTime;
-            if (pct < 0.0) return 0.0;
-            if (pct > 100.0) return 100.0;
+            if (pct < 0.0)
+            {
+                return 0.0;
+            }
+            if (pct > 100.0)
+            {
+                return 100.0;
+            }
             return pct;
         }
 
@@ -437,8 +458,8 @@ namespace pe
                 if (::GetTokenInformation(token, TokenUser, buf.data(), len, &len))
                 {
                     auto* tu = reinterpret_cast<TOKEN_USER*>(buf.data());
-                    own = ::EqualSid(tu->User.Sid,
-                                     const_cast<PSID>(reinterpret_cast<const void*>(m_ownSid.data()))) != FALSE;
+                    own = ::EqualSid(tu->User.Sid, const_cast<PSID>(reinterpret_cast<const void*>(m_ownSid.data()))) !=
+                          FALSE;
                 }
             }
             ::CloseHandle(token);
@@ -504,14 +525,14 @@ namespace pe
                 return;
             }
             DWORD needed = 0, returned = 0, resume = 0;
-            ::EnumServicesStatusExW(scm, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_ACTIVE,
-                                    nullptr, 0, &needed, &returned, &resume, nullptr);
+            ::EnumServicesStatusExW(scm, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_ACTIVE, nullptr, 0, &needed,
+                                    &returned, &resume, nullptr);
             if (needed)
             {
                 std::vector<BYTE> buf(needed);
                 resume = 0;
-                if (::EnumServicesStatusExW(scm, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_ACTIVE,
-                                            buf.data(), needed, &needed, &returned, &resume, nullptr))
+                if (::EnumServicesStatusExW(scm, SC_ENUM_PROCESS_INFO, SERVICE_WIN32, SERVICE_ACTIVE, buf.data(),
+                                            needed, &needed, &returned, &resume, nullptr))
                 {
                     auto* svc = reinterpret_cast<ENUM_SERVICE_STATUS_PROCESSW*>(buf.data());
                     for (DWORD i = 0; i < returned; ++i)
@@ -528,4 +549,4 @@ namespace pe
 
         std::unordered_map<uint64_t, bool> m_ownFlag;
     };
-}
+} // namespace pe

@@ -200,3 +200,56 @@ confirmed the full box paints.
 Status: done and validated. Win32 user-mode capture, columns, time formatting,
 clock-time toggle, Clear, autoscroll, Save, Copy, Find and the filter all work.
 Kernel capture is menu-only and documented above.
+
+## Refactor -- CMainFrame bodies moved to MainFrame.cpp (2026-11-18)
+
+The CMainFrame method bodies were moved out of MainFrame.h into a new
+MainFrame.cpp, matching the WinObj split. The header now carries only the class
+shape: members, the WTL macros, the message map, DECLARE_FRAME_WND_CLASS and the
+method declarations. This was behaviour-preserving code motion plus the HRC
+clang-format pass over the DebugView sources.
+
+- MainFrame.h: 685 lines before, 145 after.
+- MainFrame.cpp: new file, 755 lines, bodies in the same order, verbatim. The
+  out-of-line definitions drop `override` on PreTranslateMessage and keep every
+  WTL handler signature including the trailing `BOOL&`.
+- clang-format ran with the repo .clang-format over `src\DebugView\*.cpp` and
+  `src\DebugView\*.h`, so DebugView's own headers picked up the HRC style too,
+  as the WinObj commit did. MainFrame.cpp was added to the project ClCompile.
+- Rebuilt both x64 configs with VS 2022 Community MSBuild v143 and /t:Rebuild.
+  Both clean.
+
+Re-validation of the Release x64 rebuild, config cleared first. A separate writer
+process (pid 26928) called `OutputDebugStringA` three times with known strings.
+A cross-process reader read the running rebuild's owner-data list:
+
+```
+ROWCOUNT: 4
+ROW 0: [0] [0.00000000] [30008] [Error: 31]
+ROW 1: [1] [1.04854660] [26928] [DebugView refactor test line ALPHA]
+ROW 2: [2] [1.20406020] [26928] [DebugView refactor test line BRAVO]
+ROW 3: [3] [1.35871520] [26928] [DebugView refactor test line CHARLIE]
+```
+
+- All three known lines captured with the writer pid from buffer offset 0, the
+  exact message, dense sequence numbers and the 150 ms gaps that match the writer.
+- The seq 0 line is background debug output from an unrelated process, which just
+  shows capture stays live across every source.
+
+Geometry, config cleared, matched the original first-launch rect:
+
+```
+WINDOWRECT: 100,100 500x300
+```
+
+Toolbar light check, three empty-area samples of the `ToolbarWindow32` child:
+
+```
+TBPIXEL x=478 y=12: 240,240,240
+TBPIXEL x=470 y=12: 240,240,240
+TBPIXEL x=460 y=12: 240,240,240
+```
+
+The toolbar reads 240,240,240, so the three-edit dark-toolbar fix survives the
+split. Capture, columns, geometry and the toolbar fix are all unchanged by the
+refactor.

@@ -17,32 +17,50 @@
 // ---- About ---------------------------------------------------------------
 class CAboutDlg : public CDialogImpl<CAboutDlg>
 {
-public:
-    enum { IDD = IDD_ABOUT };
+  public:
+    enum
+    {
+        IDD = IDD_ABOUT
+    };
 
     BEGIN_MSG_MAP(CAboutDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnClose)
-        COMMAND_ID_HANDLER(IDCANCEL, OnClose)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnClose)
+    COMMAND_ID_HANDLER(IDCANCEL, OnClose)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
     {
         SetWindowTextW(L"About PreviousFilesRecovery");
         SetDlgItemTextW(IDC_ABOUT_TITLE, L"PreviousFilesRecovery v1.10");
-        SetDlgItemTextW(IDC_ABOUT_COPYRIGHT, L"Independent source-accurate recreation of PreviousFilesRecovery by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
-        if (CWindow t1 = GetDlgItem(1005)) t1.ShowWindow(SW_HIDE);
-        if (CWindow t2 = GetDlgItem(1006)) t2.ShowWindow(SW_HIDE);
+        SetDlgItemTextW(IDC_ABOUT_COPYRIGHT,
+                        L"Independent source-accurate recreation of PreviousFilesRecovery by NirSoft, through reverse "
+                        L"engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
+        if (CWindow t1 = GetDlgItem(1005))
+        {
+            t1.ShowWindow(SW_HIDE);
+        }
+        if (CWindow t2 = GetDlgItem(1006))
+        {
+            t2.ShowWindow(SW_HIDE);
+        }
         return TRUE;
     }
-    LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }
+    LRESULT OnClose(WORD, WORD id, HWND, BOOL&)
+    {
+        EndDialog(id);
+        return 0;
+    }
 };
 
 // ---- Properties (Property / Value list for one record) -------------------
 class CPropertiesDlg : public CDialogImpl<CPropertiesDlg>, public CDialogResize<CPropertiesDlg>
 {
-public:
-    enum { IDD = IDD_PROPERTIES };
+  public:
+    enum
+    {
+        IDD = IDD_PROPERTIES
+    };
 
     const PrevFileRecord& m_rec;
     const std::vector<int>& m_cols;
@@ -50,30 +68,41 @@ public:
     CListViewCtrl m_list;
 
     CPropertiesDlg(const PrevFileRecord& r, const std::vector<int>& cols, DisplayOptions d)
-        : m_rec(r), m_cols(cols), m_disp(d) {}
+        : m_rec(r)
+        , m_cols(cols)
+        , m_disp(d)
+    {
+    }
 
     BEGIN_DLGRESIZE_MAP(CPropertiesDlg)
-        DLGRESIZE_CONTROL(IDC_PROP_VALUE, DLSZ_SIZE_X | DLSZ_SIZE_Y)
-        DLGRESIZE_CONTROL(IDOK, DLSZ_MOVE_X | DLSZ_MOVE_Y)
+    DLGRESIZE_CONTROL(IDC_PROP_VALUE, DLSZ_SIZE_X | DLSZ_SIZE_Y)
+    DLGRESIZE_CONTROL(IDOK, DLSZ_MOVE_X | DLSZ_MOVE_Y)
     END_DLGRESIZE_MAP()
 
     BEGIN_MSG_MAP(CPropertiesDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDOK, OnClose)
-        COMMAND_ID_HANDLER(IDCANCEL, OnClose)
-        CHAIN_MSG_MAP(CDialogResize<CPropertiesDlg>)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDOK, OnClose)
+    COMMAND_ID_HANDLER(IDCANCEL, OnClose)
+    CHAIN_MSG_MAP(CDialogResize<CPropertiesDlg>)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
     {
         SetWindowTextW(L"Properties");
-        if (CWindow lbl = GetDlgItem(IDC_PROP_LABEL)) lbl.ShowWindow(SW_HIDE);
-        if (CWindow edit = GetDlgItem(IDC_PROP_VALUE)) edit.ShowWindow(SW_HIDE);
+        if (CWindow lbl = GetDlgItem(IDC_PROP_LABEL))
+        {
+            lbl.ShowWindow(SW_HIDE);
+        }
+        if (CWindow edit = GetDlgItem(IDC_PROP_VALUE))
+        {
+            edit.ShowWindow(SW_HIDE);
+        }
 
-        CRect rc; GetClientRect(&rc);
+        CRect rc;
+        GetClientRect(&rc);
         rc.bottom -= 28;
-        m_list.Create(m_hWnd, rc, nullptr,
-            WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SHOWSELALWAYS, WS_EX_CLIENTEDGE, IDC_PROP_VALUE + 100);
+        m_list.Create(m_hWnd, rc, nullptr, WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SHOWSELALWAYS, WS_EX_CLIENTEDGE,
+                      IDC_PROP_VALUE + 100);
         m_list.SetExtendedListViewStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
         m_list.InsertColumn(0, L"Property", LVCFMT_LEFT, 160);
         m_list.InsertColumn(1, L"Value", LVCFMT_LEFT, 360);
@@ -85,32 +114,42 @@ public:
         DlgResize_Init(true, true);
         return TRUE;
     }
-    LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }
+    LRESULT OnClose(WORD, WORD id, HWND, BOOL&)
+    {
+        EndDialog(id);
+        return 0;
+    }
 };
 
 // ---- Column Settings -----------------------------------------------------
 class CColumnsDlg : public CDialogImpl<CColumnsDlg>
 {
-public:
-    enum { IDD = IDD_COLUMNS };
+  public:
+    enum
+    {
+        IDD = IDD_COLUMNS
+    };
 
     std::vector<int> m_visible;
     std::vector<int> m_widths;
     CListViewCtrl m_list;
 
     CColumnsDlg(std::vector<int> vis, std::vector<int> wid)
-        : m_visible(std::move(vis)), m_widths(std::move(wid)) {}
+        : m_visible(std::move(vis))
+        , m_widths(std::move(wid))
+    {
+    }
 
     BEGIN_MSG_MAP(CColumnsDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDC_COL_MOVEUP, OnMoveUp)
-        COMMAND_ID_HANDLER(IDC_COL_MOVEDOWN, OnMoveDown)
-        COMMAND_ID_HANDLER(IDC_COL_SHOW, OnShow)
-        COMMAND_ID_HANDLER(IDC_COL_HIDE, OnHide)
-        COMMAND_ID_HANDLER(IDC_COL_DEFAULT, OnDefault)
-        COMMAND_ID_HANDLER(IDOK, OnOK)
-        COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
-        NOTIFY_HANDLER(IDC_COL_LIST, LVN_ITEMCHANGED, OnSelChange)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDC_COL_MOVEUP, OnMoveUp)
+    COMMAND_ID_HANDLER(IDC_COL_MOVEDOWN, OnMoveDown)
+    COMMAND_ID_HANDLER(IDC_COL_SHOW, OnShow)
+    COMMAND_ID_HANDLER(IDC_COL_HIDE, OnHide)
+    COMMAND_ID_HANDLER(IDC_COL_DEFAULT, OnDefault)
+    COMMAND_ID_HANDLER(IDOK, OnOK)
+    COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
+    NOTIFY_HANDLER(IDC_COL_LIST, LVN_ITEMCHANGED, OnSelChange)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -137,6 +176,7 @@ public:
             ++row;
         }
         for (int c = 0; c < kColumnCount; ++c)
+        {
             if (!shown[c])
             {
                 m_list.InsertItem(row, kColumns[c].title);
@@ -144,20 +184,32 @@ public:
                 m_list.SetCheckState(row, FALSE);
                 ++row;
             }
+        }
     }
 
-    int sel() { return m_list.GetNextItem(-1, LVNI_SELECTED); }
+    int sel()
+    {
+        return m_list.GetNextItem(-1, LVNI_SELECTED);
+    }
     int widthFor(int col)
     {
         for (size_t i = 0; i < m_visible.size(); ++i)
-            if (m_visible[i] == col) return i < m_widths.size() ? m_widths[i] : kColumns[col].width;
+        {
+            if (m_visible[i] == col)
+            {
+                return i < m_widths.size() ? m_widths[i] : kColumns[col].width;
+            }
+        }
         return kColumns[col].width;
     }
 
     LRESULT OnSelChange(int, LPNMHDR, BOOL&)
     {
         int i = sel();
-        if (i >= 0) SetDlgItemInt(IDC_COL_WIDTH, widthFor((int)m_list.GetItemData(i)), FALSE);
+        if (i >= 0)
+        {
+            SetDlgItemInt(IDC_COL_WIDTH, widthFor((int)m_list.GetItemData(i)), FALSE);
+        }
         return 0;
     }
 
@@ -168,21 +220,58 @@ public:
         m_list.GetItemText(b, 0, tb, 256);
         DWORD_PTR da = m_list.GetItemData(a), db = m_list.GetItemData(b);
         BOOL ca = m_list.GetCheckState(a), cb = m_list.GetCheckState(b);
-        m_list.SetItemText(a, 0, tb); m_list.SetItemData(a, db); m_list.SetCheckState(a, cb);
-        m_list.SetItemText(b, 0, ta); m_list.SetItemData(b, da); m_list.SetCheckState(b, ca);
+        m_list.SetItemText(a, 0, tb);
+        m_list.SetItemData(a, db);
+        m_list.SetCheckState(a, cb);
+        m_list.SetItemText(b, 0, ta);
+        m_list.SetItemData(b, da);
+        m_list.SetCheckState(b, ca);
     }
 
     LRESULT OnMoveUp(WORD, WORD, HWND, BOOL&)
-    { int i = sel(); if (i > 0) { swapRows(i, i - 1); m_list.SetItemState(i - 1, LVIS_SELECTED, LVIS_SELECTED); } return 0; }
+    {
+        int i = sel();
+        if (i > 0)
+        {
+            swapRows(i, i - 1);
+            m_list.SetItemState(i - 1, LVIS_SELECTED, LVIS_SELECTED);
+        }
+        return 0;
+    }
     LRESULT OnMoveDown(WORD, WORD, HWND, BOOL&)
-    { int i = sel(); if (i >= 0 && i < m_list.GetItemCount() - 1) { swapRows(i, i + 1); m_list.SetItemState(i + 1, LVIS_SELECTED, LVIS_SELECTED); } return 0; }
-    LRESULT OnShow(WORD, WORD, HWND, BOOL&) { if (int i = sel(); i >= 0) m_list.SetCheckState(i, TRUE); return 0; }
-    LRESULT OnHide(WORD, WORD, HWND, BOOL&) { if (int i = sel(); i >= 0) m_list.SetCheckState(i, FALSE); return 0; }
+    {
+        int i = sel();
+        if (i >= 0 && i < m_list.GetItemCount() - 1)
+        {
+            swapRows(i, i + 1);
+            m_list.SetItemState(i + 1, LVIS_SELECTED, LVIS_SELECTED);
+        }
+        return 0;
+    }
+    LRESULT OnShow(WORD, WORD, HWND, BOOL&)
+    {
+        if (int i = sel(); i >= 0)
+        {
+            m_list.SetCheckState(i, TRUE);
+        }
+        return 0;
+    }
+    LRESULT OnHide(WORD, WORD, HWND, BOOL&)
+    {
+        if (int i = sel(); i >= 0)
+        {
+            m_list.SetCheckState(i, FALSE);
+        }
+        return 0;
+    }
     LRESULT OnDefault(WORD, WORD, HWND, BOOL&)
     {
         m_visible.assign(std::begin(kDefaultOrder), std::end(kDefaultOrder));
         m_widths.clear();
-        for (int c : m_visible) m_widths.push_back(kColumns[c].width);
+        for (int c : m_visible)
+        {
+            m_widths.push_back(kColumns[c].width);
+        }
         Populate();
         return 0;
     }
@@ -194,17 +283,27 @@ public:
         int editW = (int)GetDlgItemInt(IDC_COL_WIDTH, nullptr, FALSE);
         int selCol = sel() >= 0 ? (int)m_list.GetItemData(sel()) : -1;
         for (int r = 0; r < m_list.GetItemCount(); ++r)
+        {
             if (m_list.GetCheckState(r))
             {
                 int c = (int)m_list.GetItemData(r);
                 vis.push_back(c);
                 wid.push_back((c == selCol && editW > 0) ? editW : widthFor(c));
             }
-        if (!vis.empty()) { m_visible = vis; m_widths = wid; }
+        }
+        if (!vis.empty())
+        {
+            m_visible = vis;
+            m_widths = wid;
+        }
         EndDialog(IDOK);
         return 0;
     }
-    LRESULT OnCancel(WORD, WORD, HWND, BOOL&) { EndDialog(IDCANCEL); return 0; }
+    LRESULT OnCancel(WORD, WORD, HWND, BOOL&)
+    {
+        EndDialog(IDCANCEL);
+        return 0;
+    }
 };
 
 // ---- Recover Files -------------------------------------------------------
@@ -212,18 +311,24 @@ public:
 // When a name already exists in the destination a new name is used, as the readme says.
 class CRecoverDlg : public CDialogImpl<CRecoverDlg>
 {
-public:
-    enum { IDD = IDD_RECOVER };
+  public:
+    enum
+    {
+        IDD = IDD_RECOVER
+    };
 
     std::vector<PrevFileRecord> m_items;
-    explicit CRecoverDlg(std::vector<PrevFileRecord> items) : m_items(std::move(items)) {}
+    explicit CRecoverDlg(std::vector<PrevFileRecord> items)
+        : m_items(std::move(items))
+    {
+    }
 
     BEGIN_MSG_MAP(CRecoverDlg)
-        MSG_WM_INITDIALOG(OnInitDialog)
-        COMMAND_ID_HANDLER(IDC_REC_DOIT, OnDoIt)
-        COMMAND_ID_HANDLER(IDC_REC_BROWSE, OnBrowse)
-        COMMAND_ID_HANDLER(IDCANCEL, OnClose)
-        COMMAND_ID_HANDLER(2, OnClose)
+    MSG_WM_INITDIALOG(OnInitDialog)
+    COMMAND_ID_HANDLER(IDC_REC_DOIT, OnDoIt)
+    COMMAND_ID_HANDLER(IDC_REC_BROWSE, OnBrowse)
+    COMMAND_ID_HANDLER(IDCANCEL, OnClose)
+    COMMAND_ID_HANDLER(2, OnClose)
     END_MSG_MAP()
 
     BOOL OnInitDialog(CWindow, LPARAM)
@@ -235,24 +340,37 @@ public:
     LRESULT OnBrowse(WORD, WORD, HWND, BOOL&)
     {
         CFolderDialog dlg(m_hWnd, L"Choose destination folder:");
-        if (dlg.DoModal(m_hWnd) == IDOK) SetDlgItemTextW(IDC_REC_DEST, dlg.GetFolderPath());
+        if (dlg.DoModal(m_hWnd) == IDOK)
+        {
+            SetDlgItemTextW(IDC_REC_DEST, dlg.GetFolderPath());
+        }
         return 0;
     }
 
     static bool copyRecursive(const std::wstring& src, const std::wstring& dst)
     {
         DWORD a = ::GetFileAttributesW(src.c_str());
-        if (a == INVALID_FILE_ATTRIBUTES) return false;
+        if (a == INVALID_FILE_ATTRIBUTES)
+        {
+            return false;
+        }
         if (!(a & FILE_ATTRIBUTE_DIRECTORY))
+        {
             return ::CopyFileW(src.c_str(), dst.c_str(), FALSE) != 0;
+        }
         ::CreateDirectoryW(dst.c_str(), nullptr);
         WIN32_FIND_DATAW fd{};
         HANDLE h = ::FindFirstFileW((src + L"\\*").c_str(), &fd);
-        if (h == INVALID_HANDLE_VALUE) return true;
+        if (h == INVALID_HANDLE_VALUE)
+        {
+            return true;
+        }
         do
         {
-            if (fd.cFileName[0] == L'.' && (fd.cFileName[1] == 0 ||
-                (fd.cFileName[1] == L'.' && fd.cFileName[2] == 0))) continue;
+            if (fd.cFileName[0] == L'.' && (fd.cFileName[1] == 0 || (fd.cFileName[1] == L'.' && fd.cFileName[2] == 0)))
+            {
+                continue;
+            }
             copyRecursive(src + L"\\" + fd.cFileName, dst + L"\\" + fd.cFileName);
         } while (::FindNextFileW(h, &fd));
         ::FindClose(h);
@@ -262,14 +380,24 @@ public:
     static std::wstring uniqueName(const std::wstring& dir, const std::wstring& name)
     {
         std::wstring full = dir + L"\\" + name;
-        if (::GetFileAttributesW(full.c_str()) == INVALID_FILE_ATTRIBUTES) return full;
+        if (::GetFileAttributesW(full.c_str()) == INVALID_FILE_ATTRIBUTES)
+        {
+            return full;
+        }
         std::wstring base = name, ext;
         size_t dot = name.find_last_of(L'.');
-        if (dot != std::wstring::npos && dot != 0) { base = name.substr(0, dot); ext = name.substr(dot); }
+        if (dot != std::wstring::npos && dot != 0)
+        {
+            base = name.substr(0, dot);
+            ext = name.substr(dot);
+        }
         for (int i = 2; i < 10000; ++i)
         {
             std::wstring cand = dir + L"\\" + base + L" (" + std::to_wstring(i) + L")" + ext;
-            if (::GetFileAttributesW(cand.c_str()) == INVALID_FILE_ATTRIBUTES) return cand;
+            if (::GetFileAttributesW(cand.c_str()) == INVALID_FILE_ATTRIBUTES)
+            {
+                return cand;
+            }
         }
         return full;
     }
@@ -280,8 +408,8 @@ public:
         GetDlgItemTextW(IDC_REC_DEST, dest, MAX_PATH);
         if (dest[0] == 0 || ::GetFileAttributesW(dest) == INVALID_FILE_ATTRIBUTES)
         {
-            MessageBoxW(L"You must provide a valid destination folder to copy the files !",
-                        L"PreviousFilesRecovery", MB_OK | MB_ICONEXCLAMATION);
+            MessageBoxW(L"You must provide a valid destination folder to copy the files !", L"PreviousFilesRecovery",
+                        MB_OK | MB_ICONEXCLAMATION);
             return 0;
         }
         int done = 0;
@@ -289,10 +417,17 @@ public:
         {
             std::wstring out = uniqueName(dest, r.filename);
             SetDlgItemTextW(IDC_REC_LINE1, (L"Copying: " + r.filename).c_str());
-            if (copyRecursive(r.previousPath(), out)) ++done;
+            if (copyRecursive(r.previousPath(), out))
+            {
+                ++done;
+            }
         }
         MessageBoxW(L"Finished the copy process !", L"PreviousFilesRecovery", MB_OK | MB_ICONINFORMATION);
         return 0;
     }
-    LRESULT OnClose(WORD, WORD, HWND, BOOL&) { EndDialog(IDCANCEL); return 0; }
+    LRESULT OnClose(WORD, WORD, HWND, BOOL&)
+    {
+        EndDialog(IDCANCEL);
+        return 0;
+    }
 };

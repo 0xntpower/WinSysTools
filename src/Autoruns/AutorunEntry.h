@@ -44,9 +44,9 @@ namespace ar
 
     enum class SigState
     {
-        Unknown = 0,   // not verified yet
-        Verified,      // WinVerifyTrust returned trusted
-        NotVerified    // no valid Authenticode signature
+        Unknown = 0, // not verified yet
+        Verified,    // WinVerifyTrust returned trusted
+        NotVerified  // no valid Authenticode signature
     };
 
     struct AutorunEntry
@@ -88,10 +88,10 @@ namespace ar
 
     struct Location
     {
-        std::wstring label;        // display path of the location
-        std::wstring jumpPath;     // regedit LastKey path, or a folder path
-        std::wstring timestamp;    // location (key or folder) last-write time
-        bool isRegistry = true;    // Jump to Entry opens regedit when true
+        std::wstring label;     // display path of the location
+        std::wstring jumpPath;  // regedit LastKey path, or a folder path
+        std::wstring timestamp; // location (key or folder) last-write time
+        bool isRegistry = true; // Jump to Entry opens regedit when true
         Category category = Category::Logon;
         std::vector<AutorunEntry> entries;
     };
@@ -100,25 +100,44 @@ namespace ar
     {
         switch (c)
         {
-        case Category::Logon:            return L"Logon";
-        case Category::Services:         return L"Services";
-        case Category::Drivers:          return L"Drivers";
-        case Category::ScheduledTasks:   return L"Scheduled Tasks";
-        case Category::Winlogon:         return L"Winlogon";
-        case Category::Explorer:         return L"Explorer";
-        case Category::InternetExplorer: return L"Internet Explorer";
-        case Category::Codecs:           return L"Codecs";
-        case Category::BootExecute:      return L"Boot Execute";
-        case Category::ImageHijacks:     return L"Image Hijacks";
-        case Category::AppInit:          return L"AppInit";
-        case Category::KnownDlls:        return L"KnownDLLs";
-        case Category::Winsock:          return L"Winsock Providers";
-        case Category::PrintMonitors:    return L"Print Monitors";
-        case Category::LsaProviders:     return L"LSA Providers";
-        case Category::NetworkProviders: return L"Network Providers";
-        case Category::Wmi:              return L"WMI";
-        case Category::Office:           return L"Office";
-        default:                         return L"";
+        case Category::Logon:
+            return L"Logon";
+        case Category::Services:
+            return L"Services";
+        case Category::Drivers:
+            return L"Drivers";
+        case Category::ScheduledTasks:
+            return L"Scheduled Tasks";
+        case Category::Winlogon:
+            return L"Winlogon";
+        case Category::Explorer:
+            return L"Explorer";
+        case Category::InternetExplorer:
+            return L"Internet Explorer";
+        case Category::Codecs:
+            return L"Codecs";
+        case Category::BootExecute:
+            return L"Boot Execute";
+        case Category::ImageHijacks:
+            return L"Image Hijacks";
+        case Category::AppInit:
+            return L"AppInit";
+        case Category::KnownDlls:
+            return L"KnownDLLs";
+        case Category::Winsock:
+            return L"Winsock Providers";
+        case Category::PrintMonitors:
+            return L"Print Monitors";
+        case Category::LsaProviders:
+            return L"LSA Providers";
+        case Category::NetworkProviders:
+            return L"Network Providers";
+        case Category::Wmi:
+            return L"WMI";
+        case Category::Office:
+            return L"Office";
+        default:
+            return L"";
         }
     }
-}
+} // namespace ar

@@ -63,6 +63,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ADExplorer.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
+    <ClCompile Include="AdClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainFrame.h" />

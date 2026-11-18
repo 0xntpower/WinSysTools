@@ -11,18 +11,24 @@
 #include <cstdlib>
 
 // Save-file encoding (SaveFileEncoding value).
-enum SaveEncoding { Enc_Default = 0, Enc_Ansi = 1, Enc_Unicode = 2, Enc_Utf8 = 3 };
+enum SaveEncoding
+{
+    Enc_Default = 0,
+    Enc_Ansi = 1,
+    Enc_Unicode = 2,
+    Enc_Utf8 = 3
+};
 
 struct Config
 {
     // WMI query (defaults recovered: root\CIMV2 / Win32_Process)
     std::wstring nameSpace = L"root\\CIMV2";
     std::wstring classOrQuery = L"Win32_Process";
-    int  connectComputer = 1;       // 1 this computer, 2 remote
+    int connectComputer = 1; // 1 this computer, 2 remote
     std::wstring computerName;
     std::wstring userName;
-    int  syncMode = 1;              // 1 asynchronous, 2 synchronous
-    int  timeout  = 15000;          // ms
+    int syncMode = 1;    // 1 asynchronous, 2 synchronous
+    int timeout = 15000; // ms
 
     // display / options
     bool showGridLines = false;
@@ -41,10 +47,10 @@ struct Config
     bool startAsHidden = false;
     bool alwaysOnTop = false;
 
-    int  saveFileEncoding = Enc_Default;
-    int  saveFilterIndex = 0;
+    int saveFileEncoding = Enc_Default;
+    int saveFilterIndex = 0;
 
-    int  sortColumn = 0;            // sort column index
+    int sortColumn = 0; // sort column index
     bool sortAscending = true;
 
     bool havePlacement = false;
@@ -53,13 +59,22 @@ struct Config
     std::wstring cfgPath = cfgini::DefaultPath();
 
     // /cfg command-line override: point the store at a different file.
-    void setCfgPath(const std::wstring& arg) { cfgPath = cfgini::Resolve(arg); }
+    void setCfgPath(const std::wstring& arg)
+    {
+        cfgPath = cfgini::Resolve(arg);
+    }
 
     void load()
     {
         const std::wstring& p = cfgPath;
-        auto rb = [&](const wchar_t* n, bool& v) { v = cfgini::GetInt(p, n, v) != 0; };
-        auto ri = [&](const wchar_t* n, int& v)  { v = cfgini::GetInt(p, n, v); };
+        auto rb = [&](const wchar_t* n, bool& v)
+        {
+            v = cfgini::GetInt(p, n, v) != 0;
+        };
+        auto ri = [&](const wchar_t* n, int& v)
+        {
+            v = cfgini::GetInt(p, n, v);
+        };
 
         nameSpace = cfgini::GetStr(p, L"Namespace", nameSpace.c_str());
         classOrQuery = cfgini::GetStr(p, L"Class", classOrQuery.c_str());

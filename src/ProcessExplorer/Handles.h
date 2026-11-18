@@ -23,8 +23,8 @@ namespace pe
     {
         std::wstring type;
         std::wstring name;
-        uint64_t     handle = 0;
-        ULONG        access = 0;
+        uint64_t handle = 0;
+        ULONG access = 0;
     };
 
     // Resolve a duplicated handle's object type name.
@@ -112,8 +112,9 @@ namespace pe
             row.access = e.GrantedAccess;
 
             HANDLE dup = nullptr;
-            if (::DuplicateHandle(hProc, reinterpret_cast<HANDLE>(e.HandleValue),
-                                  self, &dup, 0, FALSE, DUPLICATE_SAME_ACCESS) && dup)
+            if (::DuplicateHandle(hProc, reinterpret_cast<HANDLE>(e.HandleValue), self, &dup, 0, FALSE,
+                                  DUPLICATE_SAME_ACCESS) &&
+                dup)
             {
                 row.type = QueryHandleType(dup);
                 row.name = QueryHandleName(dup, e.GrantedAccess);
@@ -124,4 +125,4 @@ namespace pe
         ::CloseHandle(hProc);
         return rows;
     }
-}
+} // namespace pe

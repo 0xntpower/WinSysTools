@@ -20,12 +20,18 @@ CAppModule _Module;
 
 namespace
 {
-    bool ieq(const std::wstring& a, const std::wstring& b) { return _wcsicmp(a.c_str(), b.c_str()) == 0; }
+    bool ieq(const std::wstring& a, const std::wstring& b)
+    {
+        return _wcsicmp(a.c_str(), b.c_str()) == 0;
+    }
 
     std::wstring expand(const std::wstring& s)
     {
         DWORD n = ::ExpandEnvironmentStringsW(s.c_str(), nullptr, 0);
-        if (!n) return s;
+        if (!n)
+        {
+            return s;
+        }
         std::wstring out(n, L'\0');
         ::ExpandEnvironmentStringsW(s.c_str(), out.data(), n);
         out.resize(n - 1);
@@ -36,14 +42,22 @@ namespace
     // the same set the Decryption Options dialog auto-fills.
     void fillDefaultFolders(Config& cfg)
     {
-        if (cfg.credFolder1.empty()) cfg.credFolder1 = expand(L"%LOCALAPPDATA%\\Microsoft\\Credentials");
-        if (cfg.credFolder2.empty()) cfg.credFolder2 = expand(L"%APPDATA%\\Microsoft\\Credentials");
+        if (cfg.credFolder1.empty())
+        {
+            cfg.credFolder1 = expand(L"%LOCALAPPDATA%\\Microsoft\\Credentials");
+        }
+        if (cfg.credFolder2.empty())
+        {
+            cfg.credFolder2 = expand(L"%APPDATA%\\Microsoft\\Credentials");
+        }
     }
 
     void writeConsole(const std::wstring& line)
     {
         if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::GetLastError() == ERROR_INVALID_HANDLE)
+        {
             ::AllocConsole();
+        }
         HANDLE h = ::GetStdHandle(STD_OUTPUT_HANDLE);
         if (h && h != INVALID_HANDLE_VALUE)
         {
@@ -58,7 +72,10 @@ namespace
     {
         int argc = 0;
         LPWSTR* argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
-        if (!argv) return false;
+        if (!argv)
+        {
+            return false;
+        }
 
         bool selfTest = false;
         bool noSaveLoad = false;
@@ -72,18 +89,43 @@ namespace
         for (int i = 1; i < argc; ++i)
         {
             std::wstring a = argv[i];
-            auto next = [&]() -> std::wstring { return (i + 1 < argc) ? argv[++i] : std::wstring(); };
+            auto next = [&]() -> std::wstring
+            {
+                return (i + 1 < argc) ? argv[++i] : std::wstring();
+            };
 
-            if (ieq(a, L"/selftest"))        selfTest = true;
-            else if (ieq(a, L"/nosaveload")) noSaveLoad = true;
-            else if (ieq(a, L"/deleteregkey")) deleteKey = true;
-            else if (ieq(a, L"/savelangfile")) saveLang = true;
-            else if (ieq(a, L"/cfg"))        cfgFile = next();
-            else if (ieq(a, L"/StartDecrypt")) { /* auto-start, handled in GUI */ }
+            if (ieq(a, L"/selftest"))
+            {
+                selfTest = true;
+            }
+            else if (ieq(a, L"/nosaveload"))
+            {
+                noSaveLoad = true;
+            }
+            else if (ieq(a, L"/deleteregkey"))
+            {
+                deleteKey = true;
+            }
+            else if (ieq(a, L"/savelangfile"))
+            {
+                saveLang = true;
+            }
+            else if (ieq(a, L"/cfg"))
+            {
+                cfgFile = next();
+            }
+            else if (ieq(a, L"/StartDecrypt"))
+            { /* auto-start, handled in GUI */
+            }
             else
             {
                 ExportFormat f{};
-                if (FormatFromSwitch(a, f)) { fmt = f; outFile = next(); haveExport = true; }
+                if (FormatFromSwitch(a, f))
+                {
+                    fmt = f;
+                    outFile = next();
+                    haveExport = true;
+                }
             }
         }
         ::LocalFree(argv);
@@ -111,11 +153,20 @@ namespace
             return true;
         }
 
-        if (!haveExport) return false;
+        if (!haveExport)
+        {
+            return false;
+        }
 
         Config cfg;
-        if (!noSaveLoad) cfg.load();
-        if (!cfgFile.empty()) cfg.loadIni(cfgFile);
+        if (!noSaveLoad)
+        {
+            cfg.load();
+        }
+        if (!cfgFile.empty())
+        {
+            cfg.loadIni(cfgFile);
+        }
         fillDefaultFolders(cfg);
 
         DecodeRequest req;
@@ -125,7 +176,7 @@ namespace
 
         std::vector<CredRecord> items;
         DecodeFolders(req, items);
-        bool ok = WriteReport(outFile, items, cfg.visibleColumns, fmt, ExportOptions{ cfg.saveFileEncoding });
+        bool ok = WriteReport(outFile, items, cfg.visibleColumns, fmt, ExportOptions{cfg.saveFileEncoding});
         exitCode = ok ? 0 : 1;
         return true;
     }
@@ -136,8 +187,16 @@ namespace
         LPWSTR* argv = ::CommandLineToArgvW(::GetCommandLineW(), &argc);
         bool found = false;
         for (int i = 1; i < argc && argv; ++i)
-            if (_wcsicmp(argv[i], sw) == 0) found = true;
-        if (argv) ::LocalFree(argv);
+        {
+            if (_wcsicmp(argv[i], sw) == 0)
+            {
+                found = true;
+            }
+        }
+        if (argv)
+        {
+            ::LocalFree(argv);
+        }
         return found;
     }
 
@@ -150,7 +209,9 @@ namespace
         // The original's CreateWindowExW passes CW_USEDEFAULT for X, Y, width and
         // height, so let WTL use its default rect.
         if (frame.CreateEx(nullptr) == nullptr)
+        {
             return 0;
+        }
         frame.ShowWindow(frame.m_cfg.havePlacement ? frame.m_cfg.placement.showCmd : nCmdShow);
         frame.UpdateWindow();
 
@@ -169,11 +230,12 @@ namespace
         _Module.RemoveMessageLoop();
         return ret;
     }
-}
+} // namespace
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 {
-    INITCOMMONCONTROLSEX icc{ sizeof(icc), ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES };
+    INITCOMMONCONTROLSEX icc{sizeof(icc),
+                             ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES};
     PinToLightMode();
     if (!::InitCommonControlsEx(&icc))
     {

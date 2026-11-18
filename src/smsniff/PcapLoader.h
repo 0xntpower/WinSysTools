@@ -34,30 +34,40 @@ struct PcapApi
 {
     HMODULE module = nullptr;
 
-    int   (__cdecl* findalldevs_ex)(const char*, void*, pcap_if_t**, char*) = nullptr;
-    void  (__cdecl* freealldevs)(pcap_if_t*) = nullptr;
-    pcap_t* (__cdecl* open)(const char*, int, int, int, void*, char*) = nullptr;
-    void  (__cdecl* close)(pcap_t*) = nullptr;
-    int   (__cdecl* next_ex)(pcap_t*, pcap_pkthdr_min**, const unsigned char**) = nullptr;
-    int   (__cdecl* loop)(pcap_t*, int, void*, unsigned char*) = nullptr;
-    int   (__cdecl* compile)(pcap_t*, void*, const char*, int, unsigned int) = nullptr;
-    int   (__cdecl* setfilter)(pcap_t*, void*) = nullptr;
-    void  (__cdecl* freecode)(void*) = nullptr;
-    const unsigned char* (__cdecl* next)(pcap_t*, pcap_pkthdr_min*) = nullptr;
-    int   (__cdecl* findalldevs)(pcap_if_t**, char*) = nullptr;
-    pcap_t* (__cdecl* open_live)(const char*, int, int, int, char*) = nullptr;
-    pcap_t* (__cdecl* open_offline)(const char*, char*) = nullptr;
-    int   (__cdecl* dispatch)(pcap_t*, int, void*, unsigned char*) = nullptr;
+    int(__cdecl* findalldevs_ex)(const char*, void*, pcap_if_t**, char*) = nullptr;
+    void(__cdecl* freealldevs)(pcap_if_t*) = nullptr;
+    pcap_t*(__cdecl* open)(const char*, int, int, int, void*, char*) = nullptr;
+    void(__cdecl* close)(pcap_t*) = nullptr;
+    int(__cdecl* next_ex)(pcap_t*, pcap_pkthdr_min**, const unsigned char**) = nullptr;
+    int(__cdecl* loop)(pcap_t*, int, void*, unsigned char*) = nullptr;
+    int(__cdecl* compile)(pcap_t*, void*, const char*, int, unsigned int) = nullptr;
+    int(__cdecl* setfilter)(pcap_t*, void*) = nullptr;
+    void(__cdecl* freecode)(void*) = nullptr;
+    const unsigned char*(__cdecl* next)(pcap_t*, pcap_pkthdr_min*) = nullptr;
+    int(__cdecl* findalldevs)(pcap_if_t**, char*) = nullptr;
+    pcap_t*(__cdecl* open_live)(const char*, int, int, int, char*) = nullptr;
+    pcap_t*(__cdecl* open_offline)(const char*, char*) = nullptr;
+    int(__cdecl* dispatch)(pcap_t*, int, void*, unsigned char*) = nullptr;
 
     bool available = false;
 
-    ~PcapApi() { if (module) ::FreeLibrary(module); }
+    ~PcapApi()
+    {
+        if (module)
+        {
+            ::FreeLibrary(module);
+        }
+    }
 
     // Load wpcap the way the original does, then resolve every entry point and verify the
     // required set is present. Returns true only when the driver is usable.
     bool Load()
     {
-        if (module) { ::FreeLibrary(module); module = nullptr; }
+        if (module)
+        {
+            ::FreeLibrary(module);
+            module = nullptr;
+        }
         available = false;
 
         char sysdir[MAX_PATH]{};
@@ -75,30 +85,39 @@ struct PcapApi
             ::GetCurrentDirectoryA(MAX_PATH, saved);
             ::SetCurrentDirectoryA(npcapDir.c_str());
             module = ::LoadLibraryA(npcapDll.c_str());
-            if (!module) module = ::LoadLibraryA("wpcap.dll");
+            if (!module)
+            {
+                module = ::LoadLibraryA("wpcap.dll");
+            }
             ::SetCurrentDirectoryA(saved);
         }
-        if (!module) return false;
+        if (!module)
+        {
+            return false;
+        }
 
-        auto proc = [&](const char* name) { return ::GetProcAddress(module, name); };
+        auto proc = [&](const char* name)
+        {
+            return ::GetProcAddress(module, name);
+        };
         findalldevs_ex = reinterpret_cast<decltype(findalldevs_ex)>(proc("pcap_findalldevs_ex"));
-        freealldevs    = reinterpret_cast<decltype(freealldevs)>(proc("pcap_freealldevs"));
-        open           = reinterpret_cast<decltype(open)>(proc("pcap_open"));
-        close          = reinterpret_cast<decltype(close)>(proc("pcap_close"));
-        next_ex        = reinterpret_cast<decltype(next_ex)>(proc("pcap_next_ex"));
-        loop           = reinterpret_cast<decltype(loop)>(proc("pcap_loop"));
-        compile        = reinterpret_cast<decltype(compile)>(proc("pcap_compile"));
-        setfilter      = reinterpret_cast<decltype(setfilter)>(proc("pcap_setfilter"));
-        freecode       = reinterpret_cast<decltype(freecode)>(proc("pcap_freecode"));
-        next           = reinterpret_cast<decltype(next)>(proc("pcap_next"));
-        findalldevs    = reinterpret_cast<decltype(findalldevs)>(proc("pcap_findalldevs"));
-        open_live      = reinterpret_cast<decltype(open_live)>(proc("pcap_open_live"));
-        open_offline   = reinterpret_cast<decltype(open_offline)>(proc("pcap_open_offline"));
-        dispatch       = reinterpret_cast<decltype(dispatch)>(proc("pcap_dispatch"));
+        freealldevs = reinterpret_cast<decltype(freealldevs)>(proc("pcap_freealldevs"));
+        open = reinterpret_cast<decltype(open)>(proc("pcap_open"));
+        close = reinterpret_cast<decltype(close)>(proc("pcap_close"));
+        next_ex = reinterpret_cast<decltype(next_ex)>(proc("pcap_next_ex"));
+        loop = reinterpret_cast<decltype(loop)>(proc("pcap_loop"));
+        compile = reinterpret_cast<decltype(compile)>(proc("pcap_compile"));
+        setfilter = reinterpret_cast<decltype(setfilter)>(proc("pcap_setfilter"));
+        freecode = reinterpret_cast<decltype(freecode)>(proc("pcap_freecode"));
+        next = reinterpret_cast<decltype(next)>(proc("pcap_next"));
+        findalldevs = reinterpret_cast<decltype(findalldevs)>(proc("pcap_findalldevs"));
+        open_live = reinterpret_cast<decltype(open_live)>(proc("pcap_open_live"));
+        open_offline = reinterpret_cast<decltype(open_offline)>(proc("pcap_open_offline"));
+        dispatch = reinterpret_cast<decltype(dispatch)>(proc("pcap_dispatch"));
 
         // The original requires this set before it treats the driver as usable.
-        bool ok = findalldevs && freealldevs && close && loop && compile && setfilter &&
-                  freecode && next && open_live && dispatch && open_offline;
+        bool ok = findalldevs && freealldevs && close && loop && compile && setfilter && freecode && next &&
+                  open_live && dispatch && open_offline;
         if (!ok)
         {
             ::FreeLibrary(module);

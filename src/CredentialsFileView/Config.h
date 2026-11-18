@@ -22,20 +22,20 @@ struct Config
     bool showInfoTip = true;
     bool showTimeInGmt = false;
 
-    int  saveFileEncoding = 0;    // 0 Default, 1 ANSI, 2 UTF-16, 3 UTF-8
-    int  saveFilterIndex = 0;
-    int  lowerPaneMode = 1;       // 1 Full Hex Dump, 2 Strings Only
-    int  verSplitLoc = 0x3FFF;    // vertical splitter position
+    int saveFileEncoding = 0; // 0 Default, 1 ANSI, 2 UTF-16, 3 UTF-8
+    int saveFilterIndex = 0;
+    int lowerPaneMode = 1;    // 1 Full Hex Dump, 2 Strings Only
+    int verSplitLoc = 0x3FFF; // vertical splitter position
 
-    int  dataSource = 2;          // 1 current user, 2 any system, 3 another user, 4 all users
+    int dataSource = 2; // 1 current user, 2 any system, 3 another user, 4 all users
     std::wstring userName;
-    std::wstring password_;       // login password, transient only, never persisted
+    std::wstring password_; // login password, transient only, never persisted
 
     std::wstring regHiveFolder;
     std::wstring protectFolder1, protectFolder2;
     std::wstring credFolder1, credFolder2, credFolder3;
 
-    int  sortColumn = 0;
+    int sortColumn = 0;
     bool sortAscending = true;
 
     std::vector<int> visibleColumns;
@@ -44,9 +44,12 @@ struct Config
     bool havePlacement = false;
     WINDOWPLACEMENT placement{};
 
-    std::wstring path;            // the .cfg file, resolved once
+    std::wstring path; // the .cfg file, resolved once
 
-    Config() { resetColumns(); }
+    Config()
+    {
+        resetColumns();
+    }
 
     [[nodiscard]] static std::wstring DefaultPath()
     {
@@ -54,7 +57,10 @@ struct Config
         ::GetModuleFileNameW(nullptr, exe, MAX_PATH);
         std::wstring p = exe;
         size_t dot = p.rfind(L'.');
-        if (dot != std::wstring::npos) p.resize(dot);
+        if (dot != std::wstring::npos)
+        {
+            p.resize(dot);
+        }
         return p + L".cfg";
     }
 
@@ -62,37 +68,68 @@ struct Config
     {
         visibleColumns.assign(std::begin(kDefaultOrder), std::end(kDefaultOrder));
         columnWidths.clear();
-        for (int c : visibleColumns) columnWidths.push_back(kColumns[c].width);
+        for (int c : visibleColumns)
+        {
+            columnWidths.push_back(kColumns[c].width);
+        }
     }
 
     void load()
     {
-        if (path.empty()) path = DefaultPath();
+        if (path.empty())
+        {
+            path = DefaultPath();
+        }
         const wchar_t* f = path.c_str();
-        auto gi = [&](const wchar_t* n, int def) { return static_cast<int>(::GetPrivateProfileIntW(L"General", n, def, f)); };
-        auto gs = [&](const wchar_t* n) {
+        auto gi = [&](const wchar_t* n, int def)
+        {
+            return static_cast<int>(::GetPrivateProfileIntW(L"General", n, def, f));
+        };
+        auto gs = [&](const wchar_t* n)
+        {
             wchar_t buf[1024]{};
             ::GetPrivateProfileStringW(L"General", n, L"", buf, 1024, f);
             return std::wstring(buf);
         };
 
-        markOddEvenRows  = gi(L"MarkOddEvenRows", markOddEvenRows) != 0;
-        showGridLines    = gi(L"ShowGridLines", showGridLines) != 0;
-        showInfoTip      = gi(L"ShowInfoTip", showInfoTip) != 0;
-        showTimeInGmt    = gi(L"ShowTimeInGMT", showTimeInGmt) != 0;
+        markOddEvenRows = gi(L"MarkOddEvenRows", markOddEvenRows) != 0;
+        showGridLines = gi(L"ShowGridLines", showGridLines) != 0;
+        showInfoTip = gi(L"ShowInfoTip", showInfoTip) != 0;
+        showTimeInGmt = gi(L"ShowTimeInGMT", showTimeInGmt) != 0;
         saveFileEncoding = gi(L"SaveFileEncoding", saveFileEncoding);
-        saveFilterIndex  = gi(L"SaveFilterIndex", saveFilterIndex);
-        lowerPaneMode    = gi(L"LowerPaneMode", lowerPaneMode);
-        verSplitLoc      = gi(L"VerSplitLoc", verSplitLoc);
-        dataSource       = gi(L"DataSource", dataSource);
+        saveFilterIndex = gi(L"SaveFilterIndex", saveFilterIndex);
+        lowerPaneMode = gi(L"LowerPaneMode", lowerPaneMode);
+        verSplitLoc = gi(L"VerSplitLoc", verSplitLoc);
+        dataSource = gi(L"DataSource", dataSource);
 
-        if (std::wstring s = gs(L"UserName"); !s.empty()) userName = s;
-        if (std::wstring s = gs(L"RegHiveFolder"); !s.empty()) regHiveFolder = s;
-        if (std::wstring s = gs(L"ProtectFolder1"); !s.empty()) protectFolder1 = s;
-        if (std::wstring s = gs(L"ProtectFolder2"); !s.empty()) protectFolder2 = s;
-        if (std::wstring s = gs(L"CredentialsFolders1"); !s.empty()) credFolder1 = s;
-        if (std::wstring s = gs(L"CredentialsFolders2"); !s.empty()) credFolder2 = s;
-        if (std::wstring s = gs(L"CredentialsFolders3"); !s.empty()) credFolder3 = s;
+        if (std::wstring s = gs(L"UserName"); !s.empty())
+        {
+            userName = s;
+        }
+        if (std::wstring s = gs(L"RegHiveFolder"); !s.empty())
+        {
+            regHiveFolder = s;
+        }
+        if (std::wstring s = gs(L"ProtectFolder1"); !s.empty())
+        {
+            protectFolder1 = s;
+        }
+        if (std::wstring s = gs(L"ProtectFolder2"); !s.empty())
+        {
+            protectFolder2 = s;
+        }
+        if (std::wstring s = gs(L"CredentialsFolders1"); !s.empty())
+        {
+            credFolder1 = s;
+        }
+        if (std::wstring s = gs(L"CredentialsFolders2"); !s.empty())
+        {
+            credFolder2 = s;
+        }
+        if (std::wstring s = gs(L"CredentialsFolders3"); !s.empty())
+        {
+            credFolder3 = s;
+        }
 
         int s = gi(L"Sort", sortAscending ? sortColumn : -sortColumn);
         sortAscending = s >= 0;
@@ -113,12 +150,14 @@ struct Config
     {
         const std::wstring p = path.empty() ? DefaultPath() : path;
         const wchar_t* f = p.c_str();
-        auto si = [&](const wchar_t* n, int v) {
+        auto si = [&](const wchar_t* n, int v)
+        {
             wchar_t b[16]{};
             swprintf(b, 16, L"%d", v);
             ::WritePrivateProfileStringW(L"General", n, b, f);
         };
-        auto ss = [&](const wchar_t* n, const std::wstring& v) {
+        auto ss = [&](const wchar_t* n, const std::wstring& v)
+        {
             ::WritePrivateProfileStringW(L"General", n, v.c_str(), f);
         };
 
@@ -142,7 +181,9 @@ struct Config
 
         ss(L"Columns", saveColumns());
         if (havePlacement)
+        {
             ss(L"WinPos", toHex(&placement, sizeof(placement)));
+        }
     }
 
     void deleteConfig() const
@@ -153,12 +194,17 @@ struct Config
     [[nodiscard]] std::vector<std::wstring> folders() const
     {
         std::vector<std::wstring> v;
-        for (const std::wstring* fld : { &credFolder1, &credFolder2, &credFolder3 })
-            if (!fld->empty()) v.push_back(*fld);
+        for (const std::wstring* fld : {&credFolder1, &credFolder2, &credFolder3})
+        {
+            if (!fld->empty())
+            {
+                v.push_back(*fld);
+            }
+        }
         return v;
     }
 
-private:
+  private:
     // The INI layer encodes a blob as space-separated uppercase hex bytes ("%02X ").
     [[nodiscard]] static std::wstring toHex(const void* data, size_t bytes)
     {
@@ -166,25 +212,53 @@ private:
         std::wstring s;
         s.reserve(bytes * 3);
         static const wchar_t* hx = L"0123456789ABCDEF";
-        for (size_t i = 0; i < bytes; ++i) { if (i) s += L' '; s += hx[p[i] >> 4]; s += hx[p[i] & 0xF]; }
+        for (size_t i = 0; i < bytes; ++i)
+        {
+            if (i)
+            {
+                s += L' ';
+            }
+            s += hx[p[i] >> 4];
+            s += hx[p[i] & 0xF];
+        }
         return s;
     }
     [[nodiscard]] static std::vector<BYTE> fromHex(const std::wstring& s)
     {
-        auto nib = [](wchar_t c) -> int {
-            if (c >= L'0' && c <= L'9') return c - L'0';
-            if (c >= L'A' && c <= L'F') return c - L'A' + 10;
-            if (c >= L'a' && c <= L'f') return c - L'a' + 10;
+        auto nib = [](wchar_t c) -> int
+        {
+            if (c >= L'0' && c <= L'9')
+            {
+                return c - L'0';
+            }
+            if (c >= L'A' && c <= L'F')
+            {
+                return c - L'A' + 10;
+            }
+            if (c >= L'a' && c <= L'f')
+            {
+                return c - L'a' + 10;
+            }
             return -1;
         };
         std::vector<BYTE> out;
         int hi = -1;
-        for (wchar_t c : s)                      // tolerates spaced or continuous hex
+        for (wchar_t c : s) // tolerates spaced or continuous hex
         {
             int v = nib(c);
-            if (v < 0) continue;
-            if (hi < 0) { hi = v; }
-            else { out.push_back(static_cast<BYTE>((hi << 4) | v)); hi = -1; }
+            if (v < 0)
+            {
+                continue;
+            }
+            if (hi < 0)
+            {
+                hi = v;
+            }
+            else
+            {
+                out.push_back(static_cast<BYTE>((hi << 4) | v));
+                hi = -1;
+            }
         }
         return out;
     }
@@ -197,23 +271,36 @@ private:
         {
             WORD w = static_cast<WORD>(i < columnWidths.size() ? columnWidths[i] : kColumns[visibleColumns[i]].width);
             WORD c = static_cast<WORD>(visibleColumns[i]);
-            blob.push_back(w & 0xFF); blob.push_back((w >> 8) & 0xFF);
-            blob.push_back(c & 0xFF); blob.push_back((c >> 8) & 0xFF);
+            blob.push_back(w & 0xFF);
+            blob.push_back((w >> 8) & 0xFF);
+            blob.push_back(c & 0xFF);
+            blob.push_back((c >> 8) & 0xFF);
         }
         return toHex(blob.data(), blob.size());
     }
     void loadColumns(const std::wstring& hex)
     {
         std::vector<BYTE> blob = fromHex(hex);
-        if (blob.size() < 4) return;
+        if (blob.size() < 4)
+        {
+            return;
+        }
         std::vector<int> vis, wid;
         for (size_t i = 0; i + 3 < blob.size(); i += 4)
         {
             WORD w = static_cast<WORD>(blob[i] | (blob[i + 1] << 8));
             WORD c = static_cast<WORD>(blob[i + 2] | (blob[i + 3] << 8));
-            if (c < kColumnCount) { vis.push_back(c); wid.push_back(w); }
+            if (c < kColumnCount)
+            {
+                vis.push_back(c);
+                wid.push_back(w);
+            }
         }
-        if (!vis.empty()) { visibleColumns = vis; columnWidths = wid; }
+        if (!vis.empty())
+        {
+            visibleColumns = vis;
+            columnWidths = wid;
+        }
     }
     void loadPlacement(const std::wstring& hex)
     {

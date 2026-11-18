@@ -159,6 +159,41 @@ the decompile plus a live check of the GUI shell.
 - **EULA.** `-accepteula` records `HKCU\Software\Sysinternals\Active Directory
   Explorer\EulaAccepted = 1`, verified in the registry.
 
+## Refactor: window-class bodies split into .cpp units (2026-11-18)
+
+Behaviour-preserving code motion, matching the WinObj pilot (commit 4a3adc0).
+
+- `MainFrame.h` now carries only the class shape, the member variables, the message map,
+  `DECLARE_FRAME_WND_CLASS` and the method declarations. Every `CMainFrame` method body
+  moved verbatim to the new `MainFrame.cpp` in the same order, dropping `override` and
+  `static` on the out-of-line definitions while the declarations keep them. The header
+  went from 634 to 149 lines, and `MainFrame.cpp` is 594 lines.
+- `AdClient.h` is a class with inline method bodies, so it got the same treatment. The
+  non-template `ad::Client` members moved to the new `AdClient.cpp` (299 lines), while the
+  structs, the inline free helpers in `ad::detail`, the trivial accessors and the template
+  `Bind` stay inline in the header. The header went from 615 to 311 lines. The header no
+  longer defines `WIN32_LEAN_AND_MEAN`, so a primary unit that includes it first still
+  binds the full OLE surface `activeds.h` depends on, matching the AdRestore recreation.
+- `MainFrame.cpp` and `AdClient.cpp` were added to `ADExplorer.vcxproj`. The thin entry
+  `ADExplorer.cpp` is unchanged apart from the HRC clang-format pass over `src/ADExplorer`.
+- Both x64 configurations rebuild clean with MSBuild v143 after the move.
+
+### Re-validation after the split
+
+No Active Directory or LDAP server was contacted. The rebuilt Release binary was launched
+read-only, the connect fields left blank, and nothing was connected or modified.
+
+- The main window renders at `372 x 340` pixels with the config cleared, matching the
+  first-launch geometry. The child controls enumerate as `ToolbarWindow32`,
+  `msctls_statusbar32`, the path `Edit`, `SysTreeView32`, `SysListView32` and `SysHeader32`,
+  so the toolbar, status bar, path band, tree and attribute list all build.
+- The `ToolbarWindow32` child, found with `FindWindowExW(frame, 0, "ToolbarWindow32", null)`,
+  reads `240, 240, 240` across its empty area, so the light-mode toolbar fix survives the move.
+- The connect dialog renders with the title `Connect to Active Directory` and the server,
+  user and password fields, left empty.
+- The `ldap_modify` write path (`ad::Client::ModifyAttribute`) stays unwired and is never
+  called from the GUI, so no directory object can be changed.
+
 ## Security note
 
 Directory contents are sensitive. This recreation browses and reads only, never modifies,

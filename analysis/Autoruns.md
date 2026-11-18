@@ -157,3 +157,57 @@ the same machine and compared. Evidence captured during the session:
 
 Both configurations build clean. The only warning is the shared `/Ob3` override
 from `Directory.Build.targets`, common to the other tools.
+
+## Header and unit split (MainFrame.cpp)
+
+The `CMainFrame` method bodies were moved out of `MainFrame.h` into a new
+`MainFrame.cpp`, behaviour preserving. The header fell from 898 lines to 209
+(class shape only -- members, the WTL macros, the message map and the method
+declarations), and `MainFrame.cpp` holds the 876 lines of moved bodies.
+`MainFrame.cpp` was added to the `ClCompile` group in `Autoruns.vcxproj` next to
+`Autoruns.cpp` and `Enumerators.cpp`. All Autoruns sources were re-run through
+clang-format (the HRC Allman config), and both Debug and Release x64 rebuilt
+clean with only the shared `/Ob2` to `/Ob3` override note.
+
+Re-validated after the split, strictly read-only (no entry was disabled, deleted
+or changed, and nothing was shut down):
+
+- **Opens and populates.** The frame opens at
+  `Autoruns - Sysinternals: www.sysinternals.com`, 1000 by 620, with the saved
+  placement and filter state restored from the config key. The Everything tab
+  fills, and each category tab fills with its own set: Logon, Services (68
+  services plus a header row), Drivers (52 plus a header), Scheduled Tasks (156
+  plus a header) and Winlogon (Userinit, Shell and VmApplet, shown once Hide
+  Windows is turned off). With the saved Hide Windows and Hide Empty filters on,
+  the Microsoft Windows locations fold away exactly as before, which is why
+  Winlogon reads empty until those filters are cleared.
+- **Publisher resolves.** The background Authenticode verify still runs on its
+  own thread and posts back, so the Publisher column fills with
+  `(Verified) <signer>` and `(Not Verified) <company>` after the scan (voidtools,
+  Discord, Valve, Oracle, Blizzard, Razer, Canva and the Microsoft catalog
+  signers all seen). This confirms the `WM_APP_VERIFY_DONE` handler and the
+  follow-up list rebuild survived the move.
+- **Toolbar stays light.** The `ToolbarWindow32` child (found with
+  `FindWindowExW(frame, 0, "ToolbarWindow32", null)`) has a 984 by 26 client
+  area, and its empty band samples **240,240,240**, the button-face value, so
+  the `PinToolbarLight` plus `OnEraseBkgnd` fix came through the move intact.
+- **Geometry matches.** The frame opens at the same 1000 by 620 default and
+  restores saved placement, the same as before the split.
+
+### WTL notes for the scaling pass
+
+- The message map (`BEGIN_MSG_MAP` through `END_MSG_MAP`) and
+  `DECLARE_FRAME_WND_CLASS` stay in the header. The map expands into
+  `ProcessWindowMessage` inside the class and needs only the method
+  declarations, so the handlers move out freely.
+- `CMainFrame` is a plain class, so its members get ordinary `CMainFrame::Method`
+  definitions in the `.cpp` with no template boilerplate for the
+  `CFrameWindowImpl<CMainFrame>` base.
+- Drop the `override` keyword on the out-of-line definition.
+  `PreTranslateMessage` keeps `override` on its declaration only. The
+  `[[nodiscard]]` on the three filter predicates stays on the declaration, and
+  the `const` qualifier stays on both the declaration and the definition.
+- Keep the WTL handler parameter lists exact, including the trailing `BOOL&`
+  reference, or the map macros fail to bind the handler.
+- Every method moved out. There were no trivial one-line accessors worth keeping
+  inline, so the header is declarations only.

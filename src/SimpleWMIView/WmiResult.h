@@ -26,11 +26,16 @@ inline bool cimIsNumeric(int cimType)
 {
     switch (cimType)
     {
-    case 16: case 17:   // SINT8  / UINT8
-    case 2:  case 18:   // SINT16 / UINT16
-    case 3:  case 19:   // SINT32 / UINT32
-    case 20: case 21:   // SINT64 / UINT64
-    case 4:  case 5:    // REAL32 / REAL64
+    case 16:
+    case 17: // SINT8  / UINT8
+    case 2:
+    case 18: // SINT16 / UINT16
+    case 3:
+    case 19: // SINT32 / UINT32
+    case 20:
+    case 21: // SINT64 / UINT64
+    case 4:
+    case 5: // REAL32 / REAL64
         return true;
     default:
         return false;
@@ -39,31 +44,59 @@ inline bool cimIsNumeric(int cimType)
 
 struct DisplayOptions
 {
-    bool showTimeInGmt   = false;   // Options -> Show Time In GMT
-    bool showMilliseconds = false;  // Options -> Show Milliseconds In Time
+    bool showTimeInGmt = false;    // Options -> Show Time In GMT
+    bool showMilliseconds = false; // Options -> Show Milliseconds In Time
 };
 
 // One cell. The display text is produced on demand so the date columns react to
 // the Show Time In GMT / milliseconds options without reloading.
 struct Cell
 {
-    enum Kind { Empty, Str, Int, Uint, Real, Bool, Date } kind = Empty;
-    std::wstring  str;        // Str (also arrays joined, references)
-    long long     i64 = 0;    // Int / Uint / Bool
-    double        real = 0;   // Real
-    FILETIME      ft{};       // Date (UTC)
+    enum Kind
+    {
+        Empty,
+        Str,
+        Int,
+        Uint,
+        Real,
+        Bool,
+        Date
+    } kind = Empty;
+    std::wstring str;  // Str (also arrays joined, references)
+    long long i64 = 0; // Int / Uint / Bool
+    double real = 0;   // Real
+    FILETIME ft{};     // Date (UTC)
 
     std::wstring text(const DisplayOptions& o) const
     {
         switch (kind)
         {
-        case Str:  return str;
-        case Int:  { wchar_t b[32]; _i64tow(i64, b, 10); return b; }
-        case Uint: { wchar_t b[32]; _ui64tow((unsigned long long)i64, b, 10); return b; }
-        case Bool: return i64 ? L"True" : L"False";
-        case Real: { wchar_t b[64]; _snwprintf(b, 63, L"%f", real); return b; }
-        case Date: return formatDate(o);
-        default:   return {};
+        case Str:
+            return str;
+        case Int:
+        {
+            wchar_t b[32];
+            _i64tow(i64, b, 10);
+            return b;
+        }
+        case Uint:
+        {
+            wchar_t b[32];
+            _ui64tow((unsigned long long)i64, b, 10);
+            return b;
+        }
+        case Bool:
+            return i64 ? L"True" : L"False";
+        case Real:
+        {
+            wchar_t b[64];
+            _snwprintf(b, 63, L"%f", real);
+            return b;
+        }
+        case Date:
+            return formatDate(o);
+        default:
+            return {};
         }
     }
 
@@ -72,26 +105,43 @@ struct Cell
     {
         switch (kind)
         {
-        case Int:  out = i64; return true;
-        case Uint: out = i64; return true;
-        case Bool: out = i64; return true;
-        case Date: out = ((long long)ft.dwHighDateTime << 32) | ft.dwLowDateTime; return true;
-        case Real: out = (long long)real; return true;
-        default:   return false;
+        case Int:
+            out = i64;
+            return true;
+        case Uint:
+            out = i64;
+            return true;
+        case Bool:
+            out = i64;
+            return true;
+        case Date:
+            out = ((long long)ft.dwHighDateTime << 32) | ft.dwLowDateTime;
+            return true;
+        case Real:
+            out = (long long)real;
+            return true;
+        default:
+            return false;
         }
     }
 
-private:
+  private:
     std::wstring formatDate(const DisplayOptions& o) const
     {
         if (ft.dwLowDateTime == 0 && ft.dwHighDateTime == 0)
+        {
             return {};
+        }
         FILETIME use = ft;
         if (!o.showTimeInGmt)
-            ::FileTimeToLocalFileTime(&ft, &use);   // ft is stored UTC
+        {
+            ::FileTimeToLocalFileTime(&ft, &use); // ft is stored UTC
+        }
         SYSTEMTIME st{};
         if (!::FileTimeToSystemTime(&use, &st) || st.wYear <= 1000)
+        {
             return {};
+        }
         wchar_t date[128]{}, time[128]{};
         ::GetDateFormatW(LOCALE_USER_DEFAULT, DATE_SHORTDATE, &st, nullptr, date, 128);
         ::GetTimeFormatW(LOCALE_USER_DEFAULT, 0, &st, nullptr, time, 128);
@@ -110,29 +160,33 @@ private:
 
 struct WmiColumn
 {
-    std::wstring name;      // WMI property name
-    int          cimType = 8;  // base type, array flag stripped. 8 is CIM_STRING
-    bool         isArray = false;
-    int          width = 150;
+    std::wstring name; // WMI property name
+    int cimType = 8;   // base type, array flag stripped. 8 is CIM_STRING
+    bool isArray = false;
+    int width = 150;
 };
 
 struct WmiRow
 {
-    std::vector<Cell> cells;   // one per column, in column order
+    std::vector<Cell> cells; // one per column, in column order
 };
 
 struct WmiResult
 {
     std::vector<WmiColumn> columns;
-    std::vector<WmiRow>    rows;
-    HRESULT   hr = S_OK;        // last WMI HRESULT (for the status bar)
-    DWORD     queryTimeMs = 0;  // total query + enumeration time
+    std::vector<WmiRow> rows;
+    HRESULT hr = S_OK;     // last WMI HRESULT (for the status bar)
+    DWORD queryTimeMs = 0; // total query + enumeration time
 
     int columnIndex(const std::wstring& name) const
     {
         for (size_t i = 0; i < columns.size(); ++i)
+        {
             if (_wcsicmp(columns[i].name.c_str(), name.c_str()) == 0)
+            {
                 return (int)i;
+            }
+        }
         return -1;
     }
 };

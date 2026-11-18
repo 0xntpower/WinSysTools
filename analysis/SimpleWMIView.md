@@ -220,3 +220,36 @@ round-trips to `SimpleWMIView.cfg`: seeded ShowGridLines, MarkOddEvenRows and Ti
 20000 are preserved, Namespace and Class keep their defaults, `WinPos` is written as
 `2C 00 00 00 ...` hex, and no registry key is created. The `/scomma` export still runs
 and produces the correct property header (451666 bytes for Win32_Process here).
+
+## MainFrame split into a unit (2026-11-18)
+
+Behaviour-preserving code motion, following the WinObj pilot (commit 4a3adc0). The
+`CMainFrame` window-class method bodies moved out of `MainFrame.h` into a new
+`MainFrame.cpp`. The header now carries only the class shape -- members, the
+`DECLARE_FRAME_WND_CLASS` macro, the message map and the method declarations. No
+inline body remains in the header. Every body, down to the one-line handlers, is now
+an ordinary `CMainFrame::Method` definition, with `override` dropped on the
+out-of-line `PreTranslateMessage` and `OnBarUpdate` and kept on their header
+declarations. The WTL handler signatures including the trailing `BOOL&` are unchanged,
+and the `OnEraseBkgnd` into `FillFrameBtnFace` path and the `PinToolbarLight` call stay
+byte-identical. `MainFrame.cpp` was added to the project ClCompile group, and both
+files were run through the HRC clang-format (Allman braces, which expand the one-line
+handlers and account for the `.cpp` line count).
+
+- `MainFrame.h`: 634 lines into 176 lines of declarations.
+- `MainFrame.cpp`: new, 826 lines.
+- clang-format clean. Debug and Release x64 both rebuilt clean with `/t:Rebuild`.
+
+**Re-validation.**
+- `/scomma` export is byte-identical across the split. A fully static class,
+  `Win32_ComputerSystemProduct`, exports to the same 237 bytes and the same SHA256
+  `01059E91...595C` from both the pre-split and post-split Release binaries. A
+  `Win32_OperatingSystem` export matches field for field apart from the inherently
+  volatile counters (free physical and virtual memory, paging free space, and the
+  wall-clock `LocalDateTime`), the same volatility noted in the earlier validation.
+- GUI launches on `/Class Win32_OperatingSystem /Update` and the result list fills --
+  1 row and 64 columns read back over `LVM_GETITEMCOUNT` and the header item count.
+  Window size is 1920x1023, identical to the pre-split binary.
+- Toolbar empty band reads 240,240,240 at three sample points on the `ToolbarWindow32`
+  child, matching the pre-split binary. Confirmed visually with a `PrintWindow` capture
+  of the top strip, which shows the light toolbar and the filled options bar.

@@ -54,6 +54,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FileTypesMan.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="FileTypeEnumerator.cpp" />
     <ClCompile Include="Export.cpp" />
   </ItemGroup>

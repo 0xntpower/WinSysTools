@@ -82,7 +82,7 @@ namespace
         _Module.RemoveMessageLoop();
         return ret;
     }
-}
+} // namespace
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 {
@@ -98,9 +98,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
     // Scheduler service and IShellLink).
     ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
-    INITCOMMONCONTROLSEX icc{ sizeof(icc),
-        ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES | ICC_LISTVIEW_CLASSES |
-        ICC_TAB_CLASSES | ICC_LINK_CLASS };
+    INITCOMMONCONTROLSEX icc{sizeof(icc), ICC_WIN95_CLASSES | ICC_COOL_CLASSES | ICC_BAR_CLASSES |
+                                              ICC_LISTVIEW_CLASSES | ICC_TAB_CLASSES | ICC_LINK_CLASS};
     PinToLightMode();
     if (!::InitCommonControlsEx(&icc))
     {

@@ -60,6 +60,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ProductKeyScanner.cpp" />
+    <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="Decoder.cpp" />
     <ClCompile Include="Scanner.cpp" />
     <ClCompile Include="Export.cpp" />
