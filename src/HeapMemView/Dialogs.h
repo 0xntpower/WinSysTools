@@ -319,7 +319,7 @@ public:
     {
         SetWindowTextW(L"About HeapMemView");
         SetDlgItemTextW(IDC_ABOUT_TEXT, L"HeapMemView v1.05");
-        SetDlgItemTextW(IDC_ABOUT_SUB, L"Copyright (c) 2007 - 2013 Nir Sofer");
+        SetDlgItemTextW(IDC_ABOUT_SUB, L"Independent source-accurate recreation of HeapMemView by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
         CenterWindow();
         return TRUE;
     }

@@ -173,17 +173,14 @@ namespace
             char internalName[128] = {};
             char fileVersion[128] = {};
             char description[128] = {};
-            char copyright[128] = {};
-            char company[128] = {};
 
             GetVersionField(block, "InternalName", internalName, sizeof(internalName));
             GetVersionField(block, "FileVersion", fileVersion, sizeof(fileVersion));
             GetVersionField(block, "FileDescription", description, sizeof(description));
-            GetVersionField(block, "LegalCopyright", copyright, sizeof(copyright));
-            GetVersionField(block, "CompanyName", company, sizeof(company));
 
             std::printf("\n%s v%s - %s\n%s\n%s\n\n", internalName, fileVersion, description,
-                        copyright, company);
+                        "Independent source-accurate recreation of NTFSInfo by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+                        "Author: 0xntpower");
         }
 
         std::free(block);

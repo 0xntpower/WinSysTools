@@ -35,8 +35,8 @@ namespace
     constexpr const char* kName = "Whois";
     constexpr const char* kVersion = "1.21";
     constexpr const char* kDescription = "Domain information lookup";
-    constexpr const char* kCopyright = "Copyright (C) 2005-2019 Mark Russinovich";
-    constexpr const char* kCompany = "Sysinternals - www.sysinternals.com";
+    constexpr const char* kCopyright = "Independent source-accurate recreation of Whois by Sysinternals, through reverse engineering and rewritten in modern C++20.";
+    constexpr const char* kCompany = "Author: 0xntpower";
 
     constexpr unsigned short kWhoisPort = 43;
     constexpr int kRecvChunk = 0x1000;

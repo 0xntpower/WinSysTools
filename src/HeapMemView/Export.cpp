@@ -143,7 +143,7 @@ namespace
         }
 
         out += L"<p><font size=\"2\">" + std::wstring(kFooter) +
-               L" <a href=\"http://www.nirsoft.net\">NirSoft HeapMemView</a></font></p>\r\n</body>\r\n</html>\r\n";
+               L" HeapMemView</font></p>\r\n</body>\r\n</html>\r\n";
         return out;
     }
 

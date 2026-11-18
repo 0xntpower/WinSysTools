@@ -26,7 +26,7 @@ namespace
         return out;
     }
 
-    // NirSoft XML element names are the lowercased title with spaces turned into
+    // The XML element names are the lowercased title with spaces turned into
     // underscores, for example "File Type Group" becomes "file_type_group".
     std::wstring xmlTag(const std::wstring& title)
     {
@@ -66,7 +66,7 @@ namespace
     void htmlFooter(std::wstring& out)
     {
         out += L"<p><br><h4>Created by using "
-               L"<a href=\"http://www.nirsoft.net/\" target=\"newwin\">FileTypesMan</a></h4>\r\n";
+               L"<a href=\"https://github.com/0xntpower/WinSysTools\" target=\"newwin\">FileTypesMan</a></h4>\r\n";
         out += L"</body>\r\n</html>\r\n";
     }
 }

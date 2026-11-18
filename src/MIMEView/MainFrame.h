@@ -22,7 +22,7 @@
 #include "RegKey.h"
 #include "Dialogs.h"
 
-constexpr wchar_t kConfigKey[] = L"Software\\NirSoft\\MIMEView";
+constexpr wchar_t kConfigKey[] = L"Software\\0xntpower\\MIMEView";
 
 extern CAppModule _Module;
 

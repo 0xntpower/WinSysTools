@@ -24,7 +24,7 @@
 
 // Legacy registry root, present-but-dead in the original binary. The live settings
 // store is rdpv.cfg next to the exe (see ConfigPath). Kept only for /deleteregkey.
-constexpr wchar_t kConfigKey[] = L"Software\\NirSoft\\rdpv";
+constexpr wchar_t kConfigKey[] = L"Software\\0xntpower\\rdpv";
 
 extern CAppModule _Module;
 

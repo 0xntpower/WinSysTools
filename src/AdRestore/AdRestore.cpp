@@ -421,8 +421,8 @@ int wmain(int argc, wchar_t** argv)
     ::CoInitialize(nullptr);
 
     Out(L"\nAdRestore v1.2\n");
-    Out(L"by Mark Russinovich\n");
-    Out(L"Sysinternals - www.sysinternals.com\n\n");
+    Out(L"Independent source-accurate recreation of AdRestore by Sysinternals, through reverse engineering and rewritten in modern C++20.\n");
+    Out(L"Author: 0xntpower\n\n");
 
     if (!AcceptEula(argc, argv))
     {

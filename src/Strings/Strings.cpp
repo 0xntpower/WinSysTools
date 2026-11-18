@@ -35,8 +35,8 @@ namespace
     constexpr const char* kVersion = "2.54";
     constexpr const char* kDescription =
         "Search for ANSI and Unicode strings in binary images.";
-    constexpr const char* kCopyright = "Copyright (C) 1999-2021 Mark Russinovich";
-    constexpr const char* kCompany = "Sysinternals - www.sysinternals.com";
+    constexpr const char* kCopyright = "Independent source-accurate recreation of Strings by Sysinternals, through reverse engineering and rewritten in modern C++20.";
+    constexpr const char* kCompany = "Author: 0xntpower";
 
     struct Config
     {

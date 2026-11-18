@@ -23,7 +23,7 @@
 
 // Legacy registry root, present-but-dead in the original binary. The live settings
 // store is BasicProg.cfg next to the exe (see ConfigPath). Kept only for /deleteregkey.
-constexpr wchar_t kConfigKey[] = L"Software\\NirSoft\\VNCPassView";
+constexpr wchar_t kConfigKey[] = L"Software\\0xntpower\\VNCPassView";
 
 extern CAppModule _Module;
 

@@ -3,7 +3,7 @@
 // names match the binary and the shipped SniffPass.cfg: ShowGridLines, SaveFilterIndex,
 // ExcludeDuplicates, BeepOnNewPassword, AddExportHeaderLine, AddToWindowsFirewall,
 // CaptureMethod, the four adapter name values, WinPos, Columns and Sort. The WinPos and
-// Columns blobs are stored as hex strings, the way the shared NirSoft config layer does.
+// Columns blobs are stored as hex strings, the way the shared config layer does.
 #pragma once
 #include "Columns.h"
 #include <windows.h>
@@ -126,7 +126,7 @@ struct Config
     }
 
 private:
-    // The shared NirSoft config layer stores a binary value as uppercase hex byte
+    // The shared config layer stores a binary value as uppercase hex byte
     // pairs joined by a single space and no trailing space, for example "2C 00 00 00".
     // toHex reproduces that exactly so the original can read this .cfg, and fromHex
     // skips the separators so it reads the original's. The shipped SniffPass.cfg uses

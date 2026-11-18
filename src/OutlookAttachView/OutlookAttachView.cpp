@@ -1,5 +1,5 @@
 // OutlookAttachView.cpp -- entry point, command-line handling and GUI bootstrap
-// for the OutlookAttachView recreation (NirSoft Outlook attachment viewer, x64).
+// for the OutlookAttachView recreation (a source-accurate Outlook attachment viewer, x64).
 #include <atlbase.h>
 #include <atlapp.h>
 #include <windows.h>

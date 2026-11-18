@@ -1,5 +1,5 @@
 // ShadowCopyView.cpp -- entry point, command-line handling and GUI bootstrap for the
-// ShadowCopyView recreation (NirSoft Volume Shadow Copy viewer, x64). The GUI mirrors
+// ShadowCopyView recreation (a source-accurate Volume Shadow Copy viewer, x64). The GUI mirrors
 // the original window (snapshot list over file list). The headless modes reproduce the
 // /stext|/stab|/stabular|/scomma|/shtml|/sverhtml|/sxml snapshot export, /CopyFile,
 // /savelangfile, /nosaveload and /deleteregkey switches.

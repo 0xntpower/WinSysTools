@@ -41,8 +41,8 @@ namespace
         "PsSuspend",
         "1.08",
         "Process Suspender",
-        "Copyright (C) 2001-2023 Mark Russinovich",
-        "Sysinternals",
+        "Independent source-accurate recreation of PsSuspend by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+        "Author: 0xntpower",
     };
 
     // The EULA app name is the version-resource InternalName. The registry key is

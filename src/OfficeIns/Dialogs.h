@@ -30,7 +30,7 @@ public:
     {
         SetWindowTextW(L"About OfficeIns");
         SetDlgItemTextW(IDC_ABOUT_TEXT, L"OfficeIns v1.20");
-        SetDlgItemTextW(IDC_ABOUT_SUB, L"Copyright (c) 2004 - 2015 Nir Sofer");
+        SetDlgItemTextW(IDC_ABOUT_SUB, L"Independent source-accurate recreation of OfficeIns by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
         CenterWindow();
         return TRUE;
     }

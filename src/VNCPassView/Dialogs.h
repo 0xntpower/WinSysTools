@@ -31,13 +31,12 @@ public:
     {
         SetWindowTextW(L"About VNCPassView");
         SetDlgItemTextW(IDC_ABOUT_TEXT, L"VNCPassView v1.05");
-        SetDlgItemTextW(IDC_ABOUT_LINK, L"http://www.nirsoft.net");
+        SetDlgItemTextW(IDC_ABOUT_LINK, L"Independent source-accurate recreation of VNCPassView by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
         return TRUE;
     }
     LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }
     LRESULT OnLink(WORD, WORD, HWND, BOOL&)
     {
-        ::ShellExecuteW(m_hWnd, L"open", L"http://www.nirsoft.net", nullptr, nullptr, SW_SHOWNORMAL);
         return 0;
     }
 };

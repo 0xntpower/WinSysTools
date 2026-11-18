@@ -32,7 +32,9 @@ public:
     {
         SetWindowTextW(L"About SimpleProgramDebugger");
         SetDlgItemTextW(1002, L"SimpleProgramDebugger v1.16");
-        SetDlgItemTextW(1004, L"Copyright (c) 2014 - 2022 Nir Sofer");
+        SetDlgItemTextW(1004, L"Independent source-accurate recreation of SimpleProgramDebugger by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
+        if (CWindow t1 = GetDlgItem(1005)) t1.ShowWindow(SW_HIDE);
+        if (CWindow t2 = GetDlgItem(1006)) t2.ShowWindow(SW_HIDE);
         return TRUE;
     }
     LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }

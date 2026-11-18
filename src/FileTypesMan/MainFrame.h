@@ -638,7 +638,7 @@ public:
 
     LRESULT OnWebPage(WORD, WORD, HWND, BOOL&)
     {
-        ::ShellExecuteW(m_hWnd, L"open", L"http://www.nirsoft.net/utils/file_types_manager.html",
+        ::ShellExecuteW(m_hWnd, L"open", L"https://github.com/0xntpower/WinSysTools",
                         nullptr, nullptr, SW_SHOWNORMAL);
         return 0;
     }

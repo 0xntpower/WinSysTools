@@ -51,8 +51,8 @@ namespace
         "PsPing",
         "2.12",
         "PsPing - ping, latency, bandwidth measurement utility",
-        "Copyright (C) 2012-2023 Mark Russinovich",
-        "Sysinternals - www.sysinternals.com",
+        "Independent source-accurate recreation of PsPing by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+        "Author: 0xntpower",
     };
 
     constexpr char kApp[] = "PsPing";

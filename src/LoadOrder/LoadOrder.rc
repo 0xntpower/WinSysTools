@@ -13,11 +13,11 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "Sysinternals - www.sysinternals.com"
+            VALUE "CompanyName", "0xntpower"
             VALUE "FileDescription", "Startup order viewer"
             VALUE "FileVersion", "1.02"
             VALUE "InternalName", "Loadord"
-            VALUE "LegalCopyright", "Copyright (C) 1998-2021 Mark Russinovich"
+            VALUE "LegalCopyright", "0xntpower"
             VALUE "OriginalFilename", "Loadord"
             VALUE "ProductName", "Sysinternals Loadord"
             VALUE "ProductVersion", "1.02"

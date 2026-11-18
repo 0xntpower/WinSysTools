@@ -219,10 +219,10 @@ namespace
         const std::vector<char> name = Narrow(VersionString(block.data(), translation, L"InternalName"));
         const std::vector<char> ver  = Narrow(VersionString(block.data(), translation, L"FileVersion"));
         const std::vector<char> desc = Narrow(VersionString(block.data(), translation, L"FileDescription"));
-        const std::vector<char> copy = Narrow(VersionString(block.data(), translation, L"LegalCopyright"));
-        const std::vector<char> comp = Narrow(VersionString(block.data(), translation, L"CompanyName"));
         printf("\n%s v%s - %s\n%s\n%s\n\n",
-               name.data(), ver.data(), desc.data(), copy.data(), comp.data());
+               name.data(), ver.data(), desc.data(),
+               "Independent source-accurate recreation of Coreinfo by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+               "Author: 0xntpower");
     }
 
     // ---- CPU header -----------------------------------------------------------

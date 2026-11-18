@@ -36,7 +36,9 @@ public:
     {
         SetWindowTextW(L"About SmartSniff");
         SetDlgItemTextW(IDC_ABOUT_NAME, L"SmartSniff v2.30");
-        SetDlgItemTextW(IDC_ABOUT_DESC, L"Copyright (c) 2004 - 2024 Nir Sofer");
+        SetDlgItemTextW(IDC_ABOUT_DESC, L"Independent source-accurate recreation of SmartSniff by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
+        if (CWindow t1 = GetDlgItem(1005)) t1.ShowWindow(SW_HIDE);
+        if (CWindow t2 = GetDlgItem(1006)) t2.ShowWindow(SW_HIDE);
         return TRUE;
     }
     LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }

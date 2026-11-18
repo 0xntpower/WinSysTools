@@ -3,7 +3,7 @@
 // so this does the same. Value names match the binary: MarkOddEvenRows, ShowGridLines,
 // ShowInfoTip, ShowTimeInGMT, SaveFilterIndex, VerSplitLoc, WinPos, Sort, Columns,
 // FilesSort, FilesColumns. The binary blobs WinPos, Columns and FilesColumns are
-// stored as hex strings, the way the shared NirSoft config layer encodes them.
+// stored as hex strings, the way the shared config layer encodes them.
 #pragma once
 #include "Columns.h"
 #include <windows.h>

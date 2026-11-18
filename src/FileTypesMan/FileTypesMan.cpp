@@ -1,4 +1,4 @@
-// FileTypesMan.cpp -- entry point. Recreation of NirSoft FileTypesMan (x64, v2.01).
+// FileTypesMan.cpp -- entry point. A source-accurate recreation of FileTypesMan (x64, v2.01).
 // The GUI path mirrors the original WinMain (two list panes over the HKCR scan). The
 // command-line "save and quit" mode reproduces /stext|/stab|/scomma|/stabular|/shtml|
 // /sverhtml|/sxml with /sort, /nosort, /SelectedExt, the option switches, /savelangfile

@@ -1,5 +1,5 @@
 // CredentialsFileView.cpp -- entry point, command-line handling and GUI
-// bootstrap for the CredentialsFileView recreation (NirSoft Credentials file
+// bootstrap for the CredentialsFileView recreation (a source-accurate Credentials file
 // decryptor, x64).
 #include <atlbase.h>
 #include <atlapp.h>

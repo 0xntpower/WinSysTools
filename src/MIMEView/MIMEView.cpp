@@ -1,4 +1,4 @@
-// MIMEView.cpp -- entry point. Recreation of NirSoft MIMEView (x86, v1.10).
+// MIMEView.cpp -- entry point. Recreation of MIMEView (x86, v1.10).
 // GUI path mirrors the original WinMain (sub_404D3A). The /s* switches reproduce
 // its command-line "save and quit" mode (sub_403262).
 #include <atlbase.h>

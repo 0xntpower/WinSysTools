@@ -56,8 +56,8 @@ namespace
         "PsLoggedon",
         "1.35",
         "See who's logged on",
-        "Copyright (C) 2000-2016 Mark Russinovich",
-        "Sysinternals - www.sysinternals.com",
+        "Independent source-accurate recreation of PsLoggedon by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+        "Author: 0xntpower",
     };
 
     constexpr char kApp[] = "PsLoggedon";

@@ -55,7 +55,7 @@ namespace
         return out;
     }
 
-    // NirSoft XML/JSON element names: lowercased title with spaces turned into
+    // The XML/JSON element names: lowercased title with spaces turned into
     // underscores ("Product Key" -> "product_key").
     std::wstring tagName(const std::wstring& title)
     {
@@ -89,8 +89,7 @@ namespace
 
     void htmlFooter(std::wstring& out)
     {
-        out += L"<br/><h4>Created by using <a href=\"https://www.nirsoft.net/\" target=\"newwin\">"
-               L"ProductKeyScanner</a></h4><p/>\r\n";
+        out += L"<br/><h4>Created by using ProductKeyScanner</h4><p/>\r\n";
         out += L"</body></html>\r\n";
     }
 }

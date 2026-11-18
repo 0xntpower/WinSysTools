@@ -1,5 +1,5 @@
 // SimpleWMIView.cpp -- entry point, command-line handling and GUI bootstrap for
-// the SimpleWMIView recreation (NirSoft WMI/WQL query viewer, x64).
+// the SimpleWMIView recreation (WMI/WQL query viewer, x64).
 #include <atlbase.h>
 #include <atlapp.h>
 #include <windows.h>

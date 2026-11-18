@@ -362,7 +362,7 @@ public:
     {
         SetWindowTextW(L"About IconsExtract");
         SetDlgItemTextW(IDC_ABOUT_TITLE, L"IconsExtract v1.47");
-        SetDlgItemTextW(IDC_ABOUT_COPYRIGHT, L"Copyright (c) 2003 - 2010 Nir Sofer");
+        SetDlgItemTextW(IDC_ABOUT_COPYRIGHT, L"Independent source-accurate recreation of IconsExtract by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
         CenterWindow(GetParent());
         return TRUE;
     }

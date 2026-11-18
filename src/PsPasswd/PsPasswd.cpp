@@ -49,8 +49,8 @@ namespace
         "PsPasswd",
         "1.25",
         "Local and remote password changer",
-        "Copyright (C) 2003-2023 Mark Russinovich",
-        "Sysinternals - www.sysinternals.com",
+        "Independent source-accurate recreation of PsPasswd by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+        "Author: 0xntpower",
     };
 
     // The EULA app name is the version-resource InternalName. The registry key is

@@ -13,11 +13,11 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "Sysinternals - www.sysinternals.com"
+            VALUE "CompanyName", "0xntpower"
             VALUE "FileDescription", "NTFS Information Dump"
             VALUE "FileVersion", "1.2"
             VALUE "InternalName", "NtfsInfo"
-            VALUE "LegalCopyright", "Copyright (C) 2005-2016 Mark Russinovich"
+            VALUE "LegalCopyright", "0xntpower"
             VALUE "OriginalFilename", "ntfsinfo.exe"
             VALUE "ProductName", "Sysinternals NtfsInfo"
             VALUE "ProductVersion", "1.2"

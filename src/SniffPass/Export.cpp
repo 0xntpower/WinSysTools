@@ -11,7 +11,7 @@
 namespace
 {
     const char* kProduct = "SniffPass";
-    const char* kHomePage = "http://www.nirsoft.net/";
+    const char* kHomePage = "https://github.com/0xntpower/WinSysTools";
 
     std::string narrow(const std::wstring& w)
     {

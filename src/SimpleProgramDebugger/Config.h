@@ -5,7 +5,7 @@
 // ScrollDownOnNewLine, NewProcess.ProcessPath, NewProcess.Params, NewProcess.StartFolder,
 // SortOnEveryUpdate, TrayIcon, StartAsHidden, AddExportHeaderLine, WinPos, Sort, Columns.
 // The Columns blob is an array of (WORD width, WORD columnIndex) in display order, and the
-// binary blobs WinPos and Columns are kept as hex strings the way the shared NirSoft config
+// binary blobs WinPos and Columns are kept as hex strings the way the shared config
 // layer encodes them.
 #pragma once
 #include "Columns.h"
@@ -151,7 +151,7 @@ private:
         return sortAscending ? (sortColumn + 1) : -(sortColumn + 1);
     }
 
-    // The NirSoft INI layer encodes a blob as space-separated uppercase hex bytes ("%02X ").
+    // The INI layer encodes a blob as space-separated uppercase hex bytes ("%02X ").
     [[nodiscard]] static std::wstring toHex(const void* data, size_t bytes)
     {
         const BYTE* p = static_cast<const BYTE*>(data);

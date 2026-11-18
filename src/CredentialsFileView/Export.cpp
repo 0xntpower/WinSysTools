@@ -1,5 +1,5 @@
 // Export.cpp -- report builders for the CredentialsFileView save formats,
-// following the older NirSoft export engine (the one this binary uses). The
+// following the older export engine (the one this binary uses). The
 // text, tab, tabular, HTML, and XML reports are UTF-16LE with a BOM. The CSV
 // report is UTF-8 with a BOM. The SaveFileEncoding option can force ANSI,
 // UTF-16 or UTF-8 for every format.
@@ -12,7 +12,7 @@
 namespace
 {
     const wchar_t* kReportTitle = L"Items List";
-    const wchar_t* kHomePage = L"http://www.nirsoft.net/";
+    const wchar_t* kHomePage = L"https://github.com/0xntpower/WinSysTools";
     const wchar_t* kProduct = L"CredentialsFileView";
 
     std::wstring esc(const std::wstring& s)

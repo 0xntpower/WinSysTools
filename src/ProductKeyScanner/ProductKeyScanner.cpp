@@ -1,4 +1,4 @@
-// ProductKeyScanner.cpp -- entry point. Recreation of NirSoft ProductKeyScanner
+// ProductKeyScanner.cpp -- entry point. Recreation of ProductKeyScanner
 // (x64, Unicode, v1.03). The GUI path mirrors the original WinMain. The recovered
 // switches /nosaveload, /cfg, /savelangfile, /deleteregkey are reproduced, and the
 // /s* export switches plus a /selftest decoder check are added (the original v1.03

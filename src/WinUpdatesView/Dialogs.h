@@ -29,7 +29,7 @@ public:
     BOOL OnInitDialog(CWindow, LPARAM)
     {
         SetDlgItemTextW(1002, L"WinUpdatesView v1.20");
-        SetDlgItemTextW(1004, L"Copyright (c) 2019 - 2024 Nir Sofer");
+        SetDlgItemTextW(1004, L"Independent source-accurate recreation of WinUpdatesView by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
         return TRUE;
     }
     LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }

@@ -30,7 +30,7 @@
 
 // Legacy registry root the /deleteregkey switch removes. Live settings are kept in
 // the .cfg file next to the executable (see LoadConfig/SaveConfig), not here.
-constexpr wchar_t kConfigKey[] = L"Software\\NirSoft\\ProductKeyScanner";
+constexpr wchar_t kConfigKey[] = L"Software\\0xntpower\\ProductKeyScanner";
 constexpr UINT WM_APP_SCANDONE = WM_APP + 1;
 
 extern CAppModule _Module;
@@ -570,7 +570,7 @@ public:
     // The original keeps settings in a .cfg INI file next to the executable,
     // section [General] (path builder sub_14000D300, value table sub_1400021BC).
     // Scalars are decimal, SoftwareHivePath is a string, and MainFont / Columns /
-    // WinPos are the NirSoft uppercase space-separated hex blobs. Columns is an
+    // WinPos are the original uppercase space-separated hex blobs. Columns is an
     // array of (WORD width, WORD columnIndex) pairs in display order.
     void SetCfgPath(const std::wstring& arg) { m_cfgPath = cfgini::Resolve(arg); }
 

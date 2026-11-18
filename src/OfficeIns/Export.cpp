@@ -28,7 +28,7 @@ namespace
         return out;
     }
 
-    // NirSoft XML element names are the lowercased title with spaces turned into
+    // The XML element names are the lowercased title with spaces turned into
     // underscores: "Start Mode" -> "start_mode".
     std::wstring xmlTag(const std::wstring& title)
     {
@@ -59,9 +59,8 @@ namespace
 
     void htmlFooter(std::wstring& out)
     {
-        // "Created by using" (STRINGTABLE id 6) + the NirSoft link.
-        out += L"<p><br><h4>Created by using "
-               L"<a href=\"http://www.nirsoft.net/\" target=\"newwin\">OfficeIns</a></h4>\r\n";
+        // "Created by using" (STRINGTABLE id 6) plus the tool name.
+        out += L"<p><br><h4>Created by using OfficeIns</h4>\r\n";
         out += L"</body></html>\r\n";
     }
 }
@@ -76,7 +75,7 @@ std::wstring BuildReport(const std::vector<Addin>& items,
     {
     case ExportFormat::Text:
     {
-        // NirSoft /stext: each record is wrapped by a 50-char separator above and
+        // The /stext mode wraps each record with a 50-char separator above and
         // below, titles left-padded to the widest column title, separator " : ".
         const std::wstring sep(50, L'=');
         size_t titleW = 0;
@@ -96,7 +95,7 @@ std::wstring BuildReport(const std::vector<Addin>& items,
     }
     case ExportFormat::Tab:
     {
-        // NirSoft /stab appends a tab after every column, including the last.
+        // The /stab mode appends a tab after every column, including the last.
         for (const auto& m : items)
         {
             for (int c : columns)

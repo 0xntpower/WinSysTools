@@ -8,13 +8,13 @@ version="1.0.0.0"
 
 processorArchitecture="X86" 
 
-name="NirSoft" 
+name="0xntpower" 
 
 type="win32" 
 
 /> 
 
-<description>NirSoft</description> 
+<description>0xntpower</description> 
 
 <dependency> 
 

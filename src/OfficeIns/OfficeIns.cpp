@@ -1,4 +1,4 @@
-// OfficeIns.cpp -- entry point. Recreation of NirSoft OfficeIns (x64, v1.20).
+// OfficeIns.cpp -- entry point. Recreation of OfficeIns (x64, v1.20).
 // The GUI path mirrors the original WinMain. The command-line "save and quit" mode
 // reproduces /stext|/stab|/stabular|/shtml|/sverhtml|/sxml, plus /StartMode,
 // /Connected, /RemoteComputer, /savelangfile and /noloadsettings.

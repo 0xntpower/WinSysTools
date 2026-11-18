@@ -54,8 +54,8 @@ namespace
         "PsList",
         "1.41",
         "Process information lister",
-        "Copyright (C) 2000-2023 Mark Russinovich",
-        "Sysinternals - www.sysinternals.com",
+        "Independent source-accurate recreation of PsList by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+        "Author: 0xntpower",
     };
 
     constexpr char kApp[] = "PsList";

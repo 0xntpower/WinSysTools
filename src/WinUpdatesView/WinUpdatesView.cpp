@@ -1,5 +1,5 @@
 // WinUpdatesView.cpp -- entry point, command-line handling and GUI bootstrap for
-// the WinUpdatesView recreation (NirSoft Windows Updates History Viewer, x64).
+// the WinUpdatesView recreation (Windows Updates History Viewer, x64).
 #include <atlbase.h>
 #include <atlapp.h>
 #include <windows.h>

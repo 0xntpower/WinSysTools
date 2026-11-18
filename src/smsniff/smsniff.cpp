@@ -1,5 +1,5 @@
 // smsniff.cpp -- entry point, command-line handling and GUI bootstrap for the SmartSniff
-// recreation (NirSoft packet sniffer, x64, requireAdministrator). The GUI mirrors the
+// recreation (a source-accurate packet sniffer, x64, requireAdministrator). The GUI mirrors the
 // original window (upper conversation list over a lower packet view). The headless modes
 // reproduce the /stext|/stab|/stabular|/shtml|/sverhtml|/sxml export, plus /savelangfile,
 // /deleteregkey, /nocapdriver, /noloadsettings and /LoadConfig. A /selftest mode runs the
@@ -161,7 +161,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
     if (indexOf(a, L"/deleteregkey") >= 0)
     {
         ::DeleteFileW(Config::DefaultPath().c_str());
-        ::RegDeleteKeyW(HKEY_CURRENT_USER, L"Software\\NirSoft\\SmartSniff");
+        ::RegDeleteKeyW(HKEY_CURRENT_USER, L"Software\\0xntpower\\SmartSniff");
         return 0;
     }
     if (runExportCli(a, noLoadSettings)) return 0;

@@ -1,5 +1,5 @@
 // Export.cpp -- report builders for the OutlookAttachView save formats, matching
-// the original's output. OutlookAttachView uses the older NirSoft HTML template
+// the original's output. OutlookAttachView uses the older HTML template
 // (an HTML 3.2 doctype with a bgcolor table, not the CSS mytable template) and
 // the slug-tag XML template. The text, tab, tabular, HTML and XML reports are
 // UTF-16LE with a BOM. Only the CSV report defaults to UTF-8 with a BOM. The
@@ -15,7 +15,7 @@ namespace
     const wchar_t* kReportTitle = L"Outlook Attachments";
     const wchar_t* kCredit = L"Created by using";
     const wchar_t* kProduct = L"OutlookAttachView";
-    const wchar_t* kHomePage = L"http://www.nirsoft.net/";
+    const wchar_t* kHomePage = L"https://github.com/0xntpower/WinSysTools";
 
     std::wstring esc(const std::wstring& s)
     {

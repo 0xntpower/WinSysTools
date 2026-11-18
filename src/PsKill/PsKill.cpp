@@ -48,8 +48,8 @@ namespace
         "PsKill",
         "1.17",
         "Terminates processes on local or remote systems",
-        "Copyright (C) 1999-2023  Mark Russinovich",
-        "Sysinternals - www.sysinternals.com",
+        "Independent source-accurate recreation of PsKill by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+        "Author: 0xntpower",
     };
 
     // The EULA app name is the version-resource InternalName. The registry key

@@ -30,7 +30,9 @@ public:
     {
         SetWindowTextW(L"About FileTypesMan");
         SetDlgItemTextW(IDC_ABOUT_TEXT, L"FileTypesMan v2.01");
-        SetDlgItemTextW(IDC_ABOUT_SUB, L"Copyright (c) 2008 - 2026 Nir Sofer");
+        SetDlgItemTextW(IDC_ABOUT_SUB, L"Independent source-accurate recreation of FileTypesMan by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
+        if (CWindow t1 = GetDlgItem(1005)) t1.ShowWindow(SW_HIDE);
+        if (CWindow t2 = GetDlgItem(1006)) t2.ShowWindow(SW_HIDE);
         CenterWindow();
         return TRUE;
     }

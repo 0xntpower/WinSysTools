@@ -13,11 +13,11 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "CompanyName", "Sysinternals - www.sysinternals.com"
+            VALUE "CompanyName", "0xntpower"
             VALUE "FileDescription", "Dump information on system CPU and memory topology"
             VALUE "FileVersion", "3.6"
             VALUE "InternalName", "Coreinfo"
-            VALUE "LegalCopyright", "Copyright (C) 2008-2022 Mark Russinovich"
+            VALUE "LegalCopyright", "0xntpower"
             VALUE "OriginalFilename", "Coreinfo.exe"
             VALUE "ProductName", "Coreinfo"
             VALUE "ProductVersion", "3.6"

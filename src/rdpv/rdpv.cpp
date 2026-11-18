@@ -1,4 +1,4 @@
-// rdpv.cpp -- entry point. Recreation of NirSoft RemoteDesktopPassView (x86, v1.02).
+// rdpv.cpp -- entry point. Recreation of RemoteDesktopPassView (x86, v1.02).
 // GUI path mirrors the original WinMain (sub_4070E8). The /s* switches reproduce its
 // command-line "save and quit" mode. /nosaveload, /noreg, /deleteregkey, /savelangfile
 // and a /selftest crypto check are recovered too.

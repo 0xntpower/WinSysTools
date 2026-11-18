@@ -50,8 +50,8 @@ namespace
         "PsShutdown",
         "2.6",
         "Shutdown, logoff and power manage local and remote systems",
-        "Copyright (C) 1999-2023 Mark Russinovich",
-        "Sysinternals - www.sysinternals.com",
+        "Independent source-accurate recreation of PsShutdown by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+        "Author: 0xntpower",
     };
 
     // The EULA app name is the version-resource InternalName. The registry key is

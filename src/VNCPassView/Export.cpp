@@ -27,7 +27,7 @@ namespace
         return out;
     }
 
-    // NirSoft XML element names are the lowercased title with spaces turned into
+    // The XML element names are the lowercased title with spaces turned into
     // underscores: "Password Type" -> "password_type", "VNC Passwords" -> "vnc_passwords".
     std::wstring xmlTag(const std::wstring& title)
     {

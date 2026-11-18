@@ -5,8 +5,8 @@
 //
 // The text report wraps each record in a 50-'=' rule and left-justifies field
 // names to width 18. The tab report terminates every field with a tab, including
-// the last. The HTML reports use the classic NirSoft "border=1 cellpadding=5"
-// template with a credit line to nirsoft.net. The XML root is debug_events_list.
+// the last. The HTML reports use the classic "border=1 cellpadding=5"
+// template with a credit line to the project. The XML root is debug_events_list.
 #include "Export.h"
 #include "Columns.h"
 #include <windows.h>
@@ -16,7 +16,7 @@
 namespace
 {
     const wchar_t* kReportTitle = L"Debug Events List";
-    const wchar_t* kHomePage = L"http://www.nirsoft.net/";
+    const wchar_t* kHomePage = L"https://github.com/0xntpower/WinSysTools";
     const wchar_t* kProduct = L"SimpleProgramDebugger";
 
     std::wstring esc(const std::wstring& s)

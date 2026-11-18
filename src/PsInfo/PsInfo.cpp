@@ -52,8 +52,8 @@ namespace
         "PsInfo",
         "1.79",
         "Local and remote system information viewer",
-        "Copyright (C) 2001-2023 Mark Russinovich",
-        "Sysinternals - www.sysinternals.com",
+        "Independent source-accurate recreation of PsInfo by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+        "Author: 0xntpower",
     };
 
     constexpr char kApp[] = "PsInfo";

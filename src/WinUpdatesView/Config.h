@@ -6,7 +6,7 @@
 // match the original: ShowTimeInGMT, HideItemsCompatibility, HideWindowsDefender,
 // MarkOddEvenRows, ShowGridLines, SaveFilterIndex, ShowInfoTip, LoadFrom,
 // StopWinUpdatesService, ExternalFilename, ComputerName, AddExportHeaderLine, Sort,
-// WinPos, Columns. Blobs are the NirSoft uppercase space-separated hex format.
+// WinPos, Columns. Blobs are the original uppercase space-separated hex format.
 #pragma once
 #include "../common/CfgIni.h"
 #include "Columns.h"

@@ -1,5 +1,5 @@
 // TaskSchedulerView.cpp -- entry point, command-line handling and GUI bootstrap
-// for the TaskSchedulerView recreation (NirSoft Task Scheduler viewer, x64).
+// for the TaskSchedulerView recreation (a source-accurate Task Scheduler viewer, x64).
 #include <atlbase.h>
 #include <atlapp.h>
 #include <windows.h>

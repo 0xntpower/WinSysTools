@@ -1,6 +1,6 @@
-// CfgIni.h -- the NirSoft .cfg configuration store (Unicode tools).
+// CfgIni.h -- the original .cfg configuration store (Unicode tools).
 //
-// The modern NirSoft utilities keep their settings in a <exe>.cfg INI file next
+// The modern utilities keep their settings in a <exe>.cfg INI file next
 // to the executable, section [General], not in the registry. Recovered from the
 // shared config class present in ProductKeyScanner, WinUpdatesView, SimpleWMIView
 // and TaskSchedulerView: each binary imports only GetPrivateProfile*/

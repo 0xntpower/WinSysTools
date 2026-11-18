@@ -1,10 +1,10 @@
 // SniffPass.cpp -- entry point, command-line handling and GUI bootstrap for the SniffPass
-// recreation (NirSoft password sniffer, x64, requireAdministrator). The GUI mirrors the
+// recreation (a source-accurate password sniffer, x64, requireAdministrator). The GUI mirrors the
 // original window: a single owner-data list of captured logins over a toolbar and status
 // bar. The original's switches are /noloadsettings, /noreg, /nocapdriver, /savelangfile
 // and /deleteregkey. This x64 v1.13 binary carries no /s* save-and-quit switches, so the
 // export engine is reached through File > Save in the original. For offline validation
-// this recreation adds the standard NirSoft /s* headless export and a /selftest mode that
+// this recreation adds the standard /s* headless export and a /selftest mode that
 // exercises the protocol parsers and the export builder against synthetic data only.
 #include <atlbase.h>
 #include <atlapp.h>
@@ -133,7 +133,7 @@ namespace
     }
 
     // /s* <file>: export the current (empty without capture) list and quit. Standard
-    // NirSoft headless export, added for offline validation.
+    // headless export, added for offline validation.
     bool runExportCli(const std::vector<std::wstring>& a, bool noSaveLoad)
     {
         ExportFormat fmt{};
@@ -183,7 +183,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, LPWSTR, int nCmdShow)
 
     if (indexOf(a, L"/selftest") >= 0) return runSelfTest(a);
     if (indexOf(a, L"/savelangfile") >= 0) { saveLangFile(); return 0; }
-    if (indexOf(a, L"/deleteregkey") >= 0) { ::RegDeleteKeyW(HKEY_CURRENT_USER, L"Software\\NirSoft\\SniffPass"); return 0; }
+    if (indexOf(a, L"/deleteregkey") >= 0) { ::RegDeleteKeyW(HKEY_CURRENT_USER, L"Software\\0xntpower\\SniffPass"); return 0; }
 
     const bool noSaveLoad = indexOf(a, L"/noloadsettings") >= 0 || indexOf(a, L"/noreg") >= 0;
     if (runExportCli(a, noSaveLoad)) return 0;

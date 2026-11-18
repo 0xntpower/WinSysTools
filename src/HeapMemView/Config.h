@@ -4,8 +4,8 @@
 // original load/save sub_14000B114 and sub_140001B90. WinPos is a WINDOWPLACEMENT
 // written as space-free hex bytes, Columns is a blob of (width, columnIndex) pairs
 // in little-endian 16-bit fields, one pair per visible column, matching the layout
-// the original stores. The legacy registry root Software\NirSoft\HeapMemView still
-// exists in the binary and is removed by the /deleteregkey switch.
+// the original stores. The legacy registry root Software\0xntpower\HeapMemView is
+// removed by the /deleteregkey switch.
 #pragma once
 #include <windows.h>
 #include <string>

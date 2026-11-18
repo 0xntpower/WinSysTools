@@ -19,7 +19,7 @@
 
 // Legacy registry root the /deleteregkey switch removes (older versions stored
 // settings here before the move to the .cfg file).
-constexpr wchar_t kConfigKey[] = L"Software\\NirSoft\\TaskSchedulerView";
+constexpr wchar_t kConfigKey[] = L"Software\\0xntpower\\TaskSchedulerView";
 
 struct Config
 {

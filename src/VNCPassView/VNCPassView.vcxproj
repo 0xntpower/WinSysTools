@@ -31,7 +31,7 @@
   <PropertyGroup>
     <IncludePath>C:\WTL10_10320_Release\Include;$(VCToolsInstallDir)atlmfc\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(VCToolsInstallDir)atlmfc\lib\$(PlatformTarget);$(LibraryPath)</LibraryPath>
-    <!-- The extracted .rc already embeds the NirSoft RT_MANIFEST (id 1), so the build must not add its own. -->
+    <!-- The extracted .rc already embeds the original RT_MANIFEST (id 1), so the build must not add its own. -->
     <GenerateManifest>false</GenerateManifest>
     <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>

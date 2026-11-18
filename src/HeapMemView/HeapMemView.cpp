@@ -1,4 +1,4 @@
-// HeapMemView.cpp -- entry point. Recreation of NirSoft HeapMemView v1.05 (x64).
+// HeapMemView.cpp -- entry point. Recreation of HeapMemView v1.05 (x64).
 // WinMain mirrors the original sub_14000C614: it refuses pre-Windows 2000 systems,
 // handles /savelangfile and /deleteregkey as quit-early actions, and honours
 // /nosaveload. The GUI then runs the main window and its message loop.
@@ -44,7 +44,7 @@ namespace
     // /deleteregkey: remove the legacy registry root the binary still references.
     void deleteRegKey()
     {
-        ::RegDeleteKeyW(HKEY_CURRENT_USER, L"Software\\NirSoft\\HeapMemView");
+        ::RegDeleteKeyW(HKEY_CURRENT_USER, L"Software\\0xntpower\\HeapMemView");
     }
 
     bool preVistaOrOlderUnsupported()

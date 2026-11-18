@@ -326,8 +326,8 @@ namespace
     constexpr const char* kBannerName = "Loadord";
     constexpr const char* kBannerVersion = "1.02";
     constexpr const char* kBannerDescription = "Startup order viewer";
-    constexpr const char* kBannerCopyright = "Copyright (C) 1998-2021 Mark Russinovich";
-    constexpr const char* kBannerCompany = "Sysinternals - www.sysinternals.com";
+    constexpr const char* kBannerCopyright = "Independent source-accurate recreation of LoadOrder by Sysinternals, through reverse engineering and rewritten in modern C++20.";
+    constexpr const char* kBannerCompany = "Author: 0xntpower";
 
     constexpr const wchar_t* kEulaSubKey = L"Software\\Sysinternals\\LoadOrder";
     constexpr const wchar_t* kEulaValue = L"EulaAccepted";

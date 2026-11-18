@@ -31,13 +31,12 @@ public:
     {
         SetWindowTextW(L"About Remote Desktop PassView");
         SetDlgItemTextW(IDC_ABOUT_TEXT, L"Remote Desktop PassView v1.02");
-        SetDlgItemTextW(IDC_ABOUT_LINK, L"http://www.nirsoft.net");
+        SetDlgItemTextW(IDC_ABOUT_LINK, L"Independent source-accurate recreation of RemoteDesktopPassView by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
         return TRUE;
     }
     LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }
     LRESULT OnLink(WORD, WORD, HWND, BOOL&)
     {
-        ::ShellExecuteW(m_hWnd, L"open", L"http://www.nirsoft.net", nullptr, nullptr, SW_SHOWNORMAL);
         return 0;
     }
 };

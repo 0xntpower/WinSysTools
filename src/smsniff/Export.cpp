@@ -10,7 +10,7 @@
 namespace
 {
     const wchar_t* kProduct = L"SmartSniff";
-    const wchar_t* kHomePage = L"http://www.nirsoft.net/";
+    const wchar_t* kHomePage = L"https://github.com/0xntpower/WinSysTools";
 
     std::wstring htmlEscape(const std::wstring& s)
     {

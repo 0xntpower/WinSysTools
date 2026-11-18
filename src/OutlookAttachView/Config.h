@@ -136,7 +136,7 @@ struct Config
     }
 
 private:
-    // The shared NirSoft config layer stores a binary value as uppercase hex byte
+    // The shared config layer stores a binary value as uppercase hex byte
     // pairs joined by a single space and no trailing space, for example "2C 00 00 00"
     // (recovered from the serializer sub_14000B064, which formats each byte with
     // "%2.2X " and overwrites the final space with the terminator). toHex reproduces

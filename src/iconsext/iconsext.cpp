@@ -1,4 +1,4 @@
-// iconsext.cpp -- entry point. Recreation of NirSoft IconsExtract v1.47 (x86).
+// iconsext.cpp -- entry point. Recreation of IconsExtract v1.47 (x86).
 // The GUI path mirrors the original WinMain (sub_40626D). The /save switch
 // reproduces its command-line extract-and-quit mode (sub_4060D5), and -scanpath
 // pre-fills the Search dialog (sub_4051F2 tail).

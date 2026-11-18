@@ -55,8 +55,8 @@ namespace
         "PsLoglist",
         "2.82",
         "local and remote event log viewer",
-        "Copyright (C) 2000-2023 Mark Russinovich",
-        "Sysinternals - www.sysinternals.com",
+        "Independent source-accurate recreation of PsLoglist by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+        "Author: 0xntpower",
     };
 
     // The EULA app name is the version-resource InternalName, matching

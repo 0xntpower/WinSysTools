@@ -14,7 +14,6 @@
 namespace
 {
     const wchar_t* kAppName = L"SimpleWMIView";
-    const wchar_t* kHomePage = L"http://www.nirsoft.net/";
 
     std::vector<int> effectiveColumns(const WmiResult& res, const ExportOptions& opt)
     {
@@ -180,8 +179,7 @@ std::wstring BuildReport(const WmiResult& res, ExportFormat format, const Export
         out += L"<html><head><meta http-equiv='content-type' content='text/html;charset=utf-8'>";
         out += L"<title>"; out += kAppName; out += L"</title></head>\r\n<body>\r\n";
         out += L"<h3>"; out += kAppName; out += L"</h3>\r\n";
-        out += L"<br><h4>Created by using <a href=\""; out += kHomePage;
-        out += L"\" target=\"newwin\">"; out += kAppName; out += L"</a></h4><p>\r\n";
+        out += L"<br><h4>Created by using "; out += kAppName; out += L"</h4><p>\r\n";
         out += L"<table border=\"1\" cellpadding=\"5\"><tr>";
         for (int c : cols)
             out += L"<th>" + htmlEscape(res.columns[c].name) + L"</th>";
@@ -201,8 +199,7 @@ std::wstring BuildReport(const WmiResult& res, ExportFormat format, const Export
         out += L"<html><head><meta http-equiv='content-type' content='text/html;charset=utf-8'>";
         out += L"<title>"; out += kAppName; out += L"</title></head>\r\n<body>\r\n";
         out += L"<h3>"; out += kAppName; out += L"</h3>\r\n";
-        out += L"<br><h4>Created by using <a href=\""; out += kHomePage;
-        out += L"\" target=\"newwin\">"; out += kAppName; out += L"</a></h4><p>\r\n";
+        out += L"<br><h4>Created by using "; out += kAppName; out += L"</h4><p>\r\n";
         for (const auto& r : res.rows)
         {
             out += L"<table border=\"1\" cellpadding=\"5\">\r\n";

@@ -12,7 +12,7 @@
 namespace
 {
     const wchar_t* kReportTitle = L"Tasks List";
-    const wchar_t* kHomePage = L"https://www.nirsoft.net/";
+    const wchar_t* kHomePage = L"https://github.com/0xntpower/WinSysTools";
     const wchar_t* kProduct = L"TaskSchedulerView";
 
     std::wstring esc(const std::wstring& s)

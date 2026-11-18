@@ -31,8 +31,8 @@ namespace
     // --- Banner and version resource strings (InternalName ProcDump, 11.0) ---
     constexpr char kBanner[] =
         "\nProcDump v11.0 - Sysinternals process dump utility\n"
-        "Copyright (C) 2009-2022 Mark Russinovich and Andrew Richards\n"
-        "Sysinternals - www.sysinternals.com\n";
+        "Independent source-accurate recreation of ProcDump by Sysinternals, through reverse engineering and rewritten in modern C++20.\n"
+        "Author: 0xntpower\n";
 
     // --- MINIDUMP_TYPE flag words, exactly as the original computes them for a
     // modern dbghelp (ImagehlpApiVersion major 6). sub_140006A50 selects these

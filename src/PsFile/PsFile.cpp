@@ -48,8 +48,8 @@ namespace
         "PsFile",
         "1.04",
         "Lists files and directories opened remotely",
-        "Copyright (C) 2001-2023 Mark Russinovich",
-        "Sysinternals",
+        "Independent source-accurate recreation of PsFile by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+        "Author: 0xntpower",
     };
 
     // The EULA app name is the version-resource InternalName. The registry key is

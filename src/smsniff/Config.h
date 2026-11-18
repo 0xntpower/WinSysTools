@@ -1,5 +1,5 @@
 // Config.h -- SmartSniff settings. The original keeps a SmartSniff.cfg INI file next to
-// the executable, section [General], read and written through the shared NirSoft INI
+// the executable, section [General], read and written through the shared INI
 // layer. Value names and defaults match the binary (recovered from the settings reader).
 // The binary blobs WinPos and Columns are stored as uppercase hex strings, the way that
 // layer encodes them, so this file interoperates with the original's .cfg.
@@ -175,7 +175,7 @@ private:
         return buf;
     }
 
-    // The shared NirSoft config layer stores a binary value as uppercase hex byte
+    // The shared config layer stores a binary value as uppercase hex byte
     // pairs joined by a single space and no trailing space, for example "2C 00 00 00".
     // toHex reproduces that exactly so the original can read this .cfg, and fromHex
     // skips the separators so it reads the original's.

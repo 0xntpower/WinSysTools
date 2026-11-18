@@ -1,5 +1,5 @@
 // SimpleProgramDebugger.cpp -- entry point, command-line handling and GUI
-// bootstrap for the SimpleProgramDebugger recreation (NirSoft lightweight
+// bootstrap for the SimpleProgramDebugger recreation (a lightweight
 // debugger, x64). The tool launches or attaches to a target and logs the debug
 // events from a WaitForDebugEvent loop. Command-line switches match the original.
 #include <atlbase.h>

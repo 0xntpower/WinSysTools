@@ -115,8 +115,8 @@
 #define ID_OPT_EXTRACTCAPTION 40054  // Extract Resource Captions
 #define ID_OPT_SHOWAPPS       40055  // Show Application Types
 #define ID_EDIT_JUMPUSERCHOICE 40056 // Jump To User Choice Entry (Ctrl+F8)
-#define ID_HELP_SENDREPORT    40060  // Send Report To extension.nirsoft.net (Ctrl+F9)
-#define ID_HELP_VIEWEXT       40063  // View Extension In extension.nirsoft.net (F9)
+#define ID_HELP_SENDREPORT    40060  // Send Report To Extension Database (Ctrl+F9)
+#define ID_HELP_VIEWEXT       40063  // View Extension In Extension Database (F9)
 #define ID_OPT_HIDEDOT        40066  // Hide Dot In Extension
 #define ID_OPT_ADDHEADER      40067  // Add Header Line To CSV/Tab-Delimited File
 #define ID_VIEW_MARKODDEVEN   40068  // Mark Odd/Even Rows

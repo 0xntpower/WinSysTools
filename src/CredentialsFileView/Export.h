@@ -1,5 +1,5 @@
 // Export.h -- save-report builders for the CredentialsFileView export formats.
-// The tool uses the older NirSoft export engine with seven formats.
+// The tool uses the older export engine with seven formats.
 #pragma once
 #include "CredRecord.h"
 #include <vector>

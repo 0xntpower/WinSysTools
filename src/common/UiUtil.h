@@ -28,7 +28,7 @@ inline LRESULT FillFrameBtnFace(HWND hWnd, HDC hdc)
 }
 
 // Pin the process to light mode so the themed common controls match the original
-// NirSoft tools, which do not follow the system dark theme. Without this, a v6
+// tools, which do not follow the system dark theme. Without this, a v6
 // themed toolbar on a dark-mode system paints a dark background. Call once at the
 // top of WinMain, before InitCommonControls. A no-op on Windows without the API.
 inline void PinToLightMode()
@@ -42,7 +42,7 @@ inline void PinToLightMode()
     }
 }
 
-// Load an old-style NirSoft toolbar strip bitmap into a masked imagelist, keying
+// Load an old-style toolbar strip bitmap into a masked imagelist, keying
 // the bitmap's own background corner colour transparent. The 4-bit strips use a
 // light-gray background, the newer 24-bit strips use black, so read the actual
 // corner pixel rather than assuming one. A 24-bit image list (ILC_COLOR24) is

@@ -225,16 +225,16 @@ FONT 8, "MS Shell Dlg", 400, 0, 1
    CONTROL "Include Subfolders", 1045, BUTTON, BS_AUTOCHECKBOX | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 7, 156, 142, 9 
 }
 
-112 DIALOG 0, 0, 195, 78
+112 DIALOG 0, 0, 272, 104
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION ""
 LANGUAGE LANG_HEBREW, 0x1
 FONT 8, "MS Sans Serif"
 {
-   CONTROL "OK", 1, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 145, 57, 43, 14 
+   CONTROL "OK", 1, BUTTON, BS_DEFPUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 214, 83, 50, 14
    CONTROL 101, -1, STATIC, SS_ICON | WS_CHILD | WS_VISIBLE, 14, 15, 21, 20 
    CONTROL "", 1002, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 41, 15, 130, 16 
-   CONTROL "", 1004, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 40, 34, 118, 8 
+   CONTROL "", 1004, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 14, 32, 244, 52
    CONTROL "Translation:", 1005, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 51, 45, 8 
    CONTROL "", 1006, STATIC, SS_LEFT | WS_CHILD | WS_VISIBLE | WS_GROUP, 7, 61, 120, 8 
 }
@@ -545,11 +545,11 @@ BLOCK "StringFileInfo"
 {
 	BLOCK "040904b0"
 	{
-		VALUE "CompanyName", "NirSoft"
+		VALUE "CompanyName", "0xntpower"
 		VALUE "FileDescription", "OutlookAttachView"
 		VALUE "FileVersion", "3.55"
 		VALUE "InternalName", "OutlookAttachView"
-		VALUE "LegalCopyright", "Copyright \xA9 2009 - 2025 Nir Sofer"
+		VALUE "LegalCopyright", "0xntpower"
 		VALUE "OriginalFilename", "OutlookAttachView.exe"
 		VALUE "ProductName", "OutlookAttachView"
 		VALUE "ProductVersion", "3.55"

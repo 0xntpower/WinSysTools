@@ -17,7 +17,7 @@
 
 namespace
 {
-    const wchar_t* kHomePage = L"http://www.nirsoft.net/";
+    const wchar_t* kHomePage = L"https://github.com/0xntpower/WinSysTools";
     const wchar_t* kProduct = L"PreviousFilesRecovery";
 
     std::wstring xmlEscape(const std::wstring& s)
@@ -35,7 +35,7 @@ namespace
         return out;
     }
 
-    // NirSoft XML element names are the lowercased title with spaces turned into
+    // The XML element names are the lowercased title with spaces turned into
     // underscores, so "Item Type" becomes "item_type".
     std::wstring xmlTag(const std::wstring& title)
     {

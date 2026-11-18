@@ -11,8 +11,6 @@
 namespace
 {
     const wchar_t* kReportTitle = L"Windows Updates History";
-    const wchar_t* kHomePage =
-        L"https://www.nirsoft.net/utils/windows_updates_history_viewer.html";
 
     std::wstring htmlEscape(const std::wstring& s)
     {
@@ -183,8 +181,7 @@ std::wstring BuildReport(const std::vector<UpdateRecord>& items,
         out += L".mytable  td {padding: 5px ; border: 1px groove}\r\n";
         out += L".mytable th {padding: 10px; border: 1px groove;}\r\n";
         out += L"</style></head>\r\n<body>\r\n <h3>"; out += kReportTitle; out += L"</h3>\r\n";
-        out += L"<br/><h4>Created by using <a href=\""; out += kHomePage;
-        out += L"\" target=\"newwin\">Windows Updates History Viewer</a></h4><p/><table style=\"width: ";
+        out += L"<br/><h4>Created by using Windows Updates History Viewer</h4><p/><table style=\"width: ";
         out += std::to_wstring(total); out += L"px\" class=\"mytable\"><tr style=\"background-color:#E0E0E0;\">\r\n";
         for (int c : columns)
             out += L"<th style=\"width: " + std::to_wstring(kColumns[c].htmlWidth) + L"px\">" +
@@ -210,8 +207,7 @@ std::wstring BuildReport(const std::vector<UpdateRecord>& items,
         out += L".mytable  td {padding: 5px ; border: 1px groove}\r\n";
         out += L".mytable th {padding: 10px; border: 1px groove;}\r\n";
         out += L"</style></head>\r\n<body>\r\n <h3>"; out += kReportTitle; out += L"</h3>\r\n";
-        out += L"<br/><h4>Created by using <a href=\""; out += kHomePage;
-        out += L"\" target=\"newwin\">Windows Updates History Viewer</a></h4><p/>\r\n";
+        out += L"<br/><h4>Created by using Windows Updates History Viewer</h4><p/>\r\n";
         for (const auto& it : items)
         {
             out += L"<table class=\"mytable\">\r\n";

@@ -28,7 +28,7 @@ public:
     {
         SetWindowTextW(L"About SimpleWMIView");
         SetDlgItemTextW(IDC_ABOUT_TITLE, L"SimpleWMIView v1.56");
-        SetDlgItemTextW(IDC_ABOUT_COPY, L"Copyright (c) 2015 - 2025 Nir Sofer");
+        SetDlgItemTextW(IDC_ABOUT_COPY, L"Independent source-accurate recreation of SimpleWMIView by NirSoft, through reverse engineering and rewritten in modern C++20 && WTL 10.\r\nAuthor: 0xntpower");
         return TRUE;
     }
     LRESULT OnClose(WORD, WORD id, HWND, BOOL&) { EndDialog(id); return 0; }

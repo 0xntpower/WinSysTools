@@ -1,4 +1,4 @@
-// VNCPassView.cpp -- entry point. Recreation of NirSoft VNCPassView (x86, v1.05).
+// VNCPassView.cpp -- entry point. Recreation of VNCPassView (x86, v1.05).
 // GUI path mirrors the original WinMain. The /s* switches reproduce its command-line
 // "save and quit" mode. /nosaveload, /deleteregkey and /selftest are recovered too.
 #include <atlbase.h>

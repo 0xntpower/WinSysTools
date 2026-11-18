@@ -58,8 +58,8 @@ namespace
         "PsExec",
         "2.43",
         "Execute processes remotely",
-        "Copyright (C) 2001-2023 Mark Russinovich",
-        "Sysinternals - www.sysinternals.com",
+        "Independent source-accurate recreation of PsExec by Sysinternals, through reverse engineering and rewritten in modern C++20.",
+        "Author: 0xntpower",
     };
 
     constexpr char kApp[] = "PsExec";

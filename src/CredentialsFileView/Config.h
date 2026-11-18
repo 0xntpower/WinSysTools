@@ -7,7 +7,7 @@
 // SaveFilterIndex, ShowInfoTip, VerSplitLoc, LowerPaneMode, ShowTimeInGMT, SaveFileEncoding,
 // DataSource, UserName, RegHiveFolder, ProtectFolder1/2, CredentialsFolders1/2/3, Sort,
 // Columns, WinPos. The binary blobs WinPos and Columns are kept as hex strings, the way the
-// shared NirSoft config layer encodes them. The login password is never persisted.
+// shared config layer encodes them. The login password is never persisted.
 #pragma once
 #include "Columns.h"
 #include <windows.h>
@@ -159,7 +159,7 @@ struct Config
     }
 
 private:
-    // The NirSoft INI layer encodes a blob as space-separated uppercase hex bytes ("%02X ").
+    // The INI layer encodes a blob as space-separated uppercase hex bytes ("%02X ").
     [[nodiscard]] static std::wstring toHex(const void* data, size_t bytes)
     {
         const BYTE* p = static_cast<const BYTE*>(data);
